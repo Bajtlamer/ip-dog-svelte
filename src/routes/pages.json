@@ -1,0 +1,8 @@
+{
+    "menuitems": [
+    { "item": "Home", "route": "/" },
+    { "item": "Servers", "route": "/servers" },
+    { "item": "Devices", "route": "/devices" },
+    { "item": "About", "route": "/about" }
+  ]
+}

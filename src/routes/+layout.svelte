@@ -1,7 +1,7 @@
 <!-- Main navigation container -->
 
 <nav class="bg-white border-gray-200 dark:bg-gray-900">
-  <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+  <div class="max-w-screen-lg flex flex-wrap items-center justify-between mx-auto p-4">
   <a href="/" class="flex items-center">
       <img src="./logo.png" class="h-8 mr-3" alt="Flowbite Logo" />
       <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">IP-dog</span>
@@ -17,18 +17,13 @@
   </div>
   <div class="items-center justify-between w-full md:flex md:w-auto md:order-1 {open ? 'display' : 'hidden'}" id="navbar-cta">
     <ul class="flex flex-col font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
-      <li>
-        <a href="/#" on:click={() => (open = !open)} class="block py-2 pl-3 pr-4 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-blue-500" aria-current="page">Home</a>
+      {#each menuitems as { item, route }}
+      <li class="flex-grow-1 w-1/4 text-center">
+        <a href={route} on:click={() => (open = !open)} class:active={$page.url.pathname === route}
+          class="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">{item}</a
+        >
       </li>
-      <li>
-        <a href="/servers" on:click={() => (open = !open)} class="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">Servers</a>
-      </li>
-      <li>
-        <a href="/devices" on:click={() => (open = !open)} class="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">Devices</a>
-      </li>
-      <li>
-        <a href="/about" on:click={() => (open = !open)} class="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">About</a>
-      </li>
+    {/each}
     </ul>
   </div>
   </div>
@@ -36,8 +31,17 @@
 
 
 <script>
+  import { page } from '$app/stores';
 	import "../app.css";
+  import { menuitems } from "./pages.json";
+
   let open = false;
 </script>
+
+<style>
+  .active {
+    color: blue;
+  }
+</style>
 
 <slot />
