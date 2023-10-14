@@ -7,7 +7,7 @@
       <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">IP-dog</span>
   </a>
   <div class="flex md:order-2">
-      <button type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center mr-3 md:mr-0 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 hidden md:block">Sign In</button>
+      <button type="button" on:click={() => (showModal = true)} class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center mr-3 md:mr-0 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 hidden md:block">Sign In</button>
       <button on:click={()=>{open = !open}} data-collapse-toggle="navbar-cta" type="button" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="navbar-cta" aria-expanded={open}>
         <span class="sr-only">Open main menu</span>
         <svg class="w-5 h-5" aria-hidden={open} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
@@ -29,12 +29,39 @@
   </div>
 </nav>
 
+<Modal bind:showModal>
+	<h2 slot="header">
+		modal
+		<small><em>adjective</em> mod·al \ˈmō-dəl\</small>
+	</h2>
+
+	<ol class="definition-list">
+		<li>of or relating to modality in logic</li>
+		<li>
+			containing provisions as to the mode of procedure or the manner of taking effect —used of a
+			contract or legacy
+		</li>
+		<li>of or relating to a musical mode</li>
+		<li>of or relating to structure as opposed to substance</li>
+		<li>
+			of, relating to, or constituting a grammatical form or category characteristically indicating
+			predication
+		</li>
+		<li>of or relating to a statistical mode</li>
+	</ol>
+
+	<a href="https://www.merriam-webster.com/dictionary/modal">merriam-webster.com</a>
+</Modal>
+
+
 
 <script>
   import { page } from '$app/stores';
 	import "../app.css";
   import { menuitems } from "./pages.json";
+  import Modal from '../modals/basic.svelte';
 
+  let showModal = false;
   let open = false;
 </script>
 
