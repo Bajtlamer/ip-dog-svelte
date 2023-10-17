@@ -27,24 +27,26 @@
 
 <style>
 	dialog::backdrop {
-		background: none;
-		/* background: rgba(0, 1, 2, 0.6);
-		border-radius: 0.2rem; */
+		/* background: none; */
+		/* background: rgba(0, 1, 2, 0.4); */
+		/* border-radius: 0.2rem; */
 	}
 	dialog > div {
 		/* padding: 1em; */
 		/* background: none; */
 		/* position: relative; */
-    /* width: 40rem; */
+    /* width: 100%;
+	padding: 0;
+	margin:0; */
     /* max-width: 100%;
     max-height: 100%; */
     /* margin: 2rem auto; */
 	/* margin:20px; */
-    color: black;
+    /* color: black;
     border-radius: 0.5rem;
-	padding: 20px;
+	padding: 20px; */
     /* background: black; */
-	background: rgba(0, 0, 0, 0.1);
+	/* background: rgba(0, 0, 0, 0.1); */
 	}
 	dialog[open] {
 		animation: zoom 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -60,14 +62,14 @@
 	dialog[open]::backdrop {
 		animation: fade 0.6s ease-out;
 	}
-	/* @keyframes fade {
+	@keyframes fade {
 		from {
 			opacity: 0;
 		}
 		to {
 			opacity: 1;
 		}
-	} */
+	}
 	
 
 </style>
