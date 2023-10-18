@@ -1,0 +1,32 @@
+version: "2"
+services:
+  svelte_app:
+    build:
+      context: .
+    image: node:16
+    user: node
+    restart: always
+    container_name: elk_app
+    working_dir: /home/node/app
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - ./:/home/node/app
+    command: node ./build/index.js
+    ports:
+      - "3000:3000"
+  nginx:
+    image: nginx:alpine
+    container_name: nginx-proxy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./etc/certs:/etc/nginx/certs
+      - ./etc/nginx/conf.d:/etc/nginx/conf.d
+    depends_on:
+      - svelte_app
+    # networks:
+    #   - app-network
+    # command: "pm2 start"
