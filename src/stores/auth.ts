@@ -6,7 +6,7 @@ import { getUsernameAuthToken } from "../auth.service"
 
 let token:any = null
 
-export const store = writable(null);
+export const store = writable({user:{token:null}});
 
 let sessions = []
 
