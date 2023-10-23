@@ -2,6 +2,7 @@
 	import type { PageData } from './$types';
 
 	export let data: PageData;
+
 </script>
 
 <div class="max-w-screen-lg p-4 items-center mx-auto">

@@ -15,4 +15,3 @@
     <h3 class="text-xl font-bold">This is a Subnet page</h3>
     <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Consequatur dolore ipsum ut molestias veniam nostrum ex consectetur aliquid repellendus? Corporis atque cum excepturi pariatur ex commodi et corrupti laudantium aliquam.</p>
 </div>
-<p>Current URL: {$page.url.pathname}</p>
