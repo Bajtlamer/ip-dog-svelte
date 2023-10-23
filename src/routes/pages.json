@@ -1,7 +1,7 @@
 {
     "menuitems": [
     { "item": "Home", "route": "/" },
-    { "item": "Servers", "route": "/servers" },
+    { "item": "Subnets", "route": "/subnets" },
     { "item": "Devices", "route": "/devices" },
     { "item": "About", "route": "/about" }
   ]

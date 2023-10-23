@@ -5,7 +5,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 	// Stage 1
 	event.locals.user = authenticateUser(event)
 
-	if (event.url.pathname.startsWith("/servers")) {
+	if (event.url.pathname.startsWith("/subnets")) {
 		if (!event.locals.user) {
 			throw redirect(303, "/")
 		}

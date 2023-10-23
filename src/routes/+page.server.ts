@@ -1,14 +1,9 @@
 import { redirect } from "@sveltejs/kit"
 import type { Actions, PageServerLoad } from "./$types"
 
-export const load: PageServerLoad = async ({ locals }:any) => {
-	return {
-		user: locals.user,
-	}
-}
 
 export const actions: Actions = {
-	login: async ({ cookies }) => {
+	login: async ({ cookies, route }:any) => {
 		cookies.set("auth", "regularusertoken", {
 			path: "/",
 			httpOnly: true,
@@ -16,11 +11,6 @@ export const actions: Actions = {
 			secure: process.env.NODE_ENV === "production",
 			maxAge: 60 * 60 * 24 * 7, // 1 week
 		})
-
-		throw redirect(303, "/")
-	},
-    logout: async ({ cookies }) => {
-		cookies.delete("auth")
 
 		throw redirect(303, "/")
 	}
