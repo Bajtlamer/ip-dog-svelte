@@ -3,34 +3,68 @@
 	import { store } from '../stores/auth';
 	// import { writable } from "svelte/store"
 	import { getUsernameAuthToken } from '../auth.service';
+	import type { MouseEventHandler } from 'svelte/elements';
 	// import type { PageData } from './$types';
 
 	// export let data: PageData;
+	export let closeModalForm:MouseEventHandler<EventTarget>
+	export let showModal
+	
+	const closeModal = () =>{
+		showModal = false
+		console.log("close dialog")
+	}
 
 	let username = '';
 	let password = '';
 	let error = '';
 
-	const login = async () => {
-		// alert('login!')
-		await getUsernameAuthToken(username, password)
-			.then((res) => {
-				console.log('Chyba:', res);
-				if (res.auth === false) {
+	
+	async function login() {
+			try {
+			const response = await fetch('/api/auth', {
+				method: 'POST',
+				body: JSON.stringify({ username, password }),
+				headers: {
+					'content-type': 'application/json'
+				}
+			});
+			
+			const res = await response.json();
+
+			if (res?.auth === false) {
 					error = res.message;
 				} else {
-					console.log('Token:', res.token);
+					// console.log('Token:', res.token);
 					error = 'Login successful!';
-					$store.user.token = res.token;
+					// $store.user.token = res.token;
 				}
-			})
-			.catch((err) => console.log('XXXX', err));
-	};
+			console.log(res)
+			
+		} catch (err:any) {
+			error = err.message
+		}
+	}
+	// const login = async () => {
+	// 	// alert('login!')
+	// 	await getUsernameAuthToken(username, password)
+	// 		.then((res) => {
+	// 			console.log('Chyba:', res);
+	// 			if (res.auth === false) {
+	// 				error = res.message;
+	// 			} else {
+	// 				console.log('Token:', res.token);
+	// 				error = 'Login successful!';
+	// 				$store.user.token = res.token;
+	// 			}
+	// 		})
+	// 		.catch((err) => console.log('XXXX', err));
+	// };
 </script>
 
-<section class="bg-gray-50 dark:bg-gray-900 rounded-md">
+<section class="rounded-md bg-gray-50 dark:bg-gray-900">
 	<div
-		class="w-full lg:w-96 bg-white rounded-lg shadow dark:border md:mt-0 xl:p-0 dark:bg-gray-800 dark:border-gray-700"
+		class="w-full bg-white rounded-lg shadow lg:w-96 dark:border md:mt-0 xl:p-0 dark:bg-gray-800 dark:border-gray-700"
 	>
 		<div class="p-6 space-y-4 md:space-y-6 sm:p-8">
 			<h1
@@ -38,7 +72,8 @@
 			>
 				Sign in to your account
 			</h1>
-			<!-- <form class="space-y-4 md:space-y-6" action="#" on:submit={login}> -->
+			<!-- <form method="POST" > -->
+			<form class="space-y-4 md:space-y-6" action="#" on:submit={login}>
 				<div>
 					<label for="username" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
 						>Your email</label
@@ -85,13 +120,19 @@
 						>Forgot password?</a
 					>
 				</div>
-				<form action="/?/login" method="POST">
 					<button
-						type="submit"
+						on:click={login}
+						type="button"
 						class="w-full text-white bg-blue-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
 						>Sign in</button
 					>
-				</form>
+					<button
+					on:click={closeModalForm}
+						type="button"
+						class="w-full text-white bg-blue-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+						>Close</button
+					>
+				<!-- </form> -->
 				<p class="text-sm font-light text-gray-500 dark:text-gray-400">
 					Don't have an account yet? <a
 						href="#"
@@ -101,7 +142,7 @@
 				{#if error}
 					<p class="text-white">{error}!</p>
 				{/if}
-			<!-- </form> -->
+			</form>
 		</div>
 	</div>
 </section>

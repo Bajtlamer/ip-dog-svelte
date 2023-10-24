@@ -10,6 +10,13 @@
 
 	let showModal = false;
 	let open = false;
+
+	const closeModalForm = () =>{
+		showModal = false
+		open = false
+		console.log("Closing Modal Form",showModal)
+	}
+
 </script>
 
 <nav class="bg-white border-gray-200 dark:bg-gray-900">
@@ -94,8 +101,8 @@
 	</div>
 </nav>
 
-<Modal bind:showModal>
-	<LoginForm />
+<Modal bind:showModal >
+	<LoginForm bind:showModal closeModalForm={closeModalForm} />
 </Modal>
 
 {#if !data.user}
