@@ -1,21 +1,14 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { menuitems } from './pages.json';
-	import Modal from '../modals/basic.svelte';
-	import LoginForm from '../forms/login.svelte';
-	import type { PageData } from './$types';
+	// import Modal from '../modals/basic.svelte';
+	// import LoginForm from '../forms/login.svelte';
+	// import type { PageData } from './$types';
 	import '../app.css';
 
-	export let data: PageData;
-
-	let showModal = false;
+	export let data;
 	let open = false;
-
-	const closeModalForm = () =>{
-		showModal = false
-		open = false
-		console.log("Closing Modal Form",showModal)
-	}
+	console.log(data)
 
 </script>
 
@@ -28,16 +21,22 @@
 			>
 		</a>
 		<div class="flex md:order-2">
-			{#if !data.user}
-				<button
+			{#if !data.token}
+			<a href="/login"
+					class="hidden px-4 py-2 mr-3 text-sm font-medium text-center text-white bg-blue-700 rounded-md hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 md:mr-0 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 md:block"
+					>Login
+				
+			</a>
+
+				<!-- <button
 					type="button"
 					on:click={() => (showModal = true)}
 					class="hidden px-4 py-2 mr-3 text-sm font-medium text-center text-white bg-blue-700 rounded-md hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 md:mr-0 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 md:block"
 					>Sign In</button
-				>
+				> -->
 			{:else}
 				<span class="self-center pr-4 text-sm font-semibold whitespace-nowrap dark:text-white"
-					>{data.user?.email}</span
+					>LoggedIn</span
 				>
 				<form action="/logout" method="POST">
 					<button
@@ -74,7 +73,7 @@
 				</svg>
 			</button>
 		</div>
-    {#if data.user}
+    {#if data.token}
 		<div
 			class="items-center justify-between w-full md:flex md:w-auto md:order-1 {open
 				? 'display'
@@ -101,17 +100,12 @@
 	</div>
 </nav>
 
-<Modal bind:showModal >
+<!-- <Modal bind:showModal >
 	<LoginForm bind:showModal closeModalForm={closeModalForm} />
-</Modal>
+</Modal> -->
 
-{#if !data.user}
-	<div class="flex flex-wrap items-center justify-between max-w-screen-lg p-4 mx-auto">
-    <p class="w-full italic text-center">Access denied. Please log in firts.</p>
-  </div>
-{:else}
 	<slot />
-{/if}
+<!-- {/if} -->
 
 <style>
 	.active {
