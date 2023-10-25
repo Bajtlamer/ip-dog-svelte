@@ -1,6 +1,6 @@
 import { json, error } from '@sveltejs/kit';
 // import { redirect } from "@sveltejs/kit"
-import { getUsernameAuthToken } from '../../../auth.service.js';
+import { getUsernameAuthToken } from '../../../lib/server/auth.service.js';
 
 interface AuthResponse {auth: boolean, message: string, token?: string}
 

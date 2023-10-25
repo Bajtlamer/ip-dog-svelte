@@ -8,7 +8,7 @@
 
 	export let data;
 	let open = false;
-	console.log(data)
+	// console.log(data)
 
 </script>
 
@@ -36,7 +36,7 @@
 				> -->
 			{:else}
 				<span class="self-center pr-4 text-sm font-semibold whitespace-nowrap dark:text-white"
-					>LoggedIn</span
+					>{data.user?.username}</span
 				>
 				<form action="/logout" method="POST">
 					<button

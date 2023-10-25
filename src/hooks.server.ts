@@ -1,19 +1,24 @@
-import { authenticateUser } from "$lib/server/auth"
+// import { authenticateUser } from "$lib/server/auth"
+import { getUserInfo } from "$lib/server/auth.service"
 import { redirect, type Handle } from "@sveltejs/kit"
 
 export const handle: Handle = async ({ event, resolve }) => {
-	event.locals.user = authenticateUser(event)
+	const { cookies } = event
+	const userToken = cookies.get("auth") || '';
 
-	if (event.url.pathname !== "/" && !event.locals.user) {
-		if (!event.locals.user) {
+	if (event.url.pathname !== "/" && event.url.pathname !== "/login" && !event.locals.user) {
+		if (!userToken) {
 			throw redirect(303, "/")
 		}
 		
-		// if (event.url.pathname.startsWith("/admin")) {
-		// 	if (event.locals.user.role !== "ADMIN") {
-		// 		throw redirect(303, "/")
-		// 	}
-		// }
+		const user = await getUserInfo(userToken);
+
+		if(user){
+			cookies.set('user', user);
+		}else{
+			cookies.delete('user');
+			cookies.delete('auth');
+		}
 	}   
 
 	const response = await resolve(event)

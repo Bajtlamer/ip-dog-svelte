@@ -1,6 +1,6 @@
 import {redirect } from "@sveltejs/kit"
-import type { Actions, PageServerLoad } from "./$types"
-import { getUsernameAuthToken } from "../../auth.service"
+import type { Actions } from "./$types"
+import { authenticateUser, getUserInfo } from "../../lib/server/auth.service"
 import { error } from '@sveltejs/kit';
 
 export const actions: Actions = {
@@ -14,11 +14,24 @@ export const actions: Actions = {
 
 		try {
 			// const response = await getUsernameAuthToken('bajtlamer@gmail.com', 'printadmin')
-			const response = await getUsernameAuthToken(username, password)
+			const response = await authenticateUser(username, password)
 			
 			if(response?.auth === true){
 				token = response.token;
 				
+				const user = await getUserInfo(token);
+
+				if(user){
+					cookies.set("user", user, {
+						path: "/",
+						httpOnly: true,
+						sameSite: "strict",
+						secure: process.env.NODE_ENV === "production",
+						maxAge: 60 * 60 * 24 * 7, // 1 week
+					})
+	
+				}
+
 				cookies.set("auth", token, {
 					path: "/",
 					httpOnly: true,
@@ -35,15 +48,15 @@ export const actions: Actions = {
 				// console.log("Success", response)
 				
 			}else{
-				console.log("Chyba", response)
+				// console.log("Login error:", response)
 				return {username, password, ...response}
-				throw error(401, response?.message)
+				// throw error(401, response?.message)
 			}
 	
 			// console.log(userToken)
 		} catch (error) {
 
-			console.log("Chyba", error)
+			console.log("Login error:", error)
 		}
 
 		// if(userToken.auth === false){

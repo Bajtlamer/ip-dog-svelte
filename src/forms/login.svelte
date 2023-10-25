@@ -2,7 +2,6 @@
 	// import { getUserDetails } from '../stores/auth';
 	import { store } from '../stores/auth';
 	// import { writable } from "svelte/store"
-	import { getUsernameAuthToken } from '../auth.service';
 	import type { MouseEventHandler } from 'svelte/elements';
 	// import type { PageData } from './$types';
 

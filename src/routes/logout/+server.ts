@@ -3,5 +3,6 @@ import type { RequestHandler } from "./$types"
 
 export const POST: RequestHandler = async ({ cookies }) => {
 	cookies.delete("auth")
+	cookies.delete("user")
 	throw redirect(303, "/")
 }

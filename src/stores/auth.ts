@@ -1,5 +1,5 @@
 import { writable } from "svelte/store"
-import { getUsernameAuthToken } from "../auth.service"
+import { getUsernameAuthToken } from "../lib/server/auth.service"
 
 // const username = 'bajt@volny.cz'
 // const pass = 'printadmin'

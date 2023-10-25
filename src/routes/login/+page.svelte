@@ -3,8 +3,8 @@
 	// import { store } from '../stores/auth';
 	// import { writable } from "svelte/store"
 	// import { getUsernameAuthToken } from '../auth.service';
-	import type { MouseEventHandler } from 'svelte/elements';
-    import { goto } from '$app/navigation';
+	// import type { MouseEventHandler } from 'svelte/elements';
+    // import { goto } from '$app/navigation';
 
     import type { ActionData } from './$types'
 
@@ -127,8 +127,6 @@
 					>
 				</div>
 				<button
-					
-
 					class="w-full text-white bg-blue-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
 					>Sign in</button
 				>

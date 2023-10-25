@@ -5,10 +5,10 @@
 
 </script>
 
-<div class="max-w-screen-lg p-4 items-center mx-auto">
+<div class="items-center max-w-screen-lg p-4 mx-auto">
     <h1 class="text-3xl font-bold">Devices page</h1>
     <h3 class="text-xl font-bold">This is a Devices page</h3>
     {#if data.user}
-		<p>Welcome, {data.user.email}</p>
+		<p>Welcome, {data.user?.username}</p>
 	{/if}
 </div>
