@@ -1,71 +1,13 @@
 <script lang="ts">
-	// import { getUserDetails } from '../stores/auth';
-	// import { store } from '../stores/auth';
-	// import { writable } from "svelte/store"
-	// import { getUsernameAuthToken } from '../auth.service';
-	// import type { MouseEventHandler } from 'svelte/elements';
-    // import { goto } from '$app/navigation';
+	import type { ActionData } from './$types';
+	import { page } from '$app/stores';
 
-    import type { ActionData } from './$types'
-
-    export let form: ActionData
-
-	// import type { PageData } from './$types';
-
-	// export let data: PageData;
-	// export let closeModalForm: MouseEventHandler<EventTarget>;
-	// export let showModal;
-    // export let error:Error
-	// const closeModal = () => {
-	// 	showModal = false;
-	// 	console.log('close dialog');
-	// };
+	export let form: ActionData;
 
 	let username = form?.username || '';
 	let password = '';
-	// let err = '';
 
-	// async function login() {
-	// 	try {
-	// 		const response = await fetch('/api/auth', {
-	// 			method: 'POST',
-	// 			body: JSON.stringify({ username, password }),
-	// 			headers: {
-	// 				'content-type': 'application/json'
-	// 			}
-	// 		});
-
-	// 		const res = await response.json();
-            
-	// 		if (res?.auth === true) {
-    //             console.log("Authenticated:",res.auth === true);
-    //             goto('/');
-    //             err = 'Login successful!';
-	// 		} else {
-	// 			err = res.message;
-	// 			console.log(res);
-	// 			// console.log('Token:', res.token);
-	// 			// $store.user.token = res.token;
-	// 		}
-	// 	} catch (err: any) {
-	// 		err = err.message;
-	// 	}
-	// }
-	// const login = async () => {
-	// 	// alert('login!')
-	// 	await getUsernameAuthToken(username, password)
-	// 		.then((res) => {
-	// 			console.log('Chyba:', res);
-	// 			if (res.auth === false) {
-	// 				error = res.message;
-	// 			} else {
-	// 				console.log('Token:', res.token);
-	// 				error = 'Login successful!';
-	// 				$store.user.token = res.token;
-	// 			}
-	// 		})
-	// 		.catch((err) => console.log('XXXX', err));
-	// };
+	const redirectTo = $page.url.searchParams.get('redirectTo') || '/';
 </script>
 
 <section class="p-0 pt-1 mx-auto w-96 md:pt-24">
@@ -79,7 +21,7 @@
 				Sign in to your account
 			</h1>
 			<!-- <form method="POST" > -->
-			<form action="login" method="POST" class="space-y-4 md:space-y-6">
+			<form action="?/login&redirectTo={redirectTo}" method="POST" class="space-y-4 md:space-y-6">
 				<div>
 					<label for="username" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
 						>Your email</label
@@ -127,6 +69,7 @@
 					>
 				</div>
 				<button
+					formaction="?/login&redirectTo={redirectTo}"
 					class="w-full text-white bg-blue-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
 					>Sign in</button
 				>

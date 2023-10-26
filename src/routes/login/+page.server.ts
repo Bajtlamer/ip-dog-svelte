@@ -1,80 +1,31 @@
-import {redirect } from "@sveltejs/kit"
+import { redirect } from "@sveltejs/kit"
 import type { Actions } from "./$types"
-import { authenticateUser, getUserInfo } from "../../lib/server/auth.service"
-import { error } from '@sveltejs/kit';
+import { authenticateUser } from "../../lib/server/auth.service"
 
 export const actions: Actions = {
-	default: async ({ cookies, request, url }:any) => {
+	login: async ({ cookies, request, url }: any) => {
 
 		const data = await request.formData();
 		const username = data.get('username');
 		const password = data.get('password');
 
-		let token = '';
+		const _authResponse = await authenticateUser(username, password);
+		if (_authResponse?.auth === true) {
+			const token = _authResponse.token;
 
-		try {
-			// const response = await getUsernameAuthToken('bajtlamer@gmail.com', 'printadmin')
-			const response = await authenticateUser(username, password)
-			
-			if(response?.auth === true){
-				token = response.token;
-				
-				const user = await getUserInfo(token);
+			cookies.set("auth", token, {
+				path: "/",
+				httpOnly: true,
+				sameSite: "strict",
+				secure: process.env.NODE_ENV === "production",
+				maxAge: 60 * 60 * 24 * 7, // 1 week
+			})
 
-				if(user){
-					cookies.set("user", user, {
-						path: "/",
-						httpOnly: true,
-						sameSite: "strict",
-						secure: process.env.NODE_ENV === "production",
-						maxAge: 60 * 60 * 24 * 7, // 1 week
-					})
-	
-				}
+			throw redirect(302, url.searchParams.get('redirectTo') || '/');
 
-				cookies.set("auth", token, {
-					path: "/",
-					httpOnly: true,
-					sameSite: "strict",
-					secure: process.env.NODE_ENV === "production",
-					maxAge: 60 * 60 * 24 * 7, // 1 week
-				})
-				
-				// throw redirect(303, url.searchParams('redirectTo') || '/');
-
-				if (url.searchParams.has('redirectTo')) {
-					throw redirect(303, url.searchParams.get('redirectTo'));
-				}
-				// console.log("Success", response)
-				
-			}else{
-				// console.log("Login error:", response)
-				return {username, password, ...response}
-				// throw error(401, response?.message)
-			}
-	
-			// console.log(userToken)
-		} catch (error) {
-
-			console.log("Login error:", error)
+		} else {
+			return { username, password, ..._authResponse }
 		}
-
-		// if(userToken.auth === false){
-		// 	throw error(404, {
-		// 		message: userToken.message
-		// 	});
-		// }
-		// return fail(500, { message: 'Could not create the score.' });
-		// return { name: data.get('username'), success: data.get('username') !== '' };
-		// return false
-		// cookies.set("auth", "regularusertoken", {
-		// 	path: "/",
-		// 	httpOnly: true,
-		// 	sameSite: "strict",
-		// 	secure: process.env.NODE_ENV === "production",
-		// 	maxAge: 60 * 60 * 24 * 7, // 1 week
-		// })
-		// return {test:"test"}
 
 	}
 }

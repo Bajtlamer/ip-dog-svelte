@@ -1,27 +1,28 @@
 // import { authenticateUser } from "$lib/server/auth"
 import { getUserInfo } from "$lib/server/auth.service"
-import { redirect, type Handle } from "@sveltejs/kit"
+import { redirect } from "@sveltejs/kit";
+// import { type Handle } from "@sveltejs/kit"
 
-export const handle: Handle = async ({ event, resolve }) => {
-	const { cookies } = event
-	const userToken = cookies.get("auth") || '';
+export const handle = async ({ event, resolve }) => {
+    const { cookies, url } = event
+    const userToken = cookies.get("auth");
 
-	if (event.url.pathname !== "/" && event.url.pathname !== "/login" && !event.locals.user) {
-		if (!userToken) {
-			throw redirect(303, "/")
-		}
-		
-		const user = await getUserInfo(userToken);
+    //@TODO SETUP TOKEN VERIFICATION
 
-		if(user){
-			cookies.set('user', user);
-		}else{
-			cookies.delete('user');
-			cookies.delete('auth');
-		}
-	}   
+    if (userToken) {
+        const authUser = await getUserInfo(userToken);
+        event.locals.user = authUser;
+    } else {
+        event.locals.user = null;
+    }
 
-	const response = await resolve(event)
+    if (event.url.pathname !== "/" && event.url.pathname !== "/login" && !event.locals.user) {
+        if (!userToken) {
+            throw redirect(303, `/login?redirectTo=${url.pathname}`)
+        }
+    }
 
-	return response
+    const response = await resolve(event)
+
+    return response
 }
