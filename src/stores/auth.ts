@@ -1,25 +1,26 @@
-import { writable } from "svelte/store"
-import { getUsernameAuthToken } from "../lib/server/auth.service"
+// import { writable } from "svelte/store"
+// import { getUsernameAuthToken } from "../lib/server/auth.service"
 
 // const username = 'bajt@volny.cz'
 // const pass = 'printadmin'
 
-let token:any = null
+// let token:any = null
 
-export const store = writable({user:{token:null}});
+// export const store = writable({user:{token:null}});
 
-let sessions = []
+// let sessions = []
 
-export const getUserDetails = async ( username:string, password:string ) => {
+// export const getUserDetails = async ( username:string, password:string ) => {
 
-    return getUsernameAuthToken(username, password)
-        // .then(res => {
-        //     token = res.token
-        //     console.log(res)
-        //     return token
-        // })
-        // .catch(err => {throw Error(err)})
+//     return getUsernameAuthToken(username, password)
+//         // .then(res => {
+//         //     token = res.token
+//         //     console.log(res)
+//         //     return token
+//         // })
+//         // .catch(err => {throw Error(err)})
 
-	// if ( username === user && password === pass )
-	// 	return 1
-}
+// 	// if ( username === user && password === pass )
+// 	// 	return 1
+// 
+// }

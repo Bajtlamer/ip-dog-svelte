@@ -1,14 +1,15 @@
 import { redirect } from "@sveltejs/kit"
 import type { Actions } from "./$types"
 import { authenticateUser } from "../../lib/server/auth.service"
+import { signing } from "../../stores/loader"
 
 export const actions: Actions = {
 	login: async ({ cookies, request, url }: any) => {
-
+		
 		const data = await request.formData();
 		const username = data.get('username');
 		const password = data.get('password');
-
+		await sleep(3000);
 		const _authResponse = await authenticateUser(username, password);
 		if (_authResponse?.auth === true) {
 			const token = _authResponse.token;
@@ -29,3 +30,5 @@ export const actions: Actions = {
 
 	}
 }
+
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));

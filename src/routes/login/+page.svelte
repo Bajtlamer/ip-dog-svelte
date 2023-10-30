@@ -1,6 +1,8 @@
 <script lang="ts">
+	import { Pulse } from 'svelte-loading-spinners';
 	import type { ActionData } from './$types';
 	import { page } from '$app/stores';
+	import { signing } from '../../stores/loader';
 
 	export let form: ActionData;
 
@@ -63,11 +65,17 @@
 						</div>
 					</div>
 				</div>
+				{#if signing}
+				<div class="flex items-center justify-center">
+					<Pulse size="40" color="lightgreen" unit="px" duration="1s" />
+				</div>
+				{:else}
 				<button
 					formaction="?/login&redirectTo={redirectTo}"
 					class="w-full text-white bg-blue-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
 					>Sign in</button
 				>
+				{/if}
 				<!-- </form> -->
 				<p class="text-sm font-light text-gray-500 dark:text-gray-400">
 					Don't have an account yet? <a
