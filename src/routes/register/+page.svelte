@@ -18,10 +18,13 @@
 			<h1
 				class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white"
 			>
-				Sign in to your account
+				Create a new user account
 			</h1>
-			<!-- <form method="POST" > -->
-			<form action="?/login&redirectTo={redirectTo}" method="POST" class="space-y-4 md:space-y-6">
+			<form
+				action="?/register&redirectTo={redirectTo}"
+				method="POST"
+				class="space-y-4 md:space-y-6"
+			>
 				<div>
 					<label for="username" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
 						>Your email</label
@@ -59,22 +62,15 @@
 							/>
 						</div>
 						<div class="ml-3 text-sm">
-							<label for="remember" class="text-gray-500 dark:text-gray-300">Remember me</label>
+							<label for="remember" class="text-gray-500 dark:text-gray-300">Admin account?</label>
 						</div>
 					</div>
 				</div>
 				<button
-					formaction="?/login&redirectTo={redirectTo}"
+					formaction="?/register&redirectTo={redirectTo}"
 					class="w-full text-white bg-blue-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-					>Sign in</button
+					>Create account</button
 				>
-				<!-- </form> -->
-				<p class="text-sm font-light text-gray-500 dark:text-gray-400">
-					Don't have an account yet? <a
-						href="/register"
-						class="font-medium text-primary-600 hover:underline dark:text-primary-500">Create Account</a
-					>
-				</p>
 				{#if form?.message}
 					<p class="text-white">{form.message}!</p>
 				{/if}

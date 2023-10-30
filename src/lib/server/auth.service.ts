@@ -1,3 +1,5 @@
+import { error } from "@sveltejs/kit";
+
 const url = 'https://ipdog-api.smes24.com/api/v1/auth/'
 
 export const authenticateUser = async(username: string, password: string) => {
@@ -34,9 +36,10 @@ export const getUserInfo = async (userToken: string) => {
     
     if(res.ok === true) {
         return await res.json();
+    }else{
+        return null;
     }
     
-    return null;
 }
 
 export const revalidateToken = async (userToken: string) => {
@@ -52,8 +55,6 @@ export const revalidateToken = async (userToken: string) => {
     if(res.ok === true) {
         return await res.json();
     }else{
-        return res.json()
+        return null
     }
-    
-    return null;
 }

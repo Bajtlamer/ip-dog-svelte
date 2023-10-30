@@ -1,21 +1,28 @@
-FROM node:16
+#Dockerfile
 
-# Create app directory
-WORKDIR /home/node/app
+# Use this image as the platform to build the app
+FROM node:16-alpine AS external-website
 
-# Install app dependencies
-# A wildcard is used to ensure both package.json AND package-lock.json are copied
-# where available (npm@5+)
-# COPY package*.json ./
+# A small line inside the image to show who made it
+LABEL Developers="Radek Roza"
 
-# RUN npm run build
-# RUN npm install
-# If you are building your code for production
-# RUN npm ci --only=production
+# The WORKDIR instruction sets the working directory for everything that will happen next
+WORKDIR /app
 
-# Bundle app source
-# COPY . .
+# Copy all local files into the image
+COPY . .
 
-EXPOSE 3000
+# Clean install all node modules
+RUN npm ci
 
-# CMD [ "node", "./build/index.js" ]
+# Build SvelteKit app
+RUN npm run build
+
+# Delete source code files that were used to build the app that are no longer needed
+RUN rm -rf src/ static/ emailTemplates/ docker-compose.yml
+
+# The USER instruction sets the user name to use as the default user for the remainder of the current stage
+USER node:node
+
+# This is the command that will be run inside the image when you tell Docker to start the container
+CMD ["node","build/index.js"]

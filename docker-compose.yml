@@ -1,23 +1,28 @@
-version: "2"
+version: "3"
+
 services:
-  svelte_app:
+  ipdog_svelte:
+    container_name: ipdog_svelte
+    # The name of the image that will be created when building this container
+    image: ipdog_svelte_frontend
     build:
       context: .
-    image: node:16
-    user: node
-    restart: always
-    container_name: elk_app
-    working_dir: /home/node/app
+      dockerfile: Dockerfile
+    user: "node"
     environment:
+      # Internal server error messages will not send stacktrace to the browser in production
       - NODE_ENV=production
-    volumes:
-      - ./:/home/node/app
-    command: node ./build/index.js
+      # Sets the timezone of the containers OS
+      - TZ=Europe/Prague
+    # Points to a file with the sensitive environment variables
+    env_file:
+      - .env
+    restart: unless-stopped
     ports:
-      - "3000:3000"
+      - 3000:3000
   nginx:
     image: nginx:alpine
-    container_name: nginx-proxy
+    container_name: nginx-svelte-proxy
     restart: unless-stopped
     ports:
       - "80:80"
@@ -26,7 +31,4 @@ services:
       - ./etc/certs:/etc/nginx/certs
       - ./etc/nginx/conf.d:/etc/nginx/conf.d
     depends_on:
-      - svelte_app
-    # networks:
-    #   - app-network
-    # command: "pm2 start"
+      - ipdog_svelte
