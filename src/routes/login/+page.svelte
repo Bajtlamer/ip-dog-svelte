@@ -2,7 +2,8 @@
 	import { Pulse } from 'svelte-loading-spinners';
 	import type { ActionData } from './$types';
 	import { page } from '$app/stores';
-	import { signing } from '../../stores/loader';
+	import { signing } from '../../store/loader';
+	import { enhance } from '$app/forms';
 
 	export let form: ActionData;
 
@@ -23,7 +24,9 @@
 				Sign in to your account
 			</h1>
 			<!-- <form method="POST" > -->
-			<form action="?/login&redirectTo={redirectTo}" method="POST" class="space-y-4 md:space-y-6">
+			<form action="?/login&redirectTo={redirectTo}" method="POST" class="space-y-4 md:space-y-6" use:enhance={()=>{
+				$signing = true
+			}}>
 				<div>
 					<label for="username" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
 						>Your email</label
@@ -65,12 +68,13 @@
 						</div>
 					</div>
 				</div>
-				{#if signing}
+				{#if $signing}
 				<div class="flex items-center justify-center">
 					<Pulse size="40" color="lightgreen" unit="px" duration="1s" />
 				</div>
 				{:else}
 				<button
+					type="submit"
 					formaction="?/login&redirectTo={redirectTo}"
 					class="w-full text-white bg-blue-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
 					>Sign in</button
