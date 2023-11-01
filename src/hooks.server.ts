@@ -1,5 +1,14 @@
+import { dbConnect } from "$db/mongo";
 import { getUserInfo, revalidateToken } from "$lib/server/auth.service"
 import { redirect, error } from "@sveltejs/kit";
+
+// Connect to MongoDB before starting the server
+dbConnect().then(():void => {
+    console.log("MongoDB started");
+}).catch((e) => {
+    console.log("MongoDB failed to start");
+    console.log(e);
+});
 
 export const handle = async ({ event, resolve }) => {
     const { cookies, url } = event
