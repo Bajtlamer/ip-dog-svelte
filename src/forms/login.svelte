@@ -1,6 +1,6 @@
 <script lang="ts">
 	// import { getUserDetails } from '../stores/auth';
-	import { store } from '../stores/auth';
+	// import { store } from '../stores/auth';
 	// import { writable } from "svelte/store"
 	import type { MouseEventHandler } from 'svelte/elements';
 	// import type { PageData } from './$types';
@@ -9,10 +9,10 @@
 	export let closeModalForm:MouseEventHandler<EventTarget>
 	export let showModal
 	
-	const closeModal = () =>{
-		showModal = false
-		console.log("close dialog")
-	}
+	// const closeModal = () =>{
+	// 	showModal = false
+	// 	console.log("close dialog")
+	// }
 
 	let username = '';
 	let password = '';
@@ -38,7 +38,7 @@
 					error = 'Login successful!';
 					// $store.user.token = res.token;
 				}
-			console.log(res)
+			// console.log(res)
 			
 		} catch (err:any) {
 			error = err.message

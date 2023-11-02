@@ -23,9 +23,10 @@
 					>Login
 				</a>
 			{:else}
-				<span class="self-center pr-4 text-sm font-semibold whitespace-nowrap dark:text-white"
-					>{data.user?.username}</span
-				>
+				<span class="self-center pr-4 text-sm font-semibold whitespace-nowrap dark:text-white">
+					{#if data.user?.fullName} {data.user?.fullName} {:else} {data.user?.username} {/if}
+				</span>
+			
 				<form action="/logout" method="POST">
 					<button
 						class="hidden px-4 py-2 mr-3 text-sm font-medium text-center text-white bg-blue-700 rounded-md hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 md:mr-0 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 md:block"
