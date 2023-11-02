@@ -2,11 +2,29 @@ import { getDB } from '$db/mongo';
 const USERS_COLLECTION = 'users';
 const db = getDB();
 
-interface User {
-    email: string,
-    isAdmin: boolean,
-    isActive: boolean
+export interface UserInterface {
+    username: string,
+    admin: boolean,
+    active: boolean
     fullName?: string
+}
+
+export class User implements UserInterface {
+    public username = '';
+    public admin = false;
+    public active = false;
+    public fullName = '';
+    public timestamp ? = Date.now();
+
+    constructor(user?:User) {
+        if (user === undefined) {
+            return;
+        }
+        Object.keys(user).forEach((key, index) => {
+            let k = key as keyof User;
+            this[k] = user[k as keyof object];
+        });
+    }
 }
 
 export async function getUsersCollection(skip:number, limit:number): Promise<User[]>
@@ -25,4 +43,12 @@ export async function getUser(search:string): Promise<User>
 
     // return JSON response
     return data;
+}
+
+export const updateUser = async (_id:string, _user:User): Promise<User> => {
+    return await db.collection.update( { _id} , { $set: _user });
+}
+
+export const insertUser = async (_user:User): Promise<any> => {
+    return await db.collection(USERS_COLLECTION).insertOne( _user );
 }

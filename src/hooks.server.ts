@@ -1,43 +1,46 @@
 import { dbConnect } from "$db/mongo";
-import { getUserInfo, revalidateToken } from "$lib/server/auth.service"
+import { User, insertUser } from "$db/users";
+import { getUserInfo, handleUser, revalidateToken } from "$lib/server/auth.service"
 import { redirect, error } from "@sveltejs/kit";
 
 // Connect to MongoDB before starting the server
-dbConnect().then(():void => {
+dbConnect().then((): void => {
     console.log("MongoDB started");
 }).catch((e) => {
     console.log("MongoDB failed to start");
-    console.log(e);
 });
 
 export const handle = async ({ event, resolve }) => {
     const { cookies, url } = event
     const userToken = cookies.get("auth");
 
-try {
-        if (userToken) {
-            const claim = await revalidateToken(userToken);
-            if(claim) {
+    if (event.url.pathname !== "/" && event.url.pathname !== "/login" && event.url.pathname !== "/register") {
 
-                if(claim?.auth){
-                    const authUser = await getUserInfo(userToken);
-                    if(authUser) event.locals.user = authUser;
-                }else{
-                    event.locals.user = null;
-                }
-            }
-        } else {
-            event.locals.user = null;
+    try {
+            const authUser = await handleUser(userToken);
+            console.log(authUser)
+
+
+                // if (authUser) {
+                    event.locals.user = authUser;
+                // } else {
+                    // event.locals.user = null;
+                    // console.log("presmerovava se")
+                    // throw redirect(303, `/login?redirectTo=${url.pathname}`)
+                // }
+                
+                
+            } catch (err: any) {
+            throw error(500, err?.message)
         }
-    
-} catch (err: any) {
-    throw error(500,err?.message)
-}
-    if (event.url.pathname !== "/" && event.url.pathname !== "/login" && !event.locals.user) {
+        
         if (!event.locals.user) {
-            throw redirect(303, `/login?redirectTo=${url.pathname}`)
+            if (!event.locals.user) {
+                throw redirect(303, `/login?redirectTo=${url.pathname}`)
+            }
         }
     }
+
 
     const response = await resolve(event)
 

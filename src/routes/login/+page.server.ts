@@ -9,7 +9,7 @@ export const actions: Actions = {
 		const username = data.get('username');
 		const password = data.get('password');
 
-		await sleep(1000);
+		// await sleep(1000);
 		const _authResponse = await authenticateUser(username, password);
 
 		if (_authResponse?.auth === true) {

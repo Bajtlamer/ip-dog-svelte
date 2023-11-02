@@ -1,7 +1,8 @@
 import { MongoClient } from 'mongodb';
 import { MONGO_URL } from '$env/static/private';
+import { LOCATION_ID } from '$env/static/private';
 
-const client = new MongoClient(MONGO_URL);
+const client = new MongoClient(`${MONGO_URL}/ipdog_${LOCATION_ID}`);
 
 // connect to the database
 export async function dbConnect(): Promise<void> {
