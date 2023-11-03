@@ -57,6 +57,7 @@
 					<div class="flex items-start">
 						<div class="flex items-center h-5">
 							<input
+								disabled
 								id="remember"
 								aria-describedby="remember"
 								type="checkbox"
@@ -64,7 +65,7 @@
 							/>
 						</div>
 						<div class="ml-3 text-sm">
-							<label for="remember" class="text-gray-500 dark:text-gray-300">Remember me</label>
+							<label for="remember" class="text-gray-500 dark:text-gray-50">Remember me</label>
 						</div>
 					</div>
 				</div>
@@ -81,7 +82,7 @@
 				>
 				{/if}
 				<!-- </form> -->
-				<p class="text-sm font-light text-gray-500 dark:text-gray-400">
+				<p class="text-sm font-light text-gray-500 dark:text-gray-200">
 					Don't have an account yet? <a
 						href="/register"
 						class="font-medium text-primary-600 hover:underline dark:text-primary-500">Create Account</a

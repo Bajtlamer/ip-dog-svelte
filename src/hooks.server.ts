@@ -18,18 +18,7 @@ export const handle = async ({ event, resolve }) => {
 
         try {
             const authUser = await handleUser(userToken);
-            // console.log(authUser)
-
-
-            // if (authUser) {
             event.locals.user = authUser;
-            // } else {
-            // event.locals.user = null;
-            // console.log("presmerovava se")
-            // throw redirect(303, `/login?redirectTo=${url.pathname}`)
-            // }
-
-
         } catch (err: any) {
             throw error(500, err?.message)
         }

@@ -1,14 +1,93 @@
 <script lang="ts">
-    import type { PageData } from './$types';
-    export let data: PageData;
+    import { enhance } from '$app/forms';
+    import { signing } from '../../store/loader';
+    	import type { ActionData } from './$types';
 
+    export let form: ActionData;
+    let subnet = form?.subnet || '';
 </script>
 
-<div class="items-center max-w-screen-lg p-4 mx-auto">
-    <h1 class="text-3xl font-bold">Subnets pagesss</h1>
-    <h3 class="text-xl font-bold">This is a Subnet page</h3>
-    <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Consequatur dolore ipsum ut molestias veniam nostrum ex consectetur aliquid repellendus? Corporis atque cum excepturi pariatur ex commodi et corrupti laudantium aliquam.</p>
-    {#if data.user}
-		<p>Welcome, {data.user?.username}</p>
-	{/if}
+<div class="h-screen items-center max-w-full p-20 mx-auto bg-gray-800">
+	<div
+		class="h-80 mx-auto max-w-screen-lg p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-600 dark:border-gray-700"
+	>
+		<a href="#">
+			<h1 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+				Search for subnet devices {subnet}
+			</h1>
+		</a>
+
+		<form
+			action="?/subnets"
+			method="POST"
+			class="space-y-4 md:space-y-6"
+			use:enhance={() => {
+				$signing = true;
+			}}
+		>
+			<label
+				for="default-search"
+				class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label
+			>
+			<div class="relative">
+				<div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+					<svg
+						class="w-4 h-4 text-gray-500 dark:text-gray-400"
+						aria-hidden="true"
+						xmlns="http://www.w3.org/2000/svg"
+						fill="none"
+						viewBox="0 0 20 20"
+					>
+						<path
+							stroke="currentColor"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+						/>
+					</svg>
+				</div>
+				<input
+                    bind:value={subnet}
+					type="text"
+                    name="subnet"
+					id="subnet"
+					class="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+					placeholder="Scan subnet..."
+					
+				/>
+				<button
+					type="submit"
+					class="text-white absolute right-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+					>Scan</button
+				>
+			</div>
+		</form>
+
+		<p class="mb-3 font-normal text-gray-700 dark:text-gray-400">
+			Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse
+			chronological order.
+		</p>
+		<a
+			href="#"
+			class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+		>
+			Read more
+			<svg
+				class="w-3.5 h-3.5 ml-2"
+				aria-hidden="true"
+				xmlns="http://www.w3.org/2000/svg"
+				fill="none"
+				viewBox="0 0 14 10"
+			>
+				<path
+					stroke="currentColor"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					stroke-width="2"
+					d="M1 5h12m0 0L9 1m4 4L9 9"
+				/>
+			</svg>
+		</a>
+	</div>
 </div>

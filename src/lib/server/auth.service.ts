@@ -1,5 +1,4 @@
-import { User, updateUser, insertUser } from "$db/users";
-// import { error, type RequestEvent } from "@sveltejs/kit";
+import { insertUser } from "$db/users";
 
 const url = 'https://ipdog-api.smes24.com/api/v1/auth/'
 
@@ -63,41 +62,19 @@ export const revalidateToken = async (userToken?: string) => {
 }
 
 export const handleUser = async (userToken?: string) => {
-    // let authUser;
+
     if (!userToken) return null;
 
     const claim = await revalidateToken(userToken);
-    // console.log('claim',claim)
+
     if (claim?.auth === true) {
-
-        // if(claim?.auth) {
         const authUser = await getUserInfo(userToken);
-        // console.log(authUser.username)
-        // const _user = new User(authUser);
         if (authUser?.username) {
-
             const _found = await insertUser(authUser);
             if (_found) authUser.fullName = _found.fullName;
-            // console.log(_found);
-            // console.log(authUser);
-            // if(_found) return authUser;
         }
-        // const user = JSON.parse(xxx);
-        // console.log(JSON.parse(_user))
-        // const res = await insertUser(_user);
-        // if(res) authUser.key = res;
-        // const _id = res.insertedId.toString();
-        // console.log(_id);
-        // authUser._id = _id;
         return authUser;
-        // }else{
-        // event.locals.user = null;
-        // }
     } else {
         return null
     }
-    // } else {
-    //     return null;
-    // }
-
 }
