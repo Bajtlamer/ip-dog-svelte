@@ -7,12 +7,11 @@ export const scanSubnet = async (userToken: string, subnet: string) => {
         headers: {
             "Content-Type": "application/json",
             Accept: "application/json",
-            Authorization: userToken,
-            body: JSON.stringify({
-                subnet
-            }),
-
-        }
+            Authorization: userToken
+        },
+        body: JSON.stringify({
+            subnet
+        }),
     });
 
     if (res.ok === true) {
