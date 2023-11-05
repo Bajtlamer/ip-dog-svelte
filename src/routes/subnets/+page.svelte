@@ -1,50 +1,36 @@
 <script lang="ts">
 	import { Pulse } from 'svelte-loading-spinners';
-	import { applyAction, enhance } from '$app/forms';
-	import { goto } from '$app/navigation';
-	import { signing } from '../../store/loader';
-	import type { ActionData, SubmitFunction } from './$types';
+	import { enhance } from '$app/forms';
+	import type { SubmitFunction } from './$types';
 
 	// export let form: ActionData;
 	// export let data;
 
-    // console.log(form?.devices);
-    // console.log('data:',data);
-    // let devices;
-    let loading = false;
-    let subnet: string = '';
-    let devices: string[] = [];
-    let count: number = 0;
-    
-    // console.log(devices)
-    // console.log(form);
-    // console.log(form);
-    // console.log(subnet);
-    // console.log(count);
+	let loading = false;
 
-    const submitScanForm:SubmitFunction = ({formElement, formData, action, cancel, submitter}) => {
-        const req = Object.fromEntries(formData);
-        // console.log(req?.subnet);
-        
-        loading = true;
-        return async ({result, update}) => {
-            if(result.type === "success") {
-                const _data = result.data
-                subnet = _data?.subnet
-                devices = _data?.devices
-            }
-            // const data = result?.data;
-            // console.log(result)
-            // devices = result.data.devices
-            //  devices = result.data.devices
-            loading = false;
-            // await applyAction(result);
-            // goto(result.location);
-            await update();
-        }
-    }
+	let subnet: string = '';
+	let devices: string[] = [];
+	let count: number = 0;
+	let error: string | undefined = '';
 
+	const submitScanForm: SubmitFunction = ({ formElement, formData, action, cancel, submitter }) => {
+		const req = Object.fromEntries(formData);
+		// console.log(req?.subnet);
 
+		loading = true;
+		return async ({ result, update }) => {
+			if (result.type === 'success') {
+				console.log('->', subnet);
+				const _data = result.data;
+				subnet = _data?.subnet;
+				devices = _data?.devices || [];
+				count = _data?.count || 0;
+				error = _data?.error;
+			}
+
+			loading = false;
+		};
+	};
 </script>
 
 <div class="p-2 lg:p-20 h-screen items-center max-w-full mx-auto bg-gray-800">
@@ -53,13 +39,16 @@
 	>
 		<a href="#">
 			<h1 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-				Search for subnet devices, loading:{loading}
+				Search for subnet devices
 			</h1>
 		</a>
 
-		<form action="?/subnets" method="POST" class="space-y-4 md:space-y-6" 
-            use:enhance={submitScanForm}
-        >
+		<form
+			action="?/subnets"
+			method="POST"
+			class="space-y-4 md:space-y-6"
+			use:enhance={submitScanForm}
+		>
 			<label
 				for="default-search"
 				class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label
@@ -99,33 +88,56 @@
 		</form>
 
 		<p class="mb-3 font-normal text-gray-700 dark:text-gray-400">
-			Please enter a subnet you are serarching for. For example '192.168.0.0/24'
+			Please enter a subnet you are serarching for. For example '10.0.1.0/24'
 		</p>
 
-		<h2 class="mb-2 text-lg font-semibold text-gray-900 dark:text-white">Scanned devices list:</h2>
-        {#if loading}
-        <div class="flex items-center justify-center">
-            <Pulse size="40" color="lightgreen" unit="px" duration="1s" />
-        </div>
-        {:else}
-		<ul class="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">
-			{#each devices as device, index}
-				<li class="flex items-center">
-					<svg
-						class="w-3.5 h-3.5 mr-2 text-green-500 dark:text-green-400 flex-shrink-0"
-						aria-hidden="true"
-						xmlns="http://www.w3.org/2000/svg"
-						fill="currentColor"
-						viewBox="0 0 20 20"
-					>
-						<path
-							d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"
-						/>
-					</svg>
-					{device}
-				</li>
-			{/each}
-		</ul>
-        {/if}
+		{#if loading}
+			<div class="flex items-center justify-center">
+				<Pulse size="40" color="lightgreen" unit="px" duration="1s" />
+			</div>
+		{:else}
+			{#if count}
+				<h2 class="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
+					Found {count} devices:
+				</h2>
+			{:else}
+				<p class="mb-2 text-lg font-semibold text-red-700 dark:text-red-700">
+					{error}
+				</p>
+			{/if}
+			<ul class="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">
+				{#each devices as device, index}
+					<li class="flex items-center">
+						{#if device}
+							<svg
+								class="w-3.5 h-3.5 mr-2 text-green-500 dark:text-green-400 flex-shrink-0"
+								aria-hidden="true"
+								xmlns="http://www.w3.org/2000/svg"
+								fill="currentColor"
+								viewBox="0 0 20 20"
+							>
+								<path
+									d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"
+								/>
+							</svg>
+							{device}
+						{:else}
+							<svg
+								class="w-3.5 h-3.5 mr-2 text-gray-500 dark:text-gray-400 flex-shrink-0"
+								aria-hidden="true"
+								xmlns="http://www.w3.org/2000/svg"
+								fill="currentColor"
+								viewBox="0 0 20 20"
+							>
+								<path
+									d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"
+								/>
+							</svg>
+							unknown host
+						{/if}
+					</li>
+				{/each}
+			</ul>
+		{/if}
 	</div>
 </div>
