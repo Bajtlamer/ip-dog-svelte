@@ -4,6 +4,7 @@ const user = 'bajt@volny.cz'
 const pass = 'printadmin'
 
 export const store = writable(null);
+// export const devices = writable([]);
 
 let sessions = []
 

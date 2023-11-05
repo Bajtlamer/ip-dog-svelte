@@ -6,6 +6,25 @@ import { scanSubnet } from "$lib/server/network.service";
 // 	return { devices }
 // }
 
+// interface ResponseData {
+// 	subnet: string,
+// 	type: string,
+// 	devices: string[],
+// 	status:number
+// }
+// let devices:string[] = [];
+// let subnet:string = '';
+
+// export const load = async (request) => {
+// 	const data = await request;
+// 	// console.log(request)
+// 	// const subnet = data.get('subnet');
+// 	return {
+// 		devices,
+// 		subnet
+// 	}
+// }
+
 export const actions: Actions = {
 	subnets: async ({ cookies, request }: any) => {
 		// console.log('test')
@@ -16,13 +35,21 @@ export const actions: Actions = {
 		// console.log(userToken);
 
 		const devices = await scanSubnet(userToken, subnet);
+		
+		// const responseData: ResponseData = {
+		// 	subnet,
+		// 	type:"success",
+		// 	devices,
+		// 	status:200
+		// }
+
 
 		if (devices) {
 			console.log(devices);
-			return { subnet, ...devices }
+			return {subnet, ...devices}
 		} else {
-			console.log(devices);
-			return { subnet, ...devices }
+			// console.log(devices);
+			return { subnet }
 		}
 
 	}

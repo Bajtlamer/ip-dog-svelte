@@ -1,19 +1,50 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
+	import { Pulse } from 'svelte-loading-spinners';
+	import { applyAction, enhance } from '$app/forms';
+	import { goto } from '$app/navigation';
 	import { signing } from '../../store/loader';
-	import type { ActionData } from './$types';
+	import type { ActionData, SubmitFunction } from './$types';
 
-	export let form: ActionData;
-	export let data;
-	// console.log(data);
-	let subnet: string = form?.subnet || '';
-	let devices: any = form?.devices || [];
-	let count: number = form?.count || 0;
+	// export let form: ActionData;
+	// export let data;
 
-	console.log(form);
-	console.log(devices);
-	console.log(subnet);
-	console.log(count);
+    // console.log(form?.devices);
+    // console.log('data:',data);
+    // let devices;
+    let loading = false;
+    let subnet: string = '';
+    let devices: string[] = [];
+    let count: number = 0;
+    
+    // console.log(devices)
+    // console.log(form);
+    // console.log(form);
+    // console.log(subnet);
+    // console.log(count);
+
+    const submitScanForm:SubmitFunction = ({formElement, formData, action, cancel, submitter}) => {
+        const req = Object.fromEntries(formData);
+        // console.log(req?.subnet);
+        
+        loading = true;
+        return async ({result, update}) => {
+            if(result.type === "success") {
+                const _data = result.data
+                subnet = _data?.subnet
+                devices = _data?.devices
+            }
+            // const data = result?.data;
+            // console.log(result)
+            // devices = result.data.devices
+            //  devices = result.data.devices
+            loading = false;
+            // await applyAction(result);
+            // goto(result.location);
+            await update();
+        }
+    }
+
+
 </script>
 
 <div class="h-screen items-center max-w-full p-20 mx-auto bg-gray-800">
@@ -22,11 +53,13 @@
 	>
 		<a href="#">
 			<h1 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-				Search for subnet devices
+				Search for subnet devices, loading:{loading}
 			</h1>
 		</a>
 
-		<form action="?/subnets" method="POST" class="space-y-4 md:space-y-6" >
+		<form action="?/subnets" method="POST" class="space-y-4 md:space-y-6" 
+            use:enhance={submitScanForm}
+        >
 			<label
 				for="default-search"
 				class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label
@@ -70,6 +103,11 @@
 		</p>
 
 		<h2 class="mb-2 text-lg font-semibold text-gray-900 dark:text-white">Scanned devices list:</h2>
+        {#if loading}
+        <div class="flex items-center justify-center">
+            Scanning ... <Pulse size="40" color="lightgreen" unit="px" duration="1s" />
+        </div>
+        {:else}
 		<ul class="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">
 			{#each devices as device, index}
 				<li class="flex items-center">
@@ -88,5 +126,6 @@
 				</li>
 			{/each}
 		</ul>
+        {/if}
 	</div>
 </div>
