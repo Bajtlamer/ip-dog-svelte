@@ -45,7 +45,7 @@ export const actions: Actions = {
 
 
 		if (devices) {
-			console.log(devices);
+			// console.log(devices);
 			return {subnet, ...devices}
 		} else {
 			// console.log(devices);

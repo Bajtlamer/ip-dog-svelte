@@ -47,7 +47,7 @@
 
 </script>
 
-<div class="h-screen items-center max-w-full p-20 mx-auto bg-gray-800">
+<div class="p-2 lg:p-20 h-screen items-center max-w-full mx-auto bg-gray-800">
 	<div
 		class="mx-auto max-w-screen-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-600 dark:border-gray-700"
 	>
@@ -105,7 +105,7 @@
 		<h2 class="mb-2 text-lg font-semibold text-gray-900 dark:text-white">Scanned devices list:</h2>
         {#if loading}
         <div class="flex items-center justify-center">
-            Scanning ... <Pulse size="40" color="lightgreen" unit="px" duration="1s" />
+            <Pulse size="40" color="lightgreen" unit="px" duration="1s" />
         </div>
         {:else}
 		<ul class="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">
