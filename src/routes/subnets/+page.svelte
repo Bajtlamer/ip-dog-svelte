@@ -3,8 +3,13 @@
 	import { enhance } from '$app/forms';
 	import type { SubmitFunction } from './$types';
 
+	import OkIconGrey from './../../templates/ok-icon-grey.svelte'
+	import OkIconGreen from './../../templates/ok-icon-green.svelte'
+
+	const url = 'https://ipdog-api.smes24.com/api/v1/';
+
 	// export let form: ActionData;
-	// export let data;
+	export let data;
 
 	let loading = false;
 
@@ -12,6 +17,44 @@
 	let devices: string[] = [];
 	let count: number = 0;
 	let error: string | undefined = '';
+	let userToken: string = data?.userToken;
+
+	// console.log(data.userToken);
+
+    const getStatusIcon = (status:boolean) => {
+        return (status) ? OkIconGreen : OkIconGrey;
+    }
+
+	const pingDevice = async (userToken: string, deviceString?: string) => {
+		if (!deviceString) return null;
+
+        const split = /\s/g.test(deviceString);
+        let device = (split) ? deviceString.split(' ')[0] : deviceString;
+        console.log('IP:', device);
+        
+        // device = deviceString;
+        
+		const res = await fetch(url + 'ping/' + device, {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json',
+				Accept: 'application/json',
+				Authorization: userToken
+			}
+		});
+
+		if (res.ok === true) {
+			const status = await res.json();
+            // console.log(res)
+			console.log('res', status.isAlive);
+			return status.isAlive;
+		} else {
+			console.log('res', res);
+			return null;
+		}
+	};
+
+	let pingPromise = pingDevice(userToken);
 
 	const submitScanForm: SubmitFunction = ({ formElement, formData, action, cancel, submitter }) => {
 		const req = Object.fromEntries(formData);
@@ -21,9 +64,11 @@
 		return async ({ result, update }) => {
 			if (result.type === 'success') {
 				console.log('->', subnet);
+
 				const _data = result.data;
 				subnet = _data?.subnet;
 				devices = _data?.devices || [];
+				devices.push('10.0.1.11');
 				count = _data?.count || 0;
 				error = _data?.error;
 			}
@@ -108,33 +153,14 @@
 			<ul class="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">
 				{#each devices as device, index}
 					<li class="flex items-center">
-						{#if device}
-							<svg
-								class="w-3.5 h-3.5 mr-2 text-green-500 dark:text-green-400 flex-shrink-0"
-								aria-hidden="true"
-								xmlns="http://www.w3.org/2000/svg"
-								fill="currentColor"
-								viewBox="0 0 20 20"
-							>
-								<path
-									d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"
-								/>
-							</svg>
-							{device}
-						{:else}
-							<svg
-								class="w-3.5 h-3.5 mr-2 text-gray-500 dark:text-gray-400 flex-shrink-0"
-								aria-hidden="true"
-								xmlns="http://www.w3.org/2000/svg"
-								fill="currentColor"
-								viewBox="0 0 20 20"
-							>
-								<path
-									d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"
-								/>
-							</svg>
-							unknown host
-						{/if}
+						{#await pingDevice(userToken, device)}
+                        <span class="pr-2">
+                            <Pulse size="19" color="lightgreen" unit="px" duration="1s" />
+                        </span>
+						{:then isAlive}
+                            <svelte:component this={getStatusIcon(isAlive)} />
+                        {/await}
+                            {device}
 					</li>
 				{/each}
 			</ul>
