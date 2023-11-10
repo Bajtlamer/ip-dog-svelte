@@ -30,8 +30,5 @@ export const handle = async ({ event, resolve }) => {
         }
     }
 
-
-    const response = await resolve(event)
-
-    return response
+    return await resolve(event);
 }

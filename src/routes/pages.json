@@ -3,6 +3,7 @@
     { "item": "Home", "route": "/" },
     { "item": "Subnets", "route": "/subnets" },
     { "item": "Devices", "route": "/devices" },
+    { "item": "Servers", "route": "/servers" },
     { "item": "About", "route": "/about" }
   ]
 }

@@ -69,6 +69,7 @@
 				subnet = _data?.subnet;
 				devices = _data?.devices || [];
 				devices.push('10.0.1.11');
+				devices.push('172.16.24.224');
 				count = _data?.count || 0;
 				error = _data?.error;
 			}
@@ -78,9 +79,9 @@
 	};
 </script>
 
-<div class="p-2 lg:p-20 h-screen items-center max-w-full mx-auto bg-gray-800">
+<div class="items-center h-screen max-w-full p-2 mx-auto bg-gray-800 lg:p-20">
 	<div
-		class="mx-auto max-w-screen-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-600 dark:border-gray-700"
+		class="max-w-screen-sm p-6 mx-auto bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-600 dark:border-gray-700"
 	>
 		<a href="#">
 			<h1 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
