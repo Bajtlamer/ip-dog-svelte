@@ -6,7 +6,6 @@
 	import { enhance } from '$app/forms';
 
 	export let form: ActionData;
-
 	let username = form?.username || '';
 	let password = '';
 
@@ -26,6 +25,10 @@
 			<!-- <form method="POST" > -->
 			<form action="?/login&redirectTo={redirectTo}" method="POST" class="space-y-4 md:space-y-6" use:enhance={()=>{
 				$signing = true
+				return async ({ result, update }) => {
+					$signing = false;
+					update();
+				}
 			}}>
 				<div>
 					<label for="username" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"

@@ -1,6 +1,7 @@
 import { redirect } from "@sveltejs/kit"
 import type { Actions } from "./$types"
 import { authenticateUser } from "../../lib/server/auth.service"
+import { signing } from "../../store/loader";
 
 export const actions: Actions = {
 	login: async ({ cookies, request, url }: any) => {
@@ -26,6 +27,7 @@ export const actions: Actions = {
 			throw redirect(302, url.searchParams.get('redirectTo') || '/');
 
 		} else {
+			signing.set(false);
 			return { username, password, ..._authResponse }
 		}
 

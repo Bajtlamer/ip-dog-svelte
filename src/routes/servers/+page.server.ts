@@ -1,6 +1,8 @@
-import { redirect } from "@sveltejs/kit"
+import { error, fail, redirect } from "@sveltejs/kit"
 import type { Actions } from "./$types"
 import { authenticateUser } from "../../lib/server/auth.service"
+
+// let success;
 
 export const actions: Actions = {
 	add_server: async ({ cookies, request, url }: any) => {
@@ -13,10 +15,13 @@ export const actions: Actions = {
 		console.log(data)
 		// await sleep(1000);
 		const _authResponse = await authenticateUser(username, password);
-		console.log(_authResponse)
+		// console.log(_authResponse)
 		if (_authResponse?.auth === true) {
 			const token = _authResponse.token;
-			console.log('token:', token)
+			// console.log('token:', token)
+			return fail(400,{message:'Stala se chyba'})
+			// success = true;
+			return { username, password, saddress, ..._authResponse }
 			// cookies.set("auth", token, {
 			// 	path: "/",
 			// 	httpOnly: true,
