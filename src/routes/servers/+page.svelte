@@ -4,6 +4,7 @@ import type { ActionData, SubmitFunction } from './$types';
 import NewServer from '../../modals/add-server.modal.svelte';
 import type { ProxyServer } from '../../models/proy.server';
 import type { PageData } from './$types';
+import Server from '../../templates/server.card.svelte'
 
 let dialog:HTMLDialogElement;
 let submitting = false;
@@ -23,15 +24,9 @@ const submitNewServer: SubmitFunction= ({ formElement, formData, action, cancel,
     				console.log('->', result);
                     dialog.close();
     				const _data = result.data;
-    				// subnet = _data?.subnet;
-    				// devices = _data?.devices || [];
-    				// devices.push('10.0.1.11');
-    				// devices.push('172.16.24.224');
-    				// count = _data?.count || 0;
     				error = _data?.error;
                 }else if(result.type === 'failure') {
                     error = result.data?.message;
-                    console.log('chyba', error);
                 }
     
     			submitting = false;
@@ -52,10 +47,11 @@ const submitNewServer: SubmitFunction= ({ formElement, formData, action, cancel,
         <h2 class="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
             Servers list:
         </h2>
-		<ul class="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">
+		<ul class="gap-4 flex justify-between text-gray-500 list-inside dark:text-gray-400 hover:shadow-sm">
 			{#each proxyServers as server, index}
-				<li class="flex items-center">
-						{server.name}
+				<li id={index.toString()} class="flex items-center">
+					<Server  {server}/>
+					<!-- {server.name} -->
 				</li>
 			{/each}
 		</ul>

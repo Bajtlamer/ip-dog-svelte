@@ -2,9 +2,10 @@
 	import { Pulse } from 'svelte-loading-spinners';
 	import { enhance } from '$app/forms';
 	import type { SubmitFunction } from './$types';
+	import { getStatusIcon } from '$lib/functions';
 
-	import OkIconGrey from './../../templates/ok-icon-grey.svelte'
-	import OkIconGreen from './../../templates/ok-icon-green.svelte'
+	// import OkIconGrey from './../../templates/ok-icon-grey.svelte'
+	// import OkIconGreen from './../../templates/ok-icon-green.svelte'
 
 	const url = 'https://ipdog-api.smes24.com/api/v1/';
 
@@ -21,9 +22,9 @@
 
 	// console.log(data.userToken);
 
-    const getStatusIcon = (status:boolean) => {
-        return (status) ? OkIconGreen : OkIconGrey;
-    }
+    // const getStatusIcon = (status:boolean) => {
+    //     return (status) ? OkIconGreen : OkIconGrey;
+    // }
 
 	const pingDevice = async (userToken: string, deviceString?: string) => {
 		if (!deviceString) return null;
