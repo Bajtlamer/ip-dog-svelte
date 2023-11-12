@@ -2,11 +2,16 @@
 import Modal from '../../modals/modal.svelte';
 import type { ActionData, SubmitFunction } from './$types';
 import NewServer from '../../modals/add-server.modal.svelte';
+import type { ProxyServer } from '../../models/proy.server';
+import type { PageData } from './$types';
 
 let dialog:HTMLDialogElement;
 let submitting = false;
 let error: string | undefined | unknown = '';
 let form: ActionData;
+// let proxyServers:ProxyServer[];
+export let data: PageData;
+$: ({proxyServers} = data)
 
 const submitNewServer: SubmitFunction= ({ formElement, formData, action, cancel, submitter }) => {
     		const req = Object.fromEntries(formData);
@@ -41,12 +46,20 @@ const submitNewServer: SubmitFunction= ({ formElement, formData, action, cancel,
             Add server 
         </button>
 
-		<p class="mb-3 font-normal text-gray-700 dark:text-gray-400">
+		<p class="my-3 font-normal text-gray-700 dark:text-gray-400">
 			To add serve, you need to provide server address and login credentials.
 		</p>
         <h2 class="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
             Servers list:
         </h2>
+		<ul class="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">
+			{#each proxyServers as server, index}
+				<li class="flex items-center">
+						{server.name}
+				</li>
+			{/each}
+		</ul>
+
     </div>
 </div>
 

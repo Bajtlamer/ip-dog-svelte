@@ -2,6 +2,7 @@
 	import { page } from '$app/stores';
 	import { menuitems } from './pages.json';
 	import '../app.css';
+	import { version } from '$app/environment';
 
 	export let data;
 	let open = false;
@@ -12,7 +13,7 @@
 		<a href="/" class="flex items-center">
 			<img src="./logo.png" class="h-8 mr-3" alt="Flowbite Logo" />
 			<span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white"
-				>IP-dog</span
+				>IP-dog <span class="text-xs">v{version}.beta</span></span
 			>
 		</a>
 		<div class="flex md:order-2">
