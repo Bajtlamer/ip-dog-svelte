@@ -20,21 +20,22 @@ export const authenticateUser = async (username: string, password: string, host?
                 password,
             }),
         });
-    
+
         if (res.ok === true) {
             return await res.json();
         }
-    
         const data = await res.json();
-    
+        
         return data;
-    
+        
     } catch (err:any) {
         console.log('authenticateUser() -> Error:', err?.message);
         return {auth:false, message: err?.message};
     }}
-
-export const validateServer = async (server: ProxyServerInterface) => {
-    const {auth} = await authenticateUser(server.username, server.password, server.hostname);
-    return (auth) ? true : false
-}
+    
+    export const validateServer = async (server: ProxyServerInterface): Promise<boolean> => {
+        const response = await authenticateUser(server.username, server.password, server.hostname);
+        return (response)? response.auth : false;
+    }
+    
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));

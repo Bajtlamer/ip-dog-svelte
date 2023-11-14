@@ -1,4 +1,5 @@
 import { getDB } from '$db/mongo';
+import { ObjectId } from 'mongodb';
 import { ProxyServer, type ProxyServerInterface } from '../models/proy.server';
 
 const PROXY_SERVERS_COLLECTION = 'servers';
@@ -8,8 +9,8 @@ type UserSummary = Pick<ProxyServerInterface, "hostname" | "name">;
 
 export async function getProxyServersCollection(skip: number, limit: number): Promise<ProxyServerInterface[]> {
 
-    const data = await db.collection(PROXY_SERVERS_COLLECTION).find({}).project({ _id: 0 }).skip(skip).limit(limit).toArray();
-
+    const data = await db.collection(PROXY_SERVERS_COLLECTION).find({}).skip(skip).limit(limit).toArray();
+    
     return data;
 }
 
@@ -17,6 +18,17 @@ export const findProxyServerByhostname = async (hostname: string): Promise<Proxy
 
     try {
         const server = await db.collection(PROXY_SERVERS_COLLECTION).findOne({ hostname });
+        return server;
+
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+export const findProxyServerById = async (_id: string): Promise<ProxyServerInterface | undefined> => {
+    try {
+        const server = await db.collection(PROXY_SERVERS_COLLECTION).findOne({ _id: new ObjectId(_id)});
+        // console.log(_id)
         return server;
 
     } catch (error) {
