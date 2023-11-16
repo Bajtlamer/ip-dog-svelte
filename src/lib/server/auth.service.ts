@@ -1,5 +1,5 @@
 import { insertUser } from "$db/users";
-import type { ProxyServerInterface } from "../../models/proy.server";
+import type { ProxyServerInterface } from "../../models/proxy";
 
 const url = 'https://ipdog-api.smes24.com/api/v1/auth/'
 

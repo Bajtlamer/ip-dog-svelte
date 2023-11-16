@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Pulse } from 'svelte-loading-spinners';
-	import type { ProxyServerInterface } from './../models/proy.server.ts';
+	import type { ProxyServerInterface } from '../models/proxy.js';
 	import { getServerStatusIcon } from '$lib/functions.js';
 	import { validateServer } from '$lib/proxy.js';
 	import { browser } from '$app/environment';

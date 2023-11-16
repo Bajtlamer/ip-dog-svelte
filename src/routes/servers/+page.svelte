@@ -2,7 +2,7 @@
 import Modal from '../../modals/modal.svelte';
 import type { ActionData, SubmitFunction } from './$types';
 import NewServer from '../../modals/add-server.modal.svelte';
-import type { ProxyServer } from '../../models/proy.server';
+import type { ProxyServer } from '../../models/proxy';
 import type { PageData } from './$types';
 import Server from '../../templates/server.card.svelte'
 
@@ -47,7 +47,7 @@ const submitNewServer: SubmitFunction= ({ formElement, formData, action, cancel,
         <h2 class="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
             Servers list:
         </h2>
-		<ul class="gap-4 flex justify-between text-gray-500 list-inside dark:text-gray-400 hover:shadow-sm">
+		<ul class="flex justify-between gap-4 text-gray-500 list-inside dark:text-gray-400 hover:shadow-sm">
 			{#each proxyServers as server, index}
 				<li id={index.toString()} class="flex items-center">
 					<Server  {server}/>

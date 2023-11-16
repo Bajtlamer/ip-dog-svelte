@@ -1,6 +1,6 @@
 import { getDB } from '$db/mongo';
 import { ObjectId } from 'mongodb';
-import { ProxyServer, type ProxyServerInterface } from '../models/proy.server';
+import { ProxyServer, type ProxyServerInterface } from '../models/proxy';
 
 const PROXY_SERVERS_COLLECTION = 'servers';
 const db = getDB();

@@ -15,10 +15,12 @@ export const scanSubnet = async (userToken: string, subnet: string) => {
     });
 
     if (res.ok === true) {
-        console.log(res.ok)
-        return await res.json();
+        const { devices, count, error} = await res.json();
+        return { success: true, error, devices, count }
+        // return await res.json();
     } else {
-        return null;
+        
+        return { success: false, error: 'Subnet scanning failed', count:0, devices:[] }
     }
 
 }
@@ -37,10 +39,10 @@ export const pingDevice = async (userToken: string, device: string) => {
     });
 
     if (res.ok === true) {
-        console.log(res.ok)
         return await res.json();
     } else {
-        return null;
+        console.log(res)
+        return res;
     }
 
 }

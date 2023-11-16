@@ -2,7 +2,7 @@ import type { Actions } from "./$types"
 import { authenticateUser } from "../../lib/server/auth.service"
 import { addProxyServer, getProxyServersCollection } from '../../db/proxies';
 import type { PageServerLoad } from "../$types";
-import { ProxyServer } from "../../models/proy.server";
+import { ProxyServer } from "../../models/proxy";
 
 export const load: PageServerLoad = async ({ cookies,locals }:any) => {
 	const proxyServers = await getProxyServersCollection(0,0);

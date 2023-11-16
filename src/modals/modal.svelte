@@ -2,7 +2,7 @@
 	export let dialog:HTMLDialogElement;
 </script>
 
-<dialog class="p-0 transition bg-transparent shadow trounded-lg backdrop:bg-neutral-900 backdrop:opacity-40 backdrop:transition"
+<dialog class="p-0 transition bg-transparent shadow-2xl trounded-lg backdrop:bg-neutral-900 backdrop:opacity-70 backdrop:transition"
 	bind:this={dialog} on:close>
 	<div>
 		<slot />

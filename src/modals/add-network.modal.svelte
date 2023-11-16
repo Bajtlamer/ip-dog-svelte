@@ -1,16 +1,12 @@
 <script lang="ts">
 	import { Pulse } from 'svelte-loading-spinners';
 	import { enhance } from '$app/forms';
-	import type { SubmitFunction } from './$types';
 	import { getStatusIcon } from '$lib/functions';
-
-	// import OkIconGrey from './../../templates/ok-icon-grey.svelte'
-	// import OkIconGreen from './../../templates/ok-icon-green.svelte'
-
-	const url = 'https://ipdog-api.smes24.com/api/v1/';
-
-	// export let form: ActionData;
-	export let data;
+	import type { SubmitFunction } from '@sveltejs/kit';
+	import { ProxyServer, type ProxyServerInterface } from '../models/proxy';
+	import { URL_API_PING } from '../constants';
+	
+	export let server:ProxyServerInterface;
 
 	let loading = false;
 
@@ -18,35 +14,39 @@
 	let devices: string[] = [];
 	let count: number = 0;
 	let error: string | undefined = '';
-	let userToken: string = data?.userToken;
+	// let userToken: string | undefined = server?.token;
 
-	// console.log(data.userToken);
+	// console.log(userToken);
 
-    // const getStatusIcon = (status:boolean) => {
-    //     return (status) ? OkIconGreen : OkIconGrey;
-    // }
+	// const getStatusIcon = (status:boolean) => {
+	//     return (status) ? OkIconGreen : OkIconGrey;
+	// }
 
-	const pingDevice = async (userToken: string, deviceString?: string) => {
-		if (!deviceString) return null;
+	const pingDevice = async (deviceString?: string, server?: ProxyServerInterface) => {
+		if (!deviceString || !server) return null;
+        const _proxy = new ProxyServer(server);
+		// console.log('IP:', deviceString,'Token:', _proxy.token);
 
-        const split = /\s/g.test(deviceString);
-        let device = (split) ? deviceString.split(' ')[0] : deviceString;
-        console.log('IP:', device);
-        
-        // device = deviceString;
-        
-		const res = await fetch(url + 'ping/' + device, {
+        if(!_proxy.token) return null;
+
+		const split = /\s/g.test(deviceString);
+		let device = split ? deviceString.split(' ')[0] : deviceString;
+
+
+		// device = deviceString;
+
+		const res = await fetch(_proxy.hostname + URL_API_PING + device, {
 			method: 'GET',
 			headers: {
 				'Content-Type': 'application/json',
 				Accept: 'application/json',
-				Authorization: userToken
+				Authorization: _proxy.token
 			}
 		});
 
 		if (res.ok === true) {
 			const status = await res.json();
-            // console.log(res)
+			// console.log(res)
 			// console.log('res', status.isAlive);
 			return status.isAlive;
 		} else {
@@ -55,17 +55,21 @@
 		}
 	};
 
-	let pingPromise = pingDevice(userToken);
+	// let pingPromise = pingDevice(userToken);
 
 	const submitScanForm: SubmitFunction = ({ formElement, formData, action, cancel, submitter }) => {
-		const req = Object.fromEntries(formData);
-		// console.log(req?.subnet);
+		// const req = Object.fromEntries(formData);
+		// const frmData = new FormData();
+		for (const [key, value] of Object.entries(server)){
+			formData.append(key, value);
+		}
+		// console.log(server);
 
 		loading = true;
 		return async ({ result, update }) => {
 			if (result.type === 'success') {
 				console.log('->', subnet);
-
+				// console.log(server);
 				const _data = result.data;
 				subnet = _data?.subnet;
 				devices = _data?.devices || [];
@@ -80,18 +84,16 @@
 	};
 </script>
 
-<div class="items-center h-screen max-w-full p-2 mx-auto bg-gray-800 lg:p-20">
+<div class="items-center max-w-full mx-auto bg-gray-800 lg:p-4">
 	<div
 		class="max-w-screen-sm p-6 mx-auto bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-600 dark:border-gray-700"
 	>
-		<a href="#">
 			<h1 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
 				Search for subnet devices
 			</h1>
-		</a>
 
 		<form
-			action="?/subnets"
+			action="/subnets?/subnets"
 			method="POST"
 			class="space-y-4 md:space-y-6"
 			use:enhance={submitScanForm}
@@ -134,8 +136,8 @@
 			</div>
 		</form>
 
-		<p class="mb-3 font-normal text-gray-700 dark:text-gray-400">
-			Please enter a subnet you are serarching for. For example '10.0.1.0/24'
+		<p class="pt-2 mb-3 font-normal text-gray-700 dark:text-gray-400">
+			Please enter a subnet you are serarching for. For example '10.11.11.0/24'
 		</p>
 
 		{#if loading}
@@ -155,14 +157,14 @@
 			<ul class="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">
 				{#each devices as device, index}
 					<li class="flex items-center">
-						{#await pingDevice(userToken, device)}
-                        <span class="pr-2">
-                            <Pulse size="19" color="lightgreen" unit="px" duration="1s" />
-                        </span>
+						{#await pingDevice(device, server)}
+							<span class="pr-2">
+								<Pulse size="19" color="lightgreen" unit="px" duration="1s" />
+							</span>
 						{:then isAlive}
-                            <svelte:component this={getStatusIcon(isAlive)} />
-                        {/await}
-                            {device}
+							<svelte:component this={getStatusIcon(isAlive)} />
+						{/await}
+						{device}
 					</li>
 				{/each}
 			</ul>
