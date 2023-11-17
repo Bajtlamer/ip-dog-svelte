@@ -1,55 +1,54 @@
-import type { Actions } from "./$types"
-import { scanSubnet } from "$lib/server/network.service";
-import { ScanResult } from "../../models/subnet";
-import type { PageServerLoad } from "../$types";
-import { authenticateUser } from "$lib/proxy";
-import { fail } from "@sveltejs/kit";
+import type { Actions } from './$types';
+import { scanSubnet } from '$lib/server/network.service';
+import { ScanResult } from '../../models/subnet';
+import type { PageServerLoad } from '../$types';
+import { authenticateUser } from '$lib/proxy';
+import { fail, type ActionFailure } from '@sveltejs/kit';
+// import { ProxyServer, type ProxyServerInterface } from '../../models/proxy';
 
-export const load: PageServerLoad = async ({ cookies,locals }:any) => {
-	const userToken = cookies.get('auth');
+export const load: PageServerLoad = async ({ cookies, locals }: any) => {
+	const token = cookies.get('auth');
 	const user = locals.user;
-	// console.log(userToken)
 
 	return {
-		userToken
-	} 
-}
+		token
+	};
+};
 
-
-let scanResponse:ScanResult = new ScanResult();
+let scanResponse: any;
+let server: any;
+let status: boolean = false;
 
 export const actions: Actions = {
 	subnets: async ({ cookies, request }: any) => {
-		// console.log('test')
+
 		const data = await request.formData();
 		const subnet = data.get('subnet');
 		const username = data.get('username');
 		const password = data.get('password');
 		const hostname = data.get('hostname');
 
-		const _authResponse = await authenticateUser(username, password, hostname);
+		try {
+			const _authResponse = await authenticateUser(username, password, hostname);
 
-		// console.log(_authResponse);
-		if(!_authResponse.auth || !_authResponse.token) {
-			return {subnet, ...scanResponse};
+			if (!_authResponse.auth || !_authResponse.token) {
+				return { subnet, ...scanResponse };
+			}
+			const token = _authResponse.token;
+			
+			server = {username, password, hostname, status, token}
+
+			const response: any = await scanSubnet(token, subnet);
+
+			if (response instanceof Response && response?.status === 200) {
+				const data = await response.json();
+				scanResponse = new ScanResult(data);
+				return { subnet, server, ...scanResponse };
+			} else {
+				return fail(400, { subnet, ...response });
+			}
+		} catch (error: any) {
+			return fail(400, { subnet, message: error.message });
 		}
-			const userToken = _authResponse.token;
-		
-		// console.log(userToken);
-
-		scanResponse = await scanSubnet(userToken, subnet);
-		
-
-		if (scanResponse.success) {
-			console.log('success:',scanResponse);
-			scanResponse = new ScanResult(scanResponse);
-			return {subnet, ...scanResponse}
-		} else {
-			scanResponse = new ScanResult();
-			console.log('failed',scanResponse);
-			return { subnet, error: 'Subnet scanning failed.', count:0, devices:[] };
-			// return {subnet, ...scanResponse}
-		}
-
 	}
-}
+};

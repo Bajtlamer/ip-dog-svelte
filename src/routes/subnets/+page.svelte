@@ -17,7 +17,7 @@
 	let subnet: string = '';
 	let devices: string[] = [];
 	let count: number = 0;
-	let error: string | undefined = '';
+	let message: string | undefined = '';
 	let userToken: string = data?.userToken;
 
 	// console.log(data.userToken);
@@ -63,16 +63,17 @@
 
 		loading = true;
 		return async ({ result, update }) => {
+			console.log('e2e21',result.type)
 			if (result.type === 'success') {
 				console.log('->', subnet);
-
 				const _data = result.data;
+				console.log(_data.auth)
 				subnet = _data?.subnet;
 				devices = _data?.devices || [];
 				devices.push('10.0.1.11');
 				devices.push('172.16.24.224');
 				count = _data?.count || 0;
-				error = _data?.error;
+				message = _data?.message;
 			}
 
 			loading = false;
@@ -149,7 +150,7 @@
 				</h2>
 			{:else}
 				<p class="mb-2 text-lg font-semibold text-red-700 dark:text-red-700">
-					{error}
+					{message}
 				</p>
 			{/if}
 			<ul class="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">

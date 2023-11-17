@@ -13,7 +13,7 @@
 	let subnet: string = '';
 	let devices: string[] = [];
 	let count: number = 0;
-	let error: string | undefined = '';
+	let message: string | undefined = '';
 	// let userToken: string | undefined = server?.token;
 
 	// console.log(userToken);
@@ -67,16 +67,26 @@
 
 		loading = true;
 		return async ({ result, update }) => {
+			// console.log(result.type);
 			if (result.type === 'success') {
-				console.log('->', subnet);
-				// console.log(server);
 				const _data = result.data;
-				subnet = _data?.subnet;
-				devices = _data?.devices || [];
-				devices.push('10.0.1.11');
-				devices.push('172.16.24.224');
-				count = _data?.count || 0;
-				error = _data?.error;
+				if(_data) {
+					// console.log('->', _data.server);
+					subnet = _data?.subnet;
+					if(_data?.count) {
+						count = _data?.count;
+						devices = _data?.devices;
+					}
+					if(_data?.server) {
+						server = _data.server;
+					}
+					devices.push('10.0.1.11');
+					devices.push('172.16.24.224');
+					message = _data?.message;
+				}
+			}else if(result.type === 'failure') {
+				// console.log(result.data?.message)
+				message = result.data?.message;
 			}
 
 			loading = false;
@@ -151,7 +161,7 @@
 				</h2>
 			{:else}
 				<p class="mb-2 text-lg font-semibold text-red-700 dark:text-red-700">
-					{error}
+					{message}
 				</p>
 			{/if}
 			<ul class="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">
@@ -164,7 +174,9 @@
 						{:then isAlive}
 							<svelte:component this={getStatusIcon(isAlive)} />
 						{/await}
-						{device}
+						<span class="pl-2">
+							{device}
+						</span>
 					</li>
 				{/each}
 			</ul>

@@ -1,15 +1,15 @@
 export interface ScanResult {
     devices:string[],
     count:number,
-    error:string,
-    success:boolean
+    message?:string,
+    // auth:boolean
 }
 
 export class ScanResult implements ScanResult  {
 	public devices = ['']
 	public count = 0
-	public success = false
-	public error = ''
+	// public message = ''
+	// public auth = false
 
 
 	constructor(result?: ScanResult) {
