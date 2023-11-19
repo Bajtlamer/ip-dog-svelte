@@ -20,7 +20,7 @@ model User {
   isAdmin   Boolean  @default(false)
   isActive  Boolean  @default(false)
   createdAt DateTime @default(now())
-  token     String?
+  token     String? @unique
 }
 
 model Server {

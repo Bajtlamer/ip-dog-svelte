@@ -1,34 +1,28 @@
-import { dbConnect } from "$db/mongo";
-// import { User, insertUser } from "$db/users";
-import { handleUser } from "$lib/server/auth.service"
-import { redirect, error } from "@sveltejs/kit";
+import { getUserBySessionToken } from '$db/sqllite/user';
+import type { Handle } from '@sveltejs/kit'
+// import { db } from '$lib/database'
 
-// Connect to MongoDB before starting the server
-dbConnect().then((): void => {
-    console.log("MongoDB started");
-}).catch((e) => {
-    console.log("MongoDB failed to start");
-});
+export const handle: Handle = async ({ event, resolve }) => {
+  // get cookies from browser
+  const session = event.cookies.get('session');
 
-export const handle = async ({ event, resolve }) => {
-    const { cookies, url } = event
-    const userToken = cookies.get("auth");
-
-    if (event.url.pathname !== "/login" && event.url.pathname !== "/register") {
-
-        try {
-            const authUser = await handleUser(userToken);
-            event.locals.user = authUser;
-        } catch (err: any) {
-            throw error(500, err?.message)
-        }
-
-        if (!event.locals.user) {
-            if (!event.locals.user) {
-                throw redirect(303, `/login?redirectTo=${url.pathname}`)
-            }
-        }
-    }
-
+  if (!session) {
+    // if there is no session load page as normal
     return await resolve(event);
+  }
+
+  // find the user based on the session
+  const user = await getUserBySessionToken(session);
+
+  // if `user` exists set `events.local`
+  if (user) {
+    event.locals.user = {
+      username: user.username,
+      fullname: user.fullname || '',
+      isAdmin: user.isAdmin
+    }
+  }
+
+  // load page as normal
+  return await resolve(event)
 }

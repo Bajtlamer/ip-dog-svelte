@@ -25,7 +25,7 @@
 				</a>
 			{:else}
 				<span class="self-center pr-4 text-sm font-semibold whitespace-nowrap dark:text-white">
-					{#if data.user?.fullName} {data.user?.fullName} {:else} {data.user?.username} {/if}
+					{#if data.user?.fullname} {data.user?.fullname} {:else} {data.user?.username} {/if}
 				</span>
 			
 				<form action="/logout" method="POST">

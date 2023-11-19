@@ -1,8 +1,3 @@
-type User = {
-	id: number
-	email: string
-	role: string
-}
 type AuthResponse = {
 	auth: boolean
 	message: string
@@ -17,4 +12,12 @@ declare global {
 	}
 }
 
-export {};
+declare namespace App {
+	interface Locals {
+	  user: {
+		username: string,
+		fullname: string,
+		isAdmin: boolean,
+	  }
+	}
+  }

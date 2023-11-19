@@ -44,12 +44,30 @@ export const getUserByName = async (username: string) => {
   })
 }
 
+export const getUserBySessionToken = async (token: string) => {
+  return await db.user.findFirst({
+    where: {
+      token
+    }
+  })
+}
+
 export const updateUser = async (user: UserInterface) => {
   return await db.user.update({
     where: {
       username: user.username,
     }, 
       data: user
+    }    
+  )
+}
+
+export const updateUsersToken = async (user: UserInterface) => {
+  return await db.user.update({
+    where: {
+      username: user.username,
+    }, 
+      data: {token: user.token}
     }    
   )
 }

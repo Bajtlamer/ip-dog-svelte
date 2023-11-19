@@ -3,16 +3,14 @@ import { scanSubnet } from '$lib/server/network.service';
 import { ScanResult } from '../../models/subnet';
 import type { PageServerLoad } from '../$types';
 import { authenticateUser } from '$lib/proxy';
-import { fail, type ActionFailure } from '@sveltejs/kit';
+import { fail, type ActionFailure, redirect } from '@sveltejs/kit';
 // import { ProxyServer, type ProxyServerInterface } from '../../models/proxy';
 
 export const load: PageServerLoad = async ({ cookies, locals }: any) => {
-	const token = cookies.get('auth');
-	const user = locals.user;
-
-	return {
-		token
-	};
+	// redirect user if not logged in
+	if (!locals.user) {
+		throw redirect(302, '/');
+	}
 };
 
 let scanResponse: any;
