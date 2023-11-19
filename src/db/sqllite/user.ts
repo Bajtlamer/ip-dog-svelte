@@ -43,3 +43,13 @@ export const getUserByName = async (username: string) => {
     }
   })
 }
+
+export const updateUser = async (user: UserInterface) => {
+  return await db.user.update({
+    where: {
+      username: user.username,
+    }, 
+      data: user
+    }    
+  )
+}

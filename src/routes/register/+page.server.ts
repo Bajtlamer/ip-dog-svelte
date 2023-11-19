@@ -4,15 +4,17 @@ import { addUser, getUserByName } from '$db/sqllite/user';
 import { User } from '../../models/user';
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
-import type { PageServerLoad } from '../$types';
+
+
 import { SALT_ROUNDS } from '../../constants';
+import type { PageServerLoad } from '../$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	// redirect user if logged in
 	if (locals.user) {
-		throw redirect(302, '/');
+	  throw redirect(302, '/')
 	}
-};
+  }
 
 export const actions: Actions = {
 	register: async ({ request }) => {
