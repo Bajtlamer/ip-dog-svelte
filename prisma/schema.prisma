@@ -16,20 +16,36 @@ model User {
   password  String
   fullname  String?
   email     String?
-  servers   Server[]
   isAdmin   Boolean  @default(false)
   isActive  Boolean  @default(false)
   createdAt DateTime @default(now())
-  token     String? @unique
+  token     String?  @unique
 }
 
 model Server {
-  id          Int     @id @default(autoincrement())
-  name        String
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
   hostname    String
   description String?
   username    String?
   password    String?
-  owner       User    @relation(fields: [userId], references: [id])
-  userId      Int
+  subnets     Subnet[]
+}
+
+model Subnet {
+  id          Int      @id @default(autoincrement())
+  subnet      String?  @unique
+  description String?
+  owner       Server   @relation(fields: [serverId], references: [id])
+  serverId    Int
+  devices     Device[]
+}
+
+model Device {
+  id          Int     @id @default(autoincrement())
+  address     String  @unique
+  hostname    String?
+  description String?
+  owner       Subnet  @relation(fields: [subnetId], references: [id])
+  subnetId    Int
 }

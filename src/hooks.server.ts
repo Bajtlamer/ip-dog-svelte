@@ -13,6 +13,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 
   // find the user based on the session
   const user = await getUserBySessionToken(session);
+  console.log(user)
 
   // if `user` exists set `events.local`
   if (user) {

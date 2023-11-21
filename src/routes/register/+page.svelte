@@ -1,12 +1,16 @@
 <script lang="ts">
 	import type { ActionData } from './$types';
 	import { page } from '$app/stores';
+	import { User } from '../../models/user';
 
 	export let form: ActionData;
 
-	let email 	 = form?.user?.email;
-	let username = form?.user?.username;
-	let fullname = form?.user?.fullname;
+	let user = new User(form?.user);
+
+	let email 	 = user.email;
+	let username = user.username;
+	let fullname = user.fullname;
+	
 	let password = '';
 
 	const redirectTo = $page.url.searchParams.get('redirectTo') || '/';
@@ -32,7 +36,7 @@
 						>Fullname or Nickname</label
 					>
 					<input
-						bind:value={fullname}
+						bind:value={fullname	}
 						type="text"
 						name="fullname"
 						id="fullname"
@@ -98,6 +102,7 @@
 				<button
 					formaction="?/register&redirectTo={redirectTo}"
 					class="w-full text-white bg-blue-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+					type="submit"
 					>Create account</button
 				>
 
@@ -109,8 +114,8 @@
 					>
 				</p>
 
-				{#if form?.invalid}
-					<p class="text-white">{form.invalid}!</p>
+				{#if form?.message}
+					<p class="text-white">{form?.message}!</p>
 				{/if}
 			</form>
 		</div>

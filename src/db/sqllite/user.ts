@@ -1,4 +1,5 @@
 import { db } from '$lib/db.server'
+import { fail } from 'assert'
 import type { User, UserInterface } from '../../models/user'
 
 
@@ -11,16 +12,8 @@ export const addUser = async (user: UserInterface) => {
     }
   })
 
-  console.log('found:',found);
-
   if(found) {
-  return await db.user.update({
-      where: {
-        username: user.username,
-      }, 
-        data: user
-      }    
-    )
+    throw new Error('User that name already exist!');
   }
 
   return await db.user.create({
