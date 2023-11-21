@@ -17,8 +17,9 @@ CREATE TABLE "Server" (
     "name" TEXT NOT NULL,
     "hostname" TEXT NOT NULL,
     "description" TEXT,
-    "username" TEXT,
-    "password" TEXT
+    "username" TEXT NOT NULL,
+    "password" TEXT NOT NULL,
+    "status" BOOLEAN NOT NULL DEFAULT false
 );
 
 -- CreateTable
@@ -45,9 +46,6 @@ CREATE UNIQUE INDEX "User_username_key" ON "User"("username");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_token_key" ON "User"("token");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Server_name_key" ON "Server"("name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Subnet_subnet_key" ON "Subnet"("subnet");

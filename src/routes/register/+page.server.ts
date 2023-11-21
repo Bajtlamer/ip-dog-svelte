@@ -1,6 +1,6 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
-import { addUser, getUserByName } from '$db/sqllite/user';
+import { addUser } from '$db/sqllite/users';
 import { User } from '../../models/user';
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';

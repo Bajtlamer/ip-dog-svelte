@@ -1,48 +1,58 @@
 import type { Actions } from './$types';
 import { authenticateUser } from '../../lib/server/auth.service';
-import { addProxyServer, getProxyServersCollection } from '../../db/proxies';
+// import { addProxyServer, getProxyServersCollection } from '../../db/proxies';
 import type { PageServerLoad } from '../$types';
-import { ProxyServer } from '../../models/proxy';
-import { redirect } from '@sveltejs/kit';
+import { ProxyServer, type ProxyServerInterface } from '../../models/proxy';
+import { fail, redirect } from '@sveltejs/kit';
+import { createProxyServer, getProxyServers } from '$db/sqllite/servers';
+
 
 export const load: PageServerLoad = async ({ locals }: any) => {
-	// redirect user if not logged in
-	if (!locals.user) {
+
+	if (!locals?.user) {
 		throw redirect(302, '/');
 	}
-
-	const proxyServers = await getProxyServersCollection(0, 0);
-
-	for (const server of proxyServers) {
-		if (server._id) {
-			server._id = server?._id.toString();
-		}
-	}
-
-	return {
-		proxyServers
-	};
+	const proxyServers = await getProxyServers();
+	// locals.proxyServers = proxyServers;
+	return { proxyServers };
 };
 
 export const actions: Actions = {
 	add_server: async ({ request }: any) => {
 		const data = await request.formData();
+
+		const name = data.get('name');
 		const username = data.get('username');
 		const password = data.get('server_password');
 		const hostname = data.get('server_address');
+		const description = data.get('description') || '';
 
-		const _authResponse = await authenticateUser(username, password);
+		let status: boolean = false;
 
-		const { auth, token } = _authResponse;
+		const proxy: ProxyServer = new ProxyServer({
+			name,
+			username,
+			password,
+			hostname,
+			description,
+			status
+		});
 
-		const response = { username, password, hostname, ..._authResponse };
+		try {
+			const sValidated: ProxyServerInterface = proxy.validate();
+			const sCreated: ProxyServerInterface = await createProxyServer(sValidated);
 
-		if (auth) {
-			const server = new ProxyServer({ username, password, hostname, token, status: auth });
-			const res = await addProxyServer(server);
+			if (sCreated) {
+				const proxyServers:ProxyServerInterface[] = await getProxyServers();
+				return { proxyServers, success: true };
+			} else {
+				return fail(400,{message:'Create failed'})
+			}
+		} catch (error: any) {
+			return fail(400, { message: error?.message });
 		}
-		return response;
+
+		// }
+		
 	}
 };
-
-const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));

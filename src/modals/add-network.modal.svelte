@@ -27,7 +27,8 @@
         const _proxy = new ProxyServer(server);
 		// console.log('IP:', deviceString,'Token:', _proxy.token);
 
-        if(!_proxy.token) return null;
+		const token = '';
+        if(!token) return null;
 
 		const split = /\s/g.test(deviceString);
 		let device = split ? deviceString.split(' ')[0] : deviceString;
@@ -40,7 +41,7 @@
 			headers: {
 				'Content-Type': 'application/json',
 				Accept: 'application/json',
-				Authorization: _proxy.token
+				Authorization: token
 			}
 		});
 

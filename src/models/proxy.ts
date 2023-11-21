@@ -1,33 +1,28 @@
-import type { ObjectId } from "mongodb"
 
 export interface ProxyServerInterface {
-    name?: string,
+    id?: number
+    name: string,
     hostname: string,
     username: string,
     password: string,
-    description?: string,
-    token?: string,
+    description: string | null,
     status: boolean,
-    _id?: string | undefined,
-    
 }
 
 export interface SecureProxyServer {
-    name?: string,
+    name: string,
     hostname: string,
-    description?: string,
+    description?: string | null,
     status: boolean,
     
 }
 
 export class ProxyServer implements ProxyServerInterface {
-    public _id? = ''
-    public name? = ''
+    public name = ''
     public hostname = ''
     public username = ''
     public password = ''
-    public description? = ''
-    public token? = ''
+    public description = ''
     public status = false
 
     constructor(server?: ProxyServerInterface) {
@@ -36,13 +31,10 @@ export class ProxyServer implements ProxyServerInterface {
         }
         Object.keys(server).forEach((key, index) => {
             let k = key as keyof ProxyServer;
-            if(k==='_id'){
-                this[k] = server._id?.toString()
-            }else{
-                this[k] = server[k as keyof object];
-            }
+            this[k] = server[k as keyof object];
         });
     }
+    
     toArray(): ProxyServerInterface {
         return {
             name: this.name,
@@ -50,17 +42,33 @@ export class ProxyServer implements ProxyServerInterface {
             username: this.username,
             password: this.password,
             description: this.description,
-            token: this.token,
-            status: this.status
+            status: this.status,
         }
     }
 
     toArraySafe(): SecureProxyServer {
         return {
+            // id: Number(this.id),
             name: this.name,
             hostname: this.hostname,
             description: this.description,
             status: this.status
         }
+    }
+
+    validate = () => {
+        if (typeof this.name !== 'string' || !this.name) {
+            throw new Error('Server name cannot be empty');
+        }
+        if (typeof this.hostname !== 'string' || !this.hostname) {
+            throw new Error('Hostname cannot be empty');
+        }
+        if (typeof this.username !== 'string' || !this.username) {
+            throw new Error('Username cannot be empty');
+        }
+        if (typeof this.password !== 'string' || !this.password) {
+            throw new Error('Password cannot be empty');
+        }
+        return this.toArray();
     }
 }

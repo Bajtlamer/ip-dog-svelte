@@ -1,11 +1,10 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
-import { addUser, getUserByName, updateUser, updateUsersToken } from '$db/sqllite/user';
-import { User, type UserInterface } from '../../models/user';
+import { getUserByName, updateUsersToken } from '$db/sqllite/users';
+import { User } from '../../models/user';
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
 import type { PageServerLoad } from '../$types';
-import { SALT_ROUNDS } from '../../constants';
 
 
 let message = '';

@@ -24,11 +24,12 @@ model User {
 
 model Server {
   id          Int      @id @default(autoincrement())
-  name        String   @unique
+  name        String
   hostname    String
   description String?
-  username    String?
-  password    String?
+  username    String
+  password    String
+  status      Boolean  @default(false)
   subnets     Subnet[]
 }
 

@@ -20,7 +20,9 @@ export const authenticateUser = async (username: string, password: string, host?
                 password,
             }),
         });
-        // console.log(res.status)
+
+        // await sleep(getRandomArbitrary(1000,4000));
+
         if(res.status === 200 || res.status === 201) {
             if (res.ok === true) {
                 return await res.json();
@@ -35,14 +37,12 @@ export const authenticateUser = async (username: string, password: string, host?
             const {message} = await res.json();
             throw new Error(message);
         }
+
         throw new Error('Subnet scanning failed, with an unexpected error');
-        const data = await res.json();
-        
-        return data;
         
     } catch (err:any) {
-        // console.log('authenticateUser() -> Error:', err?.message);
-        throw new Error(err.message);
+        return false;
+        // throw new Error(err.message);
     }}
     
     export const validateServer = async (server: ProxyServerInterface): Promise<boolean> => {
@@ -51,3 +51,7 @@ export const authenticateUser = async (username: string, password: string, host?
     }
     
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+const getRandomArbitrary = (min:number, max:number) => {
+    return Math.random() * (max - min) + min;
+  }

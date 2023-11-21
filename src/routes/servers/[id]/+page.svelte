@@ -5,8 +5,10 @@
     import NewServerScan from '../../../modals/add-network.modal.svelte';
 
     export let data: PageData;
-    let dialog:HTMLDialogElement;
-    let server:ProxyServerInterface = data._server;
+
+    let dialog: HTMLDialogElement;
+    let server: ProxyServerInterface = data.server;
+    
 </script>
 
 <div class="items-center h-screen max-w-full p-2 mx-auto bg-gray-800 lg:p-20">
@@ -17,15 +19,15 @@
             </a>
         
             <button on:click={() => dialog.showModal()} class="px-4 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-md hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 md:mr-0 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 md:block">
-                Add network ({server.name})
+                Add network 
             </button>
         </div>
 
         <h1 class="pt-4 text-2xl font-bold text-white">{server.name}</h1>
-		<p class="my-3 font-normal text-gray-700 dark:text-gray-400">
-			To add serve, you need to provide server address and login credentials.
-		</p>
-        <h2 class="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
+        <p class="text-white text-xs">{server.hostname}</p>
+        <h4 class="text-white text-sm font-bold pt-4">Description:</h4>
+        <p class="font-normal text-gray-700 dark:text-gray-400">{server?.description}</p>
+        <h2 class="pt-4 mb-2 text-lg font-semibold text-gray-900 dark:text-white">
             Devices list:
         </h2>
 		<ul class="flex justify-between gap-4 text-gray-500 list-inside dark:text-gray-400 hover:shadow-sm">
