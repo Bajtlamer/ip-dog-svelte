@@ -2,7 +2,7 @@ import { URL_API_LOGIN } from "../constants";
 import type { ProxyServerInterface } from "../models/proxy";
 import { constructUrl } from "./functions";
 
-const url = 'https://ipdog-api.smes24.com/api/v1/auth/'
+const url = 'https://ipdog-api.smes24.com/api/v1/auth'
 
 export const authenticateUser = async (username: string, password: string, host?: string) => {
     let hostname = host || url;

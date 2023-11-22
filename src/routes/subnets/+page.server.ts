@@ -3,11 +3,10 @@ import { scanSubnet } from '$lib/server/network.service';
 import { ScanResult } from '../../models/subnet';
 import type { PageServerLoad } from '../$types';
 import { authenticateUser } from '$lib/proxy';
-import { fail, type ActionFailure, redirect } from '@sveltejs/kit';
-// import { ProxyServer, type ProxyServerInterface } from '../../models/proxy';
+import { fail, redirect } from '@sveltejs/kit';
 
 export const load: PageServerLoad = async ({ cookies, locals }: any) => {
-	// redirect user if not logged in
+
 	if (!locals.user) {
 		throw redirect(302, '/');
 	}
@@ -18,7 +17,7 @@ let server: any;
 let status: boolean = false;
 
 export const actions: Actions = {
-	subnets: async ({ cookies, request }: any) => {
+	subnets: async ({ request }: any) => {
 
 		const data = await request.formData();
 		const subnet = data.get('subnet');
@@ -41,7 +40,8 @@ export const actions: Actions = {
 			if (response instanceof Response && response?.status === 200) {
 				const data = await response.json();
 				scanResponse = new ScanResult(data);
-				return { subnet, server, ...scanResponse };
+				
+				return { subnet, server, token, ...scanResponse };
 			} else {
 				return fail(400, { subnet, ...response });
 			}

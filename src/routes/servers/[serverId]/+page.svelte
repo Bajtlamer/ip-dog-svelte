@@ -1,14 +1,15 @@
 <script lang="ts">
 	import Modal from "../../../modals/modal.svelte";
-	import type { ProxyServerInterface } from "../../../models/proxy";
+	import type { TServer } from "../../../models/types";
 	import type { PageData } from './$types';
     import NewServerScan from '../../../modals/add-network.modal.svelte';
     import Subnet from '../../../templates/subnet.card.svelte'
-
+	import type { ProxyServer, ProxyServerInterface } from "../../../models/proxy";
+	
     export let data: PageData;
 
     let dialog: HTMLDialogElement;
-    let server: ProxyServerInterface = data.server;
+    let server: ProxyServerInterface & TServer = data.server;
     let serverId: number = data.serverId;
     
 </script>

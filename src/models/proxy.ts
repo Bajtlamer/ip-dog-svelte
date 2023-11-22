@@ -1,13 +1,12 @@
 
 export interface ProxyServerInterface {
-    id?: number
-    name: string,
-    hostname: string,
-    username: string,
-    password: string,
-    description: string | null,
-    status: boolean,
-    subnets?: any[]
+    id?: number | null;
+    name: string
+    hostname: string
+    username: string
+    password: string
+    description?: string | null
+    status: boolean
 }
 
 export interface SecureProxyServer {
@@ -33,25 +32,18 @@ export interface Device {
 }
 
 export class ProxyServer implements ProxyServerInterface {
-    public id = -1
+    public id = null;
     public name = ''
     public hostname = ''
     public username = ''
     public password = ''
     public description = ''
     public status = false
-    public subnets = []
 
-    constructor(server?: ProxyServerInterface) {
-        if (server === null || server === undefined) {
-            return;
-        }
-        Object.keys(server).forEach((key, index) => {
-            let k = key as keyof ProxyServer;
-            this[k] = server[k as keyof object];
-        });
+    constructor(proxy: ProxyServerInterface) {
+        Object.assign(this, proxy);
     }
-    
+
     toArray(): ProxyServerInterface {
         return {
             id: this.id,
@@ -61,7 +53,6 @@ export class ProxyServer implements ProxyServerInterface {
             password: this.password,
             description: this.description,
             status: this.status,
-            subnets: this.subnets
         }
     }
 

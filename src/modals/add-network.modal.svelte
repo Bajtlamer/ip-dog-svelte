@@ -3,10 +3,11 @@
 	import { enhance } from '$app/forms';
 	import { getStatusIcon } from '$lib/functions';
 	import type { SubmitFunction } from '@sveltejs/kit';
-	import { ProxyServer, type ProxyServerInterface } from '../models/proxy';
 	import { URL_API_PING } from '../constants';
-	
-	export let server:ProxyServerInterface;
+	import { authenticateUser } from '$lib/proxy';
+	import type { ProxyServerInterface } from '../models/proxy';
+		
+	export let server: ProxyServerInterface ;
 
 	let loading = false;
 
@@ -14,29 +15,20 @@
 	let devices: string[] = [];
 	let count: number = 0;
 	let message: string | undefined = '';
-	// let userToken: string | undefined = server?.token;
 
-	// console.log(userToken);
+	const pingDevice = async (deviceString?: string, server?: ProxyServerInterface): Promise<boolean> => {
+		if (!deviceString || !server) return false;
+		
+        // const _proxy = new ProxyServer(server);
 
-	// const getStatusIcon = (status:boolean) => {
-	//     return (status) ? OkIconGreen : OkIconGrey;
-	// }
-
-	const pingDevice = async (deviceString?: string, server?: ProxyServerInterface) => {
-		if (!deviceString || !server) return null;
-        const _proxy = new ProxyServer(server);
-		// console.log('IP:', deviceString,'Token:', _proxy.token);
-
-		const token = '';
-        if(!token) return null;
-
+		const token = await authenticateUser(server.username, server.password, server.hostname);
+		
+        if(!token) return false;
+		
 		const split = /\s/g.test(deviceString);
 		let device = split ? deviceString.split(' ')[0] : deviceString;
-
-
-		// device = deviceString;
-
-		const res = await fetch(_proxy.hostname + URL_API_PING + device, {
+		
+		const res = await fetch(server.hostname + URL_API_PING + device, {
 			method: 'GET',
 			headers: {
 				'Content-Type': 'application/json',
@@ -47,47 +39,40 @@
 
 		if (res.ok === true) {
 			const status = await res.json();
-			// console.log(res)
-			// console.log('res', status.isAlive);
 			return status.isAlive;
 		} else {
-			// console.log('res', res);
-			return null;
+			return false;
 		}
 	};
 
-	// let pingPromise = pingDevice(userToken);
-
 	const submitScanForm: SubmitFunction = ({ formElement, formData, action, cancel, submitter }) => {
-		// const req = Object.fromEntries(formData);
-		// const frmData = new FormData();
 		for (const [key, value] of Object.entries(server)){
 			formData.append(key, value);
 		}
-		// console.log(server);
 
 		loading = true;
 		return async ({ result, update }) => {
-			// console.log(result.type);
+
 			if (result.type === 'success') {
+
 				const _data = result.data;
+
 				if(_data) {
-					// console.log('->', _data.server);
-					subnet = _data?.subnet;
 					if(_data?.count) {
 						count = _data?.count;
 						devices = _data?.devices;
 					}
+					
 					if(_data?.server) {
 						server = _data.server;
 					}
-					devices.push('10.0.1.11');
-					devices.push('172.16.24.224');
+					// devices.push('10.0.1.11');
+					// devices.push('172.16.24.224');
 					message = _data?.message;
 				}
 			}else if(result.type === 'failure') {
-				// console.log(result.data?.message)
 				message = result.data?.message;
+				cancel();
 			}
 
 			loading = false;
@@ -100,7 +85,7 @@
 		class="max-w-screen-sm p-6 mx-auto bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-600 dark:border-gray-700"
 	>
 			<h1 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-				Search for subnet devices
+				Add network
 			</h1>
 
 		<form
