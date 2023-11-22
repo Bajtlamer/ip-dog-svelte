@@ -7,6 +7,7 @@ export interface ProxyServerInterface {
     password: string,
     description: string | null,
     status: boolean,
+    subnets?: any[]
 }
 
 export interface SecureProxyServer {
@@ -17,13 +18,29 @@ export interface SecureProxyServer {
     
 }
 
+export interface Subnet {
+    id?: number
+    subnet: string,
+    description?: string | null
+    devices?: any[]
+}
+
+export interface Device {
+    id?: number
+    address: string;
+    hostname?: string
+    description?: string    
+}
+
 export class ProxyServer implements ProxyServerInterface {
+    public id = -1
     public name = ''
     public hostname = ''
     public username = ''
     public password = ''
     public description = ''
     public status = false
+    public subnets = []
 
     constructor(server?: ProxyServerInterface) {
         if (server === null || server === undefined) {
@@ -37,12 +54,14 @@ export class ProxyServer implements ProxyServerInterface {
     
     toArray(): ProxyServerInterface {
         return {
+            id: this.id,
             name: this.name,
             hostname: this.hostname,
             username: this.username,
             password: this.password,
             description: this.description,
             status: this.status,
+            subnets: this.subnets
         }
     }
 

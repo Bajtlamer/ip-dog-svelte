@@ -35,7 +35,7 @@ model Server {
 
 model Subnet {
   id          Int      @id @default(autoincrement())
-  subnet      String?  @unique
+  subnet      String   @unique
   description String?
   owner       Server   @relation(fields: [serverId], references: [id])
   serverId    Int

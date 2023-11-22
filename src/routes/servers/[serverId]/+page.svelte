@@ -3,11 +3,13 @@
 	import type { ProxyServerInterface } from "../../../models/proxy";
 	import type { PageData } from './$types';
     import NewServerScan from '../../../modals/add-network.modal.svelte';
+    import Subnet from '../../../templates/subnet.card.svelte'
 
     export let data: PageData;
 
     let dialog: HTMLDialogElement;
     let server: ProxyServerInterface = data.server;
+    let serverId: number = data.serverId;
     
 </script>
 
@@ -25,14 +27,20 @@
 
         <h1 class="pt-4 text-2xl font-bold text-white">{server.name}</h1>
         <p class="text-white text-xs">{server.hostname}</p>
-        <h4 class="text-white text-sm font-bold pt-4">Description:</h4>
-        <p class="font-normal text-gray-700 dark:text-gray-400">{server?.description}</p>
+        <h4 class="text-white font-bold pt-4">Description:&nbsp;&nbsp;<span class="text-sm font-normal text-white dark:text-white">{server?.description}</span></h4>
+        
         <h2 class="pt-4 mb-2 text-lg font-semibold text-gray-900 dark:text-white">
-            Devices list:
+            Subnets list:
         </h2>
-		<ul class="flex justify-between gap-4 text-gray-500 list-inside dark:text-gray-400 hover:shadow-sm">
-		</ul>
-
+		<ul class="block justify-between text-gray-500 list-inside dark:text-gray-400 hover:shadow-sm">
+            {#if server.subnets}
+            {#each server.subnets as subnet, index}
+            <li id={subnet.id?.toString()} class="block shadow-lg my-2 items-center min-w-full">
+                <Subnet {subnet} {serverId}/>
+            </li>
+        {/each}
+        {/if}
+    	</ul>
     </div>
 </div>
 
