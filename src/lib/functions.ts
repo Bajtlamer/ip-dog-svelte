@@ -1,6 +1,8 @@
 import OkIconGreen from "../templates/ok-icon-green.svelte";
+import ServerIconGreen from "../templates/icons/server-icon-green.svelte";
+import ServerIconRed from "../templates/icons/server-icon-red.svelte";
 import OkIconGrey from "../templates/ok-icon-grey.svelte";
-import FailIconRed from "../templates/fail-icon-red.svelte";
+
 import { fail } from "@sveltejs/kit";
 
 export const getStatusIcon = (status:boolean) => {
@@ -8,7 +10,7 @@ export const getStatusIcon = (status:boolean) => {
 }
 
 export const getServerStatusIcon = (status:boolean) => {
-    return (status) ? OkIconGreen : FailIconRed;
+    return (status) ? ServerIconGreen : ServerIconRed;
 }
 
 export const isValidURL = (url: string): boolean => { 

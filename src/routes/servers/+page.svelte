@@ -5,6 +5,8 @@ import NewServer from '../../modals/add-server.modal.svelte';
 import type { ProxyServerInterface } from '../../models/proxy';
 import type { PageData } from './$types';
 import Server from '../../templates/server.card.svelte'
+import AddServerIcon from "../../templates/icons/server-icon-add.svelte";
+import DeleteServerIcon from "../../templates/icons/server-icon-delete.svelte";
 
 let dialog:HTMLDialogElement;
 let submitting = false;
@@ -40,11 +42,13 @@ const submitNewServer: SubmitFunction= ({ formData, cancel, submitter }) => {
 		<div class="flex items-center justify-between w-full">
 
 			<button on:click={() => dialog.showModal()} class="px-4 py-2 mr-3 text-sm font-medium text-center text-white bg-blue-700 rounded-md hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 md:mr-0 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 md:block">
-				Create new server 
+				<div class="block">
+					<AddServerIcon /> Add
+				</div>
 			</button>
 			<h1 class="text-2xl font-bold text-white">SERVERS</h1>
-			<button class="px-4 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-md hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 md:mr-0 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 md:block">
-				Delete Servers 
+			<button disabled class="px-4 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-md hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 md:mr-0 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 md:block">
+				<DeleteServerIcon />Del 
 			</button>
 		</div>
 
