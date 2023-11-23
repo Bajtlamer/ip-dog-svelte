@@ -1,6 +1,6 @@
 import type { Actions } from './$types';
 import type { PageServerLoad } from '../$types';
-import { ProxyServer, type ProxyServerInterface } from '../../models/proxy';
+import { ProxyServer, type TProxyServerCreatePrototype } from '../../models/proxy';
 import { fail, redirect } from '@sveltejs/kit';
 import { createProxyServer, getProxyServers } from '$db/sqllite/servers';
 import type { TServer } from '../../models/types';
@@ -35,7 +35,7 @@ export const actions: Actions = {
 		});
 
 		try {
-			const sValidated: ProxyServerInterface = proxy.validate();
+			const sValidated: TProxyServerCreatePrototype = proxy.validate();
 			const sCreated: TServer = await createProxyServer(sValidated);
 
 			if (sCreated) {

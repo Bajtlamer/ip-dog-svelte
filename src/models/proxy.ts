@@ -1,3 +1,11 @@
+export type TProxyServerCreatePrototype = {
+    name: string;
+    username: string;
+    password: string;
+    hostname: string;
+    description?: string | null;
+    status?: boolean;
+}
 
 export interface ProxyServerInterface {
     id?: number | null;
@@ -6,6 +14,7 @@ export interface ProxyServerInterface {
     username: string
     password: string
     description?: string | null
+    token?: string | null
     status: boolean
 }
 
@@ -38,6 +47,7 @@ export class ProxyServer implements ProxyServerInterface {
     public username = ''
     public password = ''
     public description = ''
+    public token = ''
     public status = false
 
     constructor(proxy: ProxyServerInterface) {
@@ -56,13 +66,14 @@ export class ProxyServer implements ProxyServerInterface {
         }
     }
 
-    toArraySafe(): SecureProxyServer {
+    toCreateArray(): TProxyServerCreatePrototype {
         return {
-            // id: Number(this.id),
             name: this.name,
             hostname: this.hostname,
             description: this.description,
-            status: this.status
+            username: this.username,
+            password: this.password,
+            status: this.status,
         }
     }
 
@@ -79,6 +90,6 @@ export class ProxyServer implements ProxyServerInterface {
         if (typeof this.password !== 'string' || !this.password) {
             throw new Error('Password cannot be empty');
         }
-        return this.toArray();
+        return this.toCreateArray();
     }
 }

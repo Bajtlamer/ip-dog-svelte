@@ -1,16 +1,14 @@
 <script lang="ts">
     import { enhance } from '$app/forms';
-	import type { ActionData } from '../routes/$types';
  
     export let dialog: HTMLDialogElement;
-    // let submitNewServer:MouseEventHandler<HTMLButtonElement> | null | undefined;
     export let submitNewServer: any;
     export let message: string | undefined | unknown = '';
-    // export let form: ActionData;
     
 </script>
     
-<div class="relative w-96 lg:w-96 max-w-3xl max-h-full">
+<!-- <div class="relative w-96 lg:w-96 max-w-3xl max-h-full"> -->
+    <div class="relative w-96 items-center mx-auto bg-gray-800 lg:p-4">
     <!-- Modal content -->
     <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
         <!-- Modal header -->

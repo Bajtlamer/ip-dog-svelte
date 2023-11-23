@@ -34,3 +34,8 @@ export type TDevice = {
     description?: string | null
 }
 
+export type AuthTokenResponse = {
+    auth: boolean,
+    token?: string,
+    message?: string
+}

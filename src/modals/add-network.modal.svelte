@@ -3,9 +3,8 @@
 	import { enhance } from '$app/forms';
 	import { getStatusIcon } from '$lib/functions';
 	import type { SubmitFunction } from '@sveltejs/kit';
-	import { URL_API_PING } from '../constants';
-	import { authenticateUser } from '$lib/proxy';
 	import type { ProxyServerInterface } from '../models/proxy';
+	import { pingDevice } from '$lib/service/network.service';
 		
 	export let server: ProxyServerInterface ;
 
@@ -16,34 +15,6 @@
 	let count: number = 0;
 	let message: string | undefined = '';
 
-	const pingDevice = async (deviceString?: string, server?: ProxyServerInterface): Promise<boolean> => {
-		if (!deviceString || !server) return false;
-		
-        // const _proxy = new ProxyServer(server);
-
-		const token = await authenticateUser(server.username, server.password, server.hostname);
-		
-        if(!token) return false;
-		
-		const split = /\s/g.test(deviceString);
-		let device = split ? deviceString.split(' ')[0] : deviceString;
-		
-		const res = await fetch(server.hostname + URL_API_PING + device, {
-			method: 'GET',
-			headers: {
-				'Content-Type': 'application/json',
-				Accept: 'application/json',
-				Authorization: token
-			}
-		});
-
-		if (res.ok === true) {
-			const status = await res.json();
-			return status.isAlive;
-		} else {
-			return false;
-		}
-	};
 
 	const submitScanForm: SubmitFunction = ({ formElement, formData, action, cancel, submitter }) => {
 		for (const [key, value] of Object.entries(server)){
@@ -51,6 +22,7 @@
 		}
 
 		loading = true;
+
 		return async ({ result, update }) => {
 
 			if (result.type === 'success') {
@@ -66,8 +38,8 @@
 					if(_data?.server) {
 						server = _data.server;
 					}
-					// devices.push('10.0.1.11');
-					// devices.push('172.16.24.224');
+					devices.push('10.0.1.11');
+					devices.push('172.16.24.224');
 					message = _data?.message;
 				}
 			}else if(result.type === 'failure') {

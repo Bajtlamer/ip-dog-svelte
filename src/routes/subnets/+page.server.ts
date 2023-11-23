@@ -1,9 +1,11 @@
 import type { Actions } from './$types';
-import { scanSubnet } from '$lib/server/network.service';
+import { scanSubnet } from '$lib/service/network.service';
 import { ScanResult } from '../../models/subnet';
 import type { PageServerLoad } from '../$types';
 import { authenticateUser } from '$lib/proxy';
 import { fail, redirect } from '@sveltejs/kit';
+import type { AuthTokenResponse } from '../../models/types';
+import type { ProxyServerInterface } from '../../models/proxy';
 
 export const load: PageServerLoad = async ({ cookies, locals }: any) => {
 
@@ -12,8 +14,8 @@ export const load: PageServerLoad = async ({ cookies, locals }: any) => {
 	}
 };
 
-let scanResponse: any;
-let server: any;
+let scanResponse: ScanResult;
+let server: ProxyServerInterface;
 let status: boolean = false;
 
 export const actions: Actions = {
@@ -24,18 +26,21 @@ export const actions: Actions = {
 		const username = data.get('username');
 		const password = data.get('password');
 		const hostname = data.get('hostname');
+		const name = data.get('name');
 
 		try {
-			const _authResponse = await authenticateUser(username, password, hostname);
+			const _authResponse: AuthTokenResponse = await authenticateUser(username, password, hostname);
 
-			if (!_authResponse.auth || !_authResponse.token) {
-				return { subnet, ...scanResponse };
+
+			if (!_authResponse.auth || !_authResponse?.token) {
+				return { subnet };
 			}
-			const token = _authResponse.token;
-			
-			server = {username, password, hostname, status, token}
 
-			const response: any = await scanSubnet(token, subnet);
+			const token: string = _authResponse.token;
+			
+			server = { name, username, password, hostname, status, token };
+
+			const response: any = await scanSubnet(token, subnet, hostname);
 
 			if (response instanceof Response && response?.status === 200) {
 				const data = await response.json();

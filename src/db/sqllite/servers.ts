@@ -1,4 +1,5 @@
 import { db } from '$lib/db.server';
+import type { TProxyServerCreatePrototype } from '../../models/proxy';
 import type { TServer, TSubnet } from '../../models/types';
 
 export const getProxyServers = async ():Promise<TServer[]> => {
@@ -15,7 +16,7 @@ export const getServerSubnets = async (serverId: number):Promise<TSubnet[]> => {
   return subnets;
 }
 
-export const createProxyServer = async (proxy: any): Promise<TServer> => {
+export const createProxyServer = async (proxy: TProxyServerCreatePrototype): Promise<TServer> => {
 
   return await db.server.create({
     data: proxy

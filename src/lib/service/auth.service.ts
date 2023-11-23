@@ -1,4 +1,4 @@
-// import { insertUser } from "$db/__users";
+
 import type { ProxyServerInterface } from "../../models/proxy";
 
 const url = 'https://ipdog-api.smes24.com/api/v1/auth/'
@@ -68,20 +68,20 @@ export const revalidateTokenxxxx = async (userToken?: string) => {
     }
 }
 
-export const handleUserxxx = async (userToken?: string) => {
+// export const handleUserxxx = async (userToken?: string) => {
 
-    if (!userToken) return null;
+//     if (!userToken) return null;
 
-    const claim = await revalidateToken(userToken);
+//     const claim = await revalidateToken(userToken);
 
-    if (claim?.auth === true) {
-        const authUser = await getUserInfo(userToken);
-        if (authUser?.username) {
-            const _found = await insertUser(authUser);
-            if (_found) authUser.fullName = _found.fullName;
-        }
-        return authUser;
-    } else {
-        return null
-    }
-}
+//     if (claim?.auth === true) {
+//         const authUser = await getUserInfo(userToken);
+//         if (authUser?.username) {
+//             const _found = await insertUser(authUser);
+//             if (_found) authUser.fullName = _found.fullName;
+//         }
+//         return authUser;
+//     } else {
+//         return null
+//     }
+// }
