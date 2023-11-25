@@ -39,3 +39,15 @@ export type AuthTokenResponse = {
     token?: string,
     message?: string
 }
+
+export type TModal = {
+    title: string,
+    message: string,
+    buttons: TButton[],
+}
+
+export type TButton = {
+    text: string,
+    class?: string
+    handler?: Promise<void> | Function,
+}

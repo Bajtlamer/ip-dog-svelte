@@ -1,31 +1,32 @@
 <script lang="ts">
-	import { deserialize, enhance } from '$app/forms';
+	import { deserialize } from '$app/forms';
 	import { Pulse } from 'svelte-loading-spinners';
 	import { getServerStatusIcon } from '$lib/functions.js';
 	import { validateServer } from '$lib/proxy.js';
 	import { browser } from '$app/environment';
-	import DeleteServerIcon from '../templates/icons/server-icon-delete.svelte';
+	// import DeleteServerIcon from '../templates/icons/server-icon-delete.svelte';
 	import { clickOutside } from '$lib/event';
-	import type { SubmitFunction } from '@sveltejs/kit';
+	// import type { SubmitFunction } from '@sveltejs/kit';
 	import Modal from '../modals/modal.svelte';
 	import ConfirmationDialog from '../modals/confirmation-dialog.svelte';
+	import type { TModal } from '../models/types';
 
 	export let server: any;
 	export let serverDropdownShow = false;
+
 	let deleting = false;
 	let dialog: HTMLDialogElement;
 
-	const modal = {
+	const modal: TModal = {
 		title: 'Delete Proxy server',
-		content: `Are you sure you want to delete server '${server.name}'? This cannot be undone.`,
+		message: `Are you sure you want to delete server '${server.name}'? The action will also delete his subnets. This cannot be undone.`,
 		buttons: [
 			{ text: 'Cancel', class: 'cancel', handler: () => dialog.close() },
 			{ text: 'Delete', class: 'bg-red-700 dark:bg-red-700 dark:hover:bg-red-600 dark:focus:ring-red-600', handler: () => deleteServer() }
 		]
 	};
 
-	let message: string = 'Delete server';
-
+	
 	const onClickOutsideEventHandler = (event: MouseEvent) => {
 		console.log('clicked_outside', event);
 		serverDropdownShow = false;
@@ -63,7 +64,7 @@
             // modal.content = `Server '${server.name}' was deleted successfully.`;
 			dialog.close();
 		} else if (result.type === 'failure') {
-			modal.content = `Server deletion failed.`;
+			modal.message = `Server deletion failed.`;
 			dialog.close();
 		}
 

@@ -19,7 +19,7 @@
 		<!-- Modal body -->
 		<div class="flex items-center justify-between p-5">
 			<p class="text-gray-400">
-				{modal.content}
+				{modal.message}
 			</p>
 		</div>
 		<!-- Modal footer -->
