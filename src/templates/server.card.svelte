@@ -16,11 +16,11 @@
 	let dialog: HTMLDialogElement;
 
 	const modal = {
-		title: 'Delete server',
+		title: 'Delete Proxy server',
 		content: `Are you sure you want to delete server '${server.name}'? This cannot be undone.`,
 		buttons: [
 			{ text: 'Cancel', class: 'cancel', handler: () => dialog.close() },
-			{ text: 'Delete', class: 'delete', handler: () => (deleting = true) }
+			{ text: 'Delete', class: 'bg-red-700 dark:bg-red-700 dark:hover:bg-red-600 dark:focus:ring-red-600', handler: () => deleteServer() }
 		]
 	};
 
@@ -41,12 +41,12 @@
 		}
 	};
 
-	const menuClick = () => {
+	const deleteMenuClick = () => {
 		dialog.showModal();
 		console.log('menu_click');
 	};
 
-	const success = async () => {
+	const deleteServer = async () => {
 		deleting = true;
 		console.log('success');
 		const data = new FormData();
@@ -59,11 +59,11 @@
 
 		const result: import('@sveltejs/kit').ActionResult = deserialize(await response.text());
 		if (result.type === 'success') {
-			console.log('success deleted');
+			console.log('successfuly deleted');
             // modal.content = `Server '${server.name}' was deleted successfully.`;
 			dialog.close();
 		} else if (result.type === 'failure') {
-			modal.content = `Server delete failed.`;
+			modal.content = `Server deletion failed.`;
 			dialog.close();
 		}
 
@@ -132,8 +132,8 @@
 				<div class="py-1" role="none">
 					<!-- <form method="POST" action="?/delete_server" role="none" use:enhance|preventDefault={success}> -->
 					<button
-						on:click={menuClick}
-						on:keyup={menuClick}
+						on:click={deleteMenuClick}
+						on:keyup={deleteMenuClick}
 						type="submit"
 						class="block w-full px-4 py-2 text-left text-sm hover:bg-gray-700"
 						role="menuitem"
@@ -142,22 +142,26 @@
 						>Edit Server
 					</button>
 					<!-- </form> -->
-					<form method="POST" action="?/delete_server" role="none" use:enhance={success}>
-						<button
-							type="submit"
-							class="block w-full px-4 py-2 text-left text-sm hover:bg-gray-700"
-							role="menuitem"
-							tabindex="-1"
-							>Delete Server
-						</button>
-					</form>
-					<a
-						href="#"
-						class="block px-4 py-2 text-sm hover:bg-gray-700"
+					<button
+						on:click={deleteMenuClick}
+						on:keyup={deleteMenuClick}
+						type="submit"
+						class="block w-full px-4 py-2 text-left text-sm hover:bg-gray-700"
 						role="menuitem"
 						tabindex="-1"
-						id="menu-item-0">Clear Subnets</a
-					>
+						id="menu-item-2"
+						>Delete Server
+					</button>
+					<button
+						on:click={deleteMenuClick}
+						on:keyup={deleteMenuClick}
+						type="submit"
+						class="block w-full px-4 py-2 text-left text-sm hover:bg-gray-700"
+						role="menuitem"
+						tabindex="-1"
+						id="menu-item-2"
+						>New Subnet
+					</button>
 				</div>
 			</div>
 		</div>
@@ -206,5 +210,5 @@
 </div>
 
 <Modal bind:dialog on:close>
-	<ConfirmationDialog {success} {dialog} {modal} />
+	<ConfirmationDialog {dialog} {modal} />
 </Modal>
