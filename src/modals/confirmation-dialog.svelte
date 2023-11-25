@@ -1,5 +1,7 @@
 <script lang="ts">
-	import type { MouseEventHandler } from 'svelte/elements';
+	// import type { MouseEventHandler } from 'svelte/elements';
+
+	import { MODAL_TYPE_CONFIRM, MODAL_TYPE_INFO, MODAL_TYPE_WARNING } from "../constants";
 
 	export let dialog: HTMLDialogElement;
 	// export let message: string | undefined | unknown = '';
@@ -26,7 +28,7 @@
 		<div
 			class="block text-right place-items-end items-end p-4 border-gray-200 rounded-b dark:border-gray-600"
 		>
-			{#if modal?.buttons.length > 0}
+			{#if modal.type === MODAL_TYPE_CONFIRM}
 				{#each modal.buttons as button}
 					<button
 						on:click|preventDefault={button.handler}
@@ -36,14 +38,14 @@
 						>{button.text}</button
 					>
 				{/each}
-			{:else if modal?.ok == true}
+			{:else if modal?.type === MODAL_TYPE_INFO}
 				<button
 					on:click|preventDefault={() => dialog.close()}
 					type="button"
 					class="w-20 ms-3 text-gray-500 bg-blue-600 hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-2 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-blue-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-blue-600 dark:focus:ring-gray-600"
 					>OK</button
 				>
-			{:else}
+			{:else if modal?.type === MODAL_TYPE_WARNING}
 				<button
 					on:click|preventDefault={() => dialog.close()}
 					type="button"

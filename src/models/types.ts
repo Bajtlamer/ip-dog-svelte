@@ -44,6 +44,7 @@ export type TModal = {
     title: string,
     message: string,
     buttons: TButton[],
+    type?: string
 }
 
 export type TButton = {

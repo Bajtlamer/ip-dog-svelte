@@ -2,8 +2,9 @@ import type { Actions } from './$types';
 import type { PageServerLoad } from '../$types';
 import { ProxyServer, type TProxyServerCreatePrototype } from '../../models/proxy';
 import { fail, redirect } from '@sveltejs/kit';
-import { createProxyServer, getProxyServers } from '$db/sqllite/servers';
+import { createProxyServer, deleteProxyServer, getProxyServers } from '$db/sqllite/servers';
 import type { TServer } from '../../models/types';
+import { error } from 'console';
 
 export const load: PageServerLoad = async ({ locals }: any) => {
 	if (!locals?.user) {
@@ -49,9 +50,19 @@ export const actions: Actions = {
 		}
 	},
 
-	delete_server: async ({ request, params }: any) => {
+	delete_server: async ({ request }: any) => {
 		const data = await request.formData();
-		const serverId = data.get('serverId');
+		const serverId = Number(data.get('serverId'));
+
+		if(isNaN(serverId)) {
+			throw error(400, 'Delete server failed, invalid serverId.');
+		}
+		await deleteProxyServer(serverId);
+	
 		console.log('Deleting server with ID:', serverId);
+		// const proxyServers = await getProxyServers();
+		// console.log("🚀 ~ file: +page.server.ts:64 ~ delete_server: ~ proxyServers:", proxyServers)
+		
+		// return { proxyServers };
 	}
 };

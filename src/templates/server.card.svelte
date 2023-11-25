@@ -9,22 +9,32 @@
 	// import type { SubmitFunction } from '@sveltejs/kit';
 	import Modal from '../modals/modal.svelte';
 	import ConfirmationDialog from '../modals/confirmation-dialog.svelte';
-	import type { TModal } from '../models/types';
+	// import type { TModal } from '../models/types';
+	// import type { ProxyServerInterface } from '../models/proxy';
+	import { invalidate } from '$app/navigation';
+	// import { MODAL_TYPE_CONFIRM, MODAL_TYPE_INFO } from '../constants';
+	import { ModalDialog } from '../models/modal';
 
 	export let server: any;
 	export let serverDropdownShow = false;
+    let modal: ModalDialog = new ModalDialog();
+    // export let proxyServers:ProxyServerInterface[];
+    // console.log('ProxyServers:',proxyServers);
+
+    // $: ({modal})
 
 	let deleting = false;
 	let dialog: HTMLDialogElement;
 
-	const modal: TModal = {
-		title: 'Delete Proxy server',
-		message: `Are you sure you want to delete server '${server.name}'? The action will also delete his subnets. This cannot be undone.`,
-		buttons: [
-			{ text: 'Cancel', class: 'cancel', handler: () => dialog.close() },
-			{ text: 'Delete', class: 'bg-red-700 dark:bg-red-700 dark:hover:bg-red-600 dark:focus:ring-red-600', handler: () => deleteServer() }
-		]
-	};
+	// const modal: TModal = {
+	// 	title: 'Delete Proxy server',
+	// 	message: `Are you sure you want to delete server '${server.name}'? This operation cannot be undone.`,
+    //     type: MODAL_TYPE_CONFIRM,
+	// 	buttons: [
+	// 		{ text: 'Cancel', class: 'cancel', handler: () => dialog.close() },
+	// 		{ text: 'Delete', class: 'bg-red-700 dark:bg-red-700 dark:hover:bg-red-600 dark:focus:ring-red-600', handler: () => deleteServer() }
+	// 	]
+	// };
 
 	
 	const onClickOutsideEventHandler = (event: MouseEvent) => {
@@ -42,7 +52,25 @@
 		}
 	};
 
-	const deleteMenuClick = () => {
+	const newSubnetMenuClick = () => {
+        modal = modal.createModalWarningDialog('Add Subnet', 'Add a new subnet to this server.');
+		dialog.showModal();
+	};
+
+	const editProxyServerMenuClick = () => {
+        modal = modal.createModalInfoDialog('Edit Proxy Server', 'Edit existing Proxy Server.');
+        dialog.showModal();
+	};
+
+	const deleteProxyServerMenuClick = () => {
+        modal = modal.createModalConfirmationDialog(
+            'Delete Server', 
+            `Are you sure you want to delete server '${server.name}'? This operation cannot be undone.`, [
+                { text: 'Cancel', class: 'cancel', handler: () => dialog.close() },
+                { text: 'Delete', class: 'bg-red-700 dark:bg-red-700 dark:hover:bg-red-600 dark:focus:ring-red-600', handler: () => deleteServer() }
+            ]
+        );
+
 		dialog.showModal();
 		console.log('menu_click');
 	};
@@ -60,12 +88,17 @@
 
 		const result: import('@sveltejs/kit').ActionResult = deserialize(await response.text());
 		if (result.type === 'success') {
-			console.log('successfuly deleted');
-            // modal.content = `Server '${server.name}' was deleted successfully.`;
-			dialog.close();
+			// console.log('successfuly deleted', result.data);
+            // proxyServers = result.data?.proxyServers;
+            // modal.buttons = [];
+            // modal.ok = true;
+            // modal.message = `Server successfully deleted.`;
+			// dialog.close();
+            await invalidate('/servers');
+            
 		} else if (result.type === 'failure') {
-			modal.message = `Server deletion failed.`;
-			dialog.close();
+            modal = modal.createModalWarningDialog('Delete Server', 'Server deletion failed.');
+			// dialog.close();
 		}
 
 		deleting = false;
@@ -133,8 +166,8 @@
 				<div class="py-1" role="none">
 					<!-- <form method="POST" action="?/delete_server" role="none" use:enhance|preventDefault={success}> -->
 					<button
-						on:click={deleteMenuClick}
-						on:keyup={deleteMenuClick}
+						on:click={editProxyServerMenuClick}
+						on:keyup={editProxyServerMenuClick}
 						type="submit"
 						class="block w-full px-4 py-2 text-left text-sm hover:bg-gray-700"
 						role="menuitem"
@@ -144,8 +177,8 @@
 					</button>
 					<!-- </form> -->
 					<button
-						on:click={deleteMenuClick}
-						on:keyup={deleteMenuClick}
+						on:click={deleteProxyServerMenuClick}
+						on:keyup={deleteProxyServerMenuClick}
 						type="submit"
 						class="block w-full px-4 py-2 text-left text-sm hover:bg-gray-700"
 						role="menuitem"
@@ -154,8 +187,8 @@
 						>Delete Server
 					</button>
 					<button
-						on:click={deleteMenuClick}
-						on:keyup={deleteMenuClick}
+						on:click={newSubnetMenuClick}
+						on:keyup={newSubnetMenuClick}
 						type="submit"
 						class="block w-full px-4 py-2 text-left text-sm hover:bg-gray-700"
 						role="menuitem"
