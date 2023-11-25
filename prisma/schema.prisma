@@ -37,7 +37,7 @@ model Subnet {
   id          Int      @id @default(autoincrement())
   subnet      String   @unique
   description String?
-  owner       Server   @relation(fields: [serverId], references: [id])
+  owner       Server   @relation(fields: [serverId], references: [id], onDelete: Cascade)
   serverId    Int
   devices     Device[]
 }
@@ -47,6 +47,6 @@ model Device {
   address     String  @unique
   hostname    String?
   description String?
-  owner       Subnet  @relation(fields: [subnetId], references: [id])
+  owner       Subnet  @relation(fields: [subnetId], references: [id], onDelete: Cascade)
   subnetId    Int
 }
