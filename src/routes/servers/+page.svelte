@@ -8,7 +8,7 @@ import Server from '../../templates/server.card.svelte'
 import AddServerIcon from "../../templates/icons/server-icon-add.svelte";
 import DeleteServerIcon from "../../templates/icons/server-icon-delete.svelte";
 
-let dialog:HTMLDialogElement;
+let dialog: HTMLDialogElement;
 let submitting = false;
 let message: string | undefined | unknown = '';
 
@@ -61,7 +61,7 @@ const submitNewServer: SubmitFunction= ({ formData, cancel, submitter }) => {
 		<ul class="block justify-betweenw text-gray-500 list-inside dark:text-gray-400 hover:shadow-sm">
 			{#each proxyServers as server, index}
 				<li id={server.id?.toString()} class="block shadow-lg my-2 items-center min-w-full">
-					<Server {server}/>
+					<Server {server} />
 				</li>
 			{/each}
 		</ul>

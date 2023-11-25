@@ -1,26 +1,111 @@
 <script lang="ts">
+	import { deserialize, enhance } from '$app/forms';
 	import { Pulse } from 'svelte-loading-spinners';
 	import { getServerStatusIcon } from '$lib/functions.js';
 	import { validateServer } from '$lib/proxy.js';
 	import { browser } from '$app/environment';
 	import DeleteServerIcon from '../templates/icons/server-icon-delete.svelte';
+	import { clickOutside } from '$lib/event';
+	import type { SubmitFunction } from '@sveltejs/kit';
+	import Modal from '../modals/modal.svelte';
+	import ConfirmationDialog from '../modals/confirmation-dialog.svelte';
+
 	export let server: any;
 	export let serverDropdownShow = false;
+	let deleting = false;
+	let dialog: HTMLDialogElement;
+
+	const modal = {
+		title: 'Delete server',
+		content: `Are you sure you want to delete server '${server.name}'? This cannot be undone.`,
+		buttons: [
+			{ text: 'Cancel', class: 'cancel', handler: () => dialog.close() },
+			{ text: 'Delete', class: 'delete', handler: () => (deleting = true) }
+		]
+	};
+
+	let message: string = 'Delete server';
+
+	const onClickOutsideEventHandler = (event: MouseEvent) => {
+		console.log('clicked_outside', event);
+		serverDropdownShow = false;
+	};
+
+	const onClickDropDownMenuEventHandler = () => {
+		serverDropdownShow = !serverDropdownShow;
+	};
+
+	const onKeyUpEventHandler = (event: KeyboardEvent) => {
+		if (event.key === 'Escape') {
+			serverDropdownShow = false;
+		}
+	};
+
+	const menuClick = () => {
+		dialog.showModal();
+		console.log('menu_click');
+	};
+
+	const success = async () => {
+		deleting = true;
+		console.log('success');
+		const data = new FormData();
+		data.set('serverId', server.id);
+
+		const response = await fetch('?/delete_server', {
+			method: 'POST',
+			body: data
+		});
+
+		const result: import('@sveltejs/kit').ActionResult = deserialize(await response.text());
+		if (result.type === 'success') {
+			console.log('success deleted');
+            // modal.content = `Server '${server.name}' was deleted successfully.`;
+			dialog.close();
+		} else if (result.type === 'failure') {
+			modal.content = `Server delete failed.`;
+			dialog.close();
+		}
+
+		deleting = false;
+	};
+
+	// const deleteServer: SubmitFunction = ({ formData, cancel, submitter }) => {
+	// 	const d = dialog.showModal();
+	// 	cancel();
+	// 	// console.log('decko', d);
+	// 	formData.set('serverId', server.id);
+	// 	const req = Object.fromEntries(formData);
+
+	// 	deleting = true;
+	// 	return async ({ result, update }) => {
+	// 		if (result.type === 'success') {
+	// 			update();
+
+	// 			// dialog.close();
+	// 		} else if (result.type === 'failure') {
+	// 			// message = result?.data?.message;
+	// 			cancel();
+	// 		}
+
+	// 		deleting = false;
+	// 	};
+	// };
 </script>
 
-<div 
+<div
 	class="p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
 >
-	<div class="flex items-center justify-between">
+	<div class="flex items-center justify-between" id="outside">
 		<h5 class=" w-full text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
 			{server.name}
 		</h5>
-		<div class="relative inline-block text-left">
-			<div>
+		<div class="relative inline-block text-left" id="test">
+			<div id="button">
 				<button
-					on:click={() => {
-						serverDropdownShow = !serverDropdownShow;
-					}}
+					use:clickOutside={onClickOutsideEventHandler}
+					on:keyup={onKeyUpEventHandler}
+					on:click={onClickDropDownMenuEventHandler}
 					type="button"
 					class="inline-flex w-full justify-center rounded-md px-2 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-inset ring-gray-600 hover:ring-1"
 					id="menu-button"
@@ -45,29 +130,34 @@
 				tabindex="-1"
 			>
 				<div class="py-1" role="none">
-                    <a
-                    href="#"
-                    class="block px-4 py-2 text-sm hover:bg-gray-700"
-                    role="menuitem"
-                    tabindex="-1"
-                    id="menu-item-2">Edit Server</a
-					>
-					<form method="POST" action="#" role="none">
-                        <button
-                        type="submit"
-                        class="block w-full px-4 py-2 text-left text-sm hover:bg-gray-700"
-                        role="menuitem"
-                        tabindex="-1"
-                        id="menu-item-3">Delete Server</button
-						>
+					<!-- <form method="POST" action="?/delete_server" role="none" use:enhance|preventDefault={success}> -->
+					<button
+						on:click={menuClick}
+						on:keyup={menuClick}
+						type="submit"
+						class="block w-full px-4 py-2 text-left text-sm hover:bg-gray-700"
+						role="menuitem"
+						tabindex="-1"
+						id="menu-item-2"
+						>Edit Server
+					</button>
+					<!-- </form> -->
+					<form method="POST" action="?/delete_server" role="none" use:enhance={success}>
+						<button
+							type="submit"
+							class="block w-full px-4 py-2 text-left text-sm hover:bg-gray-700"
+							role="menuitem"
+							tabindex="-1"
+							>Delete Server
+						</button>
 					</form>
-                    <a
-                        href="#"
-                        class="block px-4 py-2 text-sm hover:bg-gray-700"
-                        role="menuitem"
-                        tabindex="-1"
-                        id="menu-item-0">Clear Subnets</a
-                    >
+					<a
+						href="#"
+						class="block px-4 py-2 text-sm hover:bg-gray-700"
+						role="menuitem"
+						tabindex="-1"
+						id="menu-item-0">Clear Subnets</a
+					>
 				</div>
 			</div>
 		</div>
@@ -114,3 +204,7 @@
 		<!-- </button> -->
 	</div>
 </div>
+
+<Modal bind:dialog on:close>
+	<ConfirmationDialog {success} {dialog} {modal} />
+</Modal>

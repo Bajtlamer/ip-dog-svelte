@@ -47,5 +47,11 @@ export const actions: Actions = {
 		} catch (error: any) {
 			return fail(400, { message: error?.message });
 		}
+	},
+
+	delete_server: async ({ request, params }: any) => {
+		const data = await request.formData();
+		const serverId = data.get('serverId');
+		console.log('Deleting server with ID:', serverId);
 	}
 };
