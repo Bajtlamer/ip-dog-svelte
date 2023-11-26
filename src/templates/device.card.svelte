@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Device, Subnet } from '../models/proxy';
+	import type { Device } from '../models/proxy';
     
     export let serverId: number;
     export let subnetId: number;

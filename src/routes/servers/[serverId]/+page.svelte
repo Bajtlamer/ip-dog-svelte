@@ -3,15 +3,28 @@
 	import type { TServer } from "../../../models/types";
 	import type { PageData } from './$types';
     import NewServerScan from '../../../modals/add-network.modal.svelte';
+    import SaveSubnetResult from '../../../modals/save-subnet-result.modal.svelte';
     import Subnet from '../../../templates/subnet.card.svelte'
 	import type { ProxyServerInterface } from "../../../models/proxy";
 	
     export let data: PageData;
 
-    let dialog: HTMLDialogElement;
+    let serverScanDialog: HTMLDialogElement;
+    let saveSubnetDialog: HTMLDialogElement;
+
     let server: ProxyServerInterface & TServer = data.server;
     let serverId: number = data.serverId;
-    
+    let subnet: string;
+    // console.log('->',server);
+
+    // const showSubnetModal = (args:any) => {
+    //     console.log("submitting subnet with devices:", args);
+    //     saveSubnetDialog.showModal();
+    // }
+    // const submitSubnetWithDevices = () => {
+    //     console.log("submitting subnet with devices");
+    //     saveSubnetDialog.showModal();
+    // }
 </script>
 
 <div class="items-center h-screen max-w-full p-2 mx-auto bg-gray-800 lg:p-20">
@@ -21,7 +34,7 @@
                 &larr; Back
             </a>
             <h1 class="text-2xl font-bold text-white">SUBNETS</h1>
-            <button on:click={() => dialog.showModal()} class="px-4 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-md hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 md:mr-0 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 md:block">
+            <button on:click={() => serverScanDialog.showModal()} class="px-4 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-md hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 md:mr-0 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 md:block">
                 Add network 
             </button>
         </div>
@@ -45,9 +58,13 @@
     </div>
 </div>
 
-<Modal bind:dialog on:close>
-    <NewServerScan {server}/>
+<Modal bind:dialog={serverScanDialog} on:close>
+    <NewServerScan {server} />
 </Modal>
+
+<!-- <Modal bind:dialog={saveSubnetDialog} on:close>
+    <SaveSubnetResult {server} {submitSubnetWithDevices} {subnet} />
+</Modal> -->
 
 
 

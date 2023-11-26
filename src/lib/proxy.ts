@@ -41,13 +41,17 @@ export const authenticateUser = async (username: string, password: string, host?
         throw new Error('Subnet scanning failed, with an unexpected error');
         
     } catch (err:any) {
-        return false;
-        // throw new Error(err.message);
+        // return false;
+        throw new Error(err.message);
     }}
     
     export const validateServer = async (server: ProxyServerInterface): Promise<boolean> => {
-        const response = await authenticateUser(server.username, server.password, server.hostname);
-        return (response)? response.auth : false;
+        try {
+            const response = await authenticateUser(server.username, server.password, server.hostname);
+            return (response)? response.auth : false;
+        } catch (err) {
+            return false;
+        }
     }
     
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));

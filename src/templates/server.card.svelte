@@ -4,38 +4,20 @@
 	import { getServerStatusIcon } from '$lib/functions.js';
 	import { validateServer } from '$lib/proxy.js';
 	import { browser } from '$app/environment';
-	// import DeleteServerIcon from '../templates/icons/server-icon-delete.svelte';
 	import { clickOutside } from '$lib/event';
-	// import type { SubmitFunction } from '@sveltejs/kit';
 	import Modal from '../modals/modal.svelte';
 	import ConfirmationDialog from '../modals/confirmation-dialog.svelte';
-	// import type { TModal } from '../models/types';
-	// import type { ProxyServerInterface } from '../models/proxy';
 	import { invalidate } from '$app/navigation';
-	// import { MODAL_TYPE_CONFIRM, MODAL_TYPE_INFO } from '../constants';
 	import { ModalDialog } from '../models/modal';
 
 	export let server: any;
 	export let serverDropdownShow = false;
     let modal: ModalDialog = new ModalDialog();
-    // export let proxyServers:ProxyServerInterface[];
-    // console.log('ProxyServers:',proxyServers);
 
-    // $: ({modal})
-
-	let deleting = false;
+	let deleting: boolean = false;
 	let dialog: HTMLDialogElement;
 
-	// const modal: TModal = {
-	// 	title: 'Delete Proxy server',
-	// 	message: `Are you sure you want to delete server '${server.name}'? This operation cannot be undone.`,
-    //     type: MODAL_TYPE_CONFIRM,
-	// 	buttons: [
-	// 		{ text: 'Cancel', class: 'cancel', handler: () => dialog.close() },
-	// 		{ text: 'Delete', class: 'bg-red-700 dark:bg-red-700 dark:hover:bg-red-600 dark:focus:ring-red-600', handler: () => deleteServer() }
-	// 	]
-	// };
-
+    // const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 	
 	const onClickOutsideEventHandler = (event: MouseEvent) => {
 		console.log('clicked_outside', event);
@@ -77,6 +59,7 @@
 
 	const deleteServer = async () => {
 		deleting = true;
+        // await sleep(5000);
 		console.log('success');
 		const data = new FormData();
 		data.set('serverId', server.id);
@@ -88,12 +71,6 @@
 
 		const result: import('@sveltejs/kit').ActionResult = deserialize(await response.text());
 		if (result.type === 'success') {
-			// console.log('successfuly deleted', result.data);
-            // proxyServers = result.data?.proxyServers;
-            // modal.buttons = [];
-            // modal.ok = true;
-            // modal.message = `Server successfully deleted.`;
-			// dialog.close();
             await invalidate('/servers');
             
 		} else if (result.type === 'failure') {
@@ -103,28 +80,6 @@
 
 		deleting = false;
 	};
-
-	// const deleteServer: SubmitFunction = ({ formData, cancel, submitter }) => {
-	// 	const d = dialog.showModal();
-	// 	cancel();
-	// 	// console.log('decko', d);
-	// 	formData.set('serverId', server.id);
-	// 	const req = Object.fromEntries(formData);
-
-	// 	deleting = true;
-	// 	return async ({ result, update }) => {
-	// 		if (result.type === 'success') {
-	// 			update();
-
-	// 			// dialog.close();
-	// 		} else if (result.type === 'failure') {
-	// 			// message = result?.data?.message;
-	// 			cancel();
-	// 		}
-
-	// 		deleting = false;
-	// 	};
-	// };
 </script>
 
 <div
@@ -237,9 +192,6 @@
 				{/await}
 			{/if}
 		</span>
-
-		<!-- <button class="px-1 py-1 text-sm font-medium text-center text-white bg-blue-700 rounded-md hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 md:mr-0 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 md:block"> -->
-		<!-- </button> -->
 	</div>
 </div>
 

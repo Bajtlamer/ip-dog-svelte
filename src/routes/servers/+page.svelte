@@ -7,6 +7,7 @@ import type { PageData } from './$types';
 import Server from '../../templates/server.card.svelte'
 import AddServerIcon from "../../templates/icons/server-icon-add.svelte";
 import DeleteServerIcon from "../../templates/icons/server-icon-delete.svelte";
+// import type { ActionData } from './$types';
 
 let dialog: HTMLDialogElement;
 let submitting = false;
