@@ -38,16 +38,18 @@
         formData.set('serverId', serverId);
         // formData.append('devices', devices);
 
-        console.log('serverId:', serverId);
-        console.log('devices:', devices);
+        console.log('server ID:', serverId);
+        // console.log('devices:', devices);
+
         return async ({result, update}) => {
-
-        if (result.type === 'success') {
-
-            const _data = result.data;
+            if (result.type === 'success') {
+                
+                const _data = result.data;
+                console.log('result', _data);
 
             if (_data) {
                 saveSubnetDialog.close();
+                update();
             }
         } else if (result.type === 'failure') {
             message = result.data?.message;

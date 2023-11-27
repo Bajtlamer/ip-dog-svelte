@@ -8,6 +8,7 @@
     export let message: string|undefined;
     export let submitScanResultForm: SubmitFunction;
 
+    /** @type {import('./$types').ActionData} */
     let form: ActionData;
 
 </script>
@@ -35,9 +36,8 @@
             </div>
             <div>
                 <label for="description" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Description</label>
-                    <textarea name="description" id="description" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Write server description here...">
-
-                    </textarea>
+                    <textarea name="description" id="description" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Write server description here..."
+                    ></textarea>
             </div>
             <div>
 				<button
@@ -49,8 +49,11 @@
 
             </div>
     </form>
-            {#if message}<p class="text-red-500 text-sm">{message}</p>{/if}
-            {#if form?.message}<p class="text-red-500 text-sm">{form.message}</p>{/if}
+    <p class="text-white">
+        --{form?.invalidSubnet}--
+        {#if message}<p class="text-red-500 text-sm">{message}</p>{/if}
+        {#if form?.message}<p class="text-red-500 text-sm">{form.message}</p>{/if}
+    </p>
     </div>
 
 </div>

@@ -1,3 +1,5 @@
+import type { TDevice } from "./types";
+
 export interface ScanResult {
     devices:string[],
     count:number,
@@ -20,5 +22,33 @@ export class ScanResult implements ScanResult  {
             let k = key as keyof ScanResult;
             this[k] = result[k as keyof object];
         });
+    }
+}
+
+export interface iSubnet {
+    id?: number;
+    subnet: string
+    description?: string | null;
+    serverId: number
+}
+
+export class Subnet implements iSubnet {
+    id = 0;
+    subnet = ''
+    description = ''
+    serverId = 0;
+    devices = []
+
+    constructor(subnet?: iSubnet) {
+        Object.assign(this, subnet);
+    }
+
+    toArray(): iSubnet {
+        return {
+            id: this.id,
+            subnet: this.subnet,
+            description: this.description,
+            serverId: this.serverId,
+        }
     }
 }

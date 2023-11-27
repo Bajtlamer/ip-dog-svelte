@@ -25,6 +25,7 @@ export type TSubnet = {
     subnet: string
     description?: string | null
     devices?: TDevice[]
+    serverId: number
 }
 
 export type TDevice = {

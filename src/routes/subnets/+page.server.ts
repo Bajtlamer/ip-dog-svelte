@@ -4,8 +4,9 @@ import { ScanResult } from '../../models/subnet';
 import type { PageServerLoad } from '../$types';
 import { authenticateUser } from '$lib/proxy';
 import { fail, redirect } from '@sveltejs/kit';
-import type { AuthTokenResponse } from '../../models/types';
+import type { AuthTokenResponse, TSubnet } from '../../models/types';
 import type { ProxyServerInterface } from '../../models/proxy';
+import { createSubnet, findSubnetBySubnetName } from '$db/sqllite/subnets';
 
 export const load: PageServerLoad = async ({ cookies, locals }: any) => {
 
@@ -60,18 +61,25 @@ export const actions: Actions = {
 		console.log('jsem na serveru...');
 		const data = await request.formData();
 		const subnet = data.get('subnet');
-		// const username = data.get('username');
-		// const password = data.get('password');
-		// const hostname = data.get('hostname');
-		// const name = data.get('name');
-		const serverId = data.get('serverId');
-
+		const serverId = Number(data.get('serverId'));
+		const description = data.get('description');
+		
+		const subnetObj: TSubnet = { subnet, serverId, description };
+		
 		if (typeof subnet !== 'string' || !subnet) {
-			console.log('invalid subnet',subnet);
 			return fail(400, { invalidSubnet: true, subnet });
 		}
+		
+		if (isNaN (serverId)) {
+			console.log('Invalid server ID');
+			return fail(400, { 
+				message: 'Operation failed, expected server ID, but got null.', 
+				subnet, 
+				description 
+			});
+		}
 
-		console.log(`save_subnet_result`, subnet, serverId)
+		console.log(`save_subnet_result`, subnetObj)
 
 		try {
 			// const _authResponse: AuthTokenResponse = await authenticateUser(username, password, hostname);
@@ -80,7 +88,25 @@ export const actions: Actions = {
 			// if (!_authResponse.auth || !_authResponse?.token) {
 			// 	return fail(400, { authFailed: true, subnet });
 			// }
+			const exist = findSubnetBySubnetName(subnet);
 
+			if (null !== exist) {
+                console.log('exist');
+                return fail(400, { 
+					subnet, 
+					description, 
+					invalidSubnet: true, 
+					message: 'Subnet already exists.'
+				});
+            }
+			
+			const createdSubnet = await createSubnet(subnetObj) as TSubnet;
+
+			if (createdSubnet === null) {
+				return fail(400, { subnet, description, message: 'Create subnet failed.' });
+			}else{
+				return { subnet: createdSubnet };
+			}
 			// const token: string = _authResponse.token;
 			
 			// server = { name, username, password, hostname, status, token };
@@ -95,7 +121,9 @@ export const actions: Actions = {
 			// } else {
 			// 	return fail(400, { subnet, ...response });
 			// }
+			// return { subnet, server };
 		} catch (error: any) {
+			console.log(error);
 			return fail(400, { subnet, message: error.message });
 		}
 	}
