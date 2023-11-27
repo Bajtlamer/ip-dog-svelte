@@ -6,7 +6,11 @@ import { authenticateUser } from '$lib/proxy';
 import { fail, redirect } from '@sveltejs/kit';
 import type { AuthTokenResponse, TSubnet } from '../../models/types';
 import type { ProxyServerInterface } from '../../models/proxy';
-import { createSubnet, findSubnetBySubnetName } from '$db/sqllite/subnets';
+import { createSubnet, deleteSubnet, findSubnetBySubnetName } from '$db/sqllite/subnets';
+
+let scanResponse: ScanResult;
+let server: ProxyServerInterface;
+let status: boolean = false;
 
 export const load: PageServerLoad = async ({ cookies, locals }: any) => {
 
@@ -15,9 +19,6 @@ export const load: PageServerLoad = async ({ cookies, locals }: any) => {
 	}
 };
 
-let scanResponse: ScanResult;
-let server: ProxyServerInterface;
-let status: boolean = false;
 
 export const actions: Actions = {
 	subnets: async ({ request }: any) => {
@@ -88,15 +89,15 @@ export const actions: Actions = {
 			// if (!_authResponse.auth || !_authResponse?.token) {
 			// 	return fail(400, { authFailed: true, subnet });
 			// }
-			const exist = findSubnetBySubnetName(subnet);
+			const exist = await findSubnetBySubnetName(subnet);
 
 			if (null !== exist) {
-                console.log('exist');
+                console.log('exist', exist);
                 return fail(400, { 
 					subnet, 
 					description, 
 					invalidSubnet: true, 
-					message: 'Subnet already exists.'
+					message: 'Subnet that name already exists.'
 				});
             }
 			
@@ -123,8 +124,34 @@ export const actions: Actions = {
 			// }
 			// return { subnet, server };
 		} catch (error: any) {
-			console.log(error);
+			// console.log(error);
 			return fail(400, { subnet, message: error.message });
 		}
+	},
+
+	delete_subnet: async ({ request }: any) => {
+		console.log('jsem na serveru...maszu subnet');
+        const data = await request.formData();
+        // const subnet = data.get('subnetId');
+        const subnetId = Number(data.get('subnetId'));
+        // const description = data.get('description');
+        
+        // const subnetObj: TSubnet = { subnet, serverId, description };
+        
+        // if (typeof subnet!=='string' ||!subnet) {
+        //     return fail(400, { invalidSubnet: true, subnet });
+        // }
+        
+        if (isNaN (subnetId)) {
+            console.log('Invalid subnet ID');
+            return fail(400, { 
+                message: 'Operation failed, expected subnet ID, but got null.'
+            });
+        }else{
+			console.log(`SUBNET_ID:`, subnetId)
+			const response = await deleteSubnet(subnetId);
+			return { success: true, response };
+		}
+
 	}
 };

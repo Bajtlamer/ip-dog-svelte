@@ -2,7 +2,7 @@
     import {Pulse} from 'svelte-loading-spinners';
     import {enhance} from '$app/forms';
     import {getStatusIcon} from '$lib/functions';
-    import type {SubmitFunction} from '@sveltejs/kit';
+    import  type {SubmitFunction} from '@sveltejs/kit';
     import type {ProxyServerInterface} from '../models/proxy';
     import {pingDevice} from '$lib/service/network.service';
     import { clickOutside } from '$lib/event';
@@ -12,7 +12,8 @@
     export let server: ProxyServerInterface;
     // export let showSubnetModal: MouseEventHandler<HTMLButtonElement>;
     let saveSubnetDialog: HTMLDialogElement;
-    console.log('server', server);
+    export let closeDialog: Function;
+    // console.log('server', server);
 
     let loading = false;
 
@@ -21,6 +22,15 @@
     let count: number = 0;
     let message: string | undefined = '';
     let saveDropdownShow: boolean = false;
+
+    // type TSubnetFormResult = {
+    //     subnet?: string;
+    //     message?: string | undefined;
+    //     description?: string | undefined;
+    //     invalidSubnet?: boolean;
+    // }
+
+    let form: Record<string, any> | undefined = {};
 
 
     const onClickOutsideEventHandler = (event: MouseEvent) => {
@@ -46,12 +56,15 @@
                 
                 const _data = result.data;
                 console.log('result', _data);
-
-            if (_data) {
-                saveSubnetDialog.close();
-                update();
-            }
-        } else if (result.type === 'failure') {
+                
+                if (_data) {
+                    saveSubnetDialog.close();
+                    closeDialog();
+                    update();
+                }
+            } else if (result.type === 'failure') {
+                // console.log('failure:', result);
+            form =  result.data;
             message = result.data?.message;
             cancel();
         }
@@ -223,5 +236,5 @@
 </div>
 
 <Modal bind:dialog={saveSubnetDialog} on:close>
-    <SaveSubnetResult {server} {submitScanResultForm} {subnet} {message}/>
+    <SaveSubnetResult {form} {server} {submitScanResultForm} {subnet} {message}/>
 </Modal>

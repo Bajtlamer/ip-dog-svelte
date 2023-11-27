@@ -1,23 +1,152 @@
 <script lang="ts">
+	import { clickOutside } from '$lib/event';
+	import Modal from '../modals/modal.svelte';
 	import type { Subnet } from '../models/proxy';
-    
+    import ConfirmationDialog from '../modals/confirmation-dialog.svelte';
+	import { ModalDialog } from '../models/modal';
+	import { invalidate, invalidateAll } from '$app/navigation';
+	import { applyAction, deserialize } from '$app/forms';
+
     export let subnet: Subnet;
     export let serverId: number;
-    console.log(serverId)
+    
+    let delConfirmationDialog: HTMLDialogElement;
+    let saveDropdownShow: boolean = false;
+    let modal: ModalDialog = new ModalDialog();
+    let deleting: boolean;
+
+    modal = modal.createModalConfirmationDialog(
+        'Delete Subnet', 
+        `Are you sure you want to delete subent '${subnet.subnet}'?`, [
+            { text: 'Cancel', class: 'cancel', handler: () => delConfirmationDialog.close() },
+            { text: 'Delete', class: 'bg-red-700 dark:bg-red-700 dark:hover:bg-red-600 dark:focus:ring-red-600', handler: () => deleteSubnet() }
+        ]
+    );
+
+
+    const onClickOutsideEventHandler = (event: MouseEvent) => {
+        // console.log('clicked_outside', event);
+        saveDropdownShow = false;
+    };
+
+    const onKeyUpEventHandler = (event: KeyboardEvent) => {
+        if (event.key === 'Escape') {
+            saveDropdownShow = false;
+        }
+    };
+
+    const onClickDropDownMenuEventHandler = () => {
+        saveDropdownShow = !saveDropdownShow;
+    };
+
+	const deleteSubnet = async () => {
+		deleting = true;
+        // await sleep(5000);
+		console.log('start deleting subnte...');
+		const data = new FormData();
+        if (subnet.id) {
+		    data.set('subnetId', subnet.id?.toString());
+        }else {
+            return modal = modal.createModalWarningDialog('Delete Subnet', 'Delete subnet failed. Exxpected a subnet ID, but got null');
+        }
+
+        try {
+    		const response = await fetch('/subnets?/delete_subnet', {
+    			method: 'POST',
+    			body: data
+    		});
+    
+            const result: import('@sveltejs/kit').ActionResult = deserialize(await response.text());
+
+            if (result.type === 'success') {
+                delConfirmationDialog.close();
+                await invalidate('/servers/' + serverId);
+                // await invalidateAll();
+                console.log('Invalidate URL:', '/servers/' + serverId);
+                applyAction(result);
+                
+            } else if (result.type === 'failure') {
+                modal = modal.createModalWarningDialog('Delete Server', 'Server deletion failed.');
+                // delConfirmationDialog.close();
+            }
+
+        } catch (error: any) {
+            modal = modal.createModalWarningDialog('Delete Server', error?.message);
+        }
+
+		deleting = false;
+	};
+
+
 </script>
 
-<div class="p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-    <h5 class="flex items-center justify-between w-full text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-        {subnet.description}
-        <span>
-            <a href="/servers/{serverId}/{subnet?.id}" class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                Devices
-                <svg class="rtl:rotate-180 w-3.5 h-3.5 ms-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
+<div class="flex items-center space-x-4 rtl:space-x-reverse bg-gray-700xxx">
+    <div class="flex-shrink-0">
+     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><g fill="none" stroke="white" stroke-width="1.5"><rect width="7" height="5" x="3" y="2" rx=".6"/><rect width="7" height="5" x="8.5" y="17" rx=".6"/><rect width="7" height="5" x="14" y="2" rx=".6"/><path d="M6.5 7v3.5a2 2 0 0 0 2 2h7a2 2 0 0 0 2-2V7M12 12.5V17"/></g>
+     </svg>
+    </div>
+
+    <div class="flex-1 min-w-0">
+       <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
+          {subnet.subnet}
+       </p>
+       <p class="text-sm text-gray-500 truncate dark:text-gray-400">
+          {subnet.description}
+       </p>
+    </div>
+
+    <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
+        <div class="relative inline-block text-left" id="dropdown">
+            <div id="button" class="rounded-lg hover:bg-gray-700 hover:border-gray-500">
+                <button
+                        use:clickOutside={onClickOutsideEventHandler}
+                        on:keyup={onKeyUpEventHandler}
+                        on:click={onClickDropDownMenuEventHandler}
+                        type="button"
+                        class="inline-flex w-full justify-center rounded-md px-2 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-inset ring-gray-600 hover:ring-1"
+                        id="menu-button"
+                        aria-expanded="true"
+                        aria-haspopup="true"
+                >
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><path fill="white" d="M9 15.25a1.25 1.25 0 1 1 2.5 0a1.25 1.25 0 0 1-2.5 0Zm0-5a1.25 1.25 0 1 1 2.5 0a1.25 1.25 0 0 1-2.5 0Zm0-5a1.249 1.249 0 1 1 2.5 0a1.25 1.25 0 1 1-2.5 0Z"/>
                 </svg>
-            </a>
-        </span>
-    </h5>
-    <span class="block mb-2 text-xs text-white">{subnet.subnet}</span>
-    
-</div>
+                
+            </button>
+            </div>
+       
+			<div
+				class:hidden={!saveDropdownShow}
+				class="w-48 hiden border border-gray-700 absolute right-0 z-10 mt-2 origin-top-right divide-y divide-gray-100 rounded-md bg-white dark:bg-gray-800 dark:text-gray-400 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+				role="menu"
+				aria-orientation="vertical"
+				aria-labelledby="menu-button"
+				tabindex="-1"
+			>
+				<div class="py-1" role="none">
+                        <a href={`/servers/${serverId}/${subnet.id}`}
+						type="submit"
+						class="block w-full px-4 py-2 text-left text-sm hover:bg-gray-700"
+						role="menuitem"
+						tabindex="-1"
+						id="menu-item-2"
+						>Show subnet devices
+                    </a>
+					<button
+                    on:click={()=>delConfirmationDialog.showModal()}
+						type="submit"
+						class="block w-full px-4 py-2 text-left text-sm hover:bg-gray-700"
+						role="menuitem"
+						tabindex="-1"
+						id="menu-item-2"
+						>Delete Subnet
+					</button>
+				</div>
+			</div>
+        </div>
+       
+    </div>
+ </div>
+
+<Modal bind:dialog={delConfirmationDialog} on:close>
+    <ConfirmationDialog dialog={delConfirmationDialog} {modal}/>
+</Modal>

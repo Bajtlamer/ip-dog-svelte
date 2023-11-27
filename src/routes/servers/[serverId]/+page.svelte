@@ -1,20 +1,23 @@
 <script lang="ts">
 	import Modal from "../../../modals/modal.svelte";
-	import type { TServer } from "../../../models/types";
+	// import type { TServer } from "../../../models/types";
 	import type { PageData } from './$types';
     import NewServerScan from '../../../modals/add-network.modal.svelte';
-    import SaveSubnetResult from '../../../modals/save-subnet-result.modal.svelte';
+    // import SaveSubnetResult from '../../../modals/save-subnet-result.modal.svelte';
     import Subnet from '../../../templates/subnet.card.svelte'
-	import type { ProxyServerInterface } from "../../../models/proxy";
+	// import type { ProxyServerInterface } from "../../../models/proxy";
 	
     export let data: PageData;
 
     let serverScanDialog: HTMLDialogElement;
-    let saveSubnetDialog: HTMLDialogElement;
+    // let saveSubnetDialog: HTMLDialogElement;
 
-    let server: ProxyServerInterface & TServer = data.server;
+    // let server: ProxyServerInterface & TServer = data.server;
+    $: ({server} = data)
     let serverId: number = data.serverId;
     let subnet: string;
+
+    
     // console.log('->',server);
 
     // const showSubnetModal = (args:any) => {
@@ -25,6 +28,10 @@
     //     console.log("submitting subnet with devices");
     //     saveSubnetDialog.showModal();
     // }
+
+    const closeDialog = () => {
+        serverScanDialog.close();
+    }
 </script>
 
 <div class="items-center h-screen max-w-full p-2 mx-auto bg-gray-800 lg:p-20">
@@ -44,14 +51,16 @@
         <h4 class="text-white font-bold pt-4">Description:&nbsp;&nbsp;<span class="text-sm font-normal text-white dark:text-white">{server?.description}</span></h4>
         
         <h2 class="pt-4 mb-2 text-lg font-semibold text-gray-900 dark:text-white">
-            Server subnets:
+            Server subnets: {server.subnets?.length}
         </h2>
-		<ul class="block justify-between text-gray-500 list-inside dark:text-gray-400 hover:shadow-sm">
+		<ul class="max-w-full divide-y divide-gray-200 dark:divide-gray-700">
             {#if server.subnets}
             {#each server.subnets as subnet, index}
-            <li id={subnet.id?.toString()} class="block shadow-lg my-2 items-center min-w-full">
-                <Subnet {subnet} {serverId}/>
+            <li class:mb-1={(server.subnets?.length-1) > index} id={index.toString()} class="py-3 px-3 sm:py-4 bg-slate-700 border-gray-600 rounded-md">
+                <Subnet {subnet} {serverId} />
             </li>
+            <!-- <li id={subnet.id?.toString()} class="block shadow-lg my-2 items-center min-w-full">
+            </li> -->
         {/each}
         {/if}
     	</ul>
@@ -59,7 +68,7 @@
 </div>
 
 <Modal bind:dialog={serverScanDialog} on:close>
-    <NewServerScan {server} />
+    <NewServerScan {closeDialog} {server} />
 </Modal>
 
 <!-- <Modal bind:dialog={saveSubnetDialog} on:close>

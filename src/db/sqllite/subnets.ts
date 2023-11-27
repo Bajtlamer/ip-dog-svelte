@@ -30,3 +30,11 @@ export const findSubnetBySubnetName = async (subnet: string): Promise<TSubnet | 
 		}
 	});
 };
+
+export const deleteSubnet = async (subnetId: number): Promise<void> => {
+	await db.subnet.delete({
+		where: {
+			id: subnetId
+		}
+	});
+};
