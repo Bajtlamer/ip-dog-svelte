@@ -22,6 +22,7 @@
     let count: number = 0;
     let message: string | undefined = '';
     let saveDropdownShow: boolean = false;
+    let disabled = true;
 
     // type TSubnetFormResult = {
     //     subnet?: string;
@@ -63,7 +64,7 @@
                     update();
                 }
             } else if (result.type === 'failure') {
-                // console.log('failure:', result);
+                console.log('failure:', result);
             form =  result.data;
             message = result.data?.message;
             cancel();
@@ -72,6 +73,12 @@
         loading = false;
         };
     }
+
+    const showSubnetSaveForm = () => {
+        form = {};
+        // message = '';
+        saveSubnetDialog.showModal();
+    };
 
     const onKeyUpEventHandler = (event: KeyboardEvent) => {
         if (event.key === 'Escape') {
@@ -198,7 +205,7 @@
                         >
                             <div class="py-1" role="none">
                                 <button
-                                        on:click={()=>saveSubnetDialog.showModal()}
+                                        on:click={showSubnetSaveForm}
                                         type="submit"
                                         class="block w-full px-4 py-2 text-left text-sm hover:bg-gray-700"
                                         role="menuitem"
@@ -236,5 +243,5 @@
 </div>
 
 <Modal bind:dialog={saveSubnetDialog} on:close>
-    <SaveSubnetResult {form} {server} {submitScanResultForm} {subnet} {message}/>
+    <SaveSubnetResult {form} {server} {submitScanResultForm} {subnet} {disabled}/>
 </Modal>

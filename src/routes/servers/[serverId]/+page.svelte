@@ -57,7 +57,7 @@
             {#if server.subnets}
             {#each server.subnets as subnet, index}
             <li class:mb-1={(server.subnets?.length-1) > index} id={index.toString()} class="py-3 px-3 sm:py-4 bg-slate-700 border-gray-600 rounded-md">
-                <Subnet {subnet} {serverId} />
+                <Subnet {subnet} {server}/>
             </li>
             <!-- <li id={subnet.id?.toString()} class="block shadow-lg my-2 items-center min-w-full">
             </li> -->
