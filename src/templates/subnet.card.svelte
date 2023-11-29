@@ -1,4 +1,5 @@
 <script lang="ts">
+	import ArrowRight from './icons/arrow-right-icon.svelte';
 	import { clickOutside } from '$lib/event';
 	import Modal from '../modals/modal.svelte';
 	import ConfirmationDialog from '../modals/confirmation-dialog.svelte';
@@ -26,7 +27,7 @@
     
     let Device = new CDevice({
         serverId: server.id,
-        subnetId: subnet.id,
+        subnetId: subnet.id ?? 0,
         address: subnet.subnet,
         status: subnet.status,
         description: subnet.description
@@ -68,7 +69,7 @@
 	const deleteSubnet = async () => {
 		deleting = true;
 		// await sleep(5000);
-		console.log('start deleting subnte...');
+		console.log('start deleting subnet...', Subnet.id);
 		const data = new FormData();
 		if (Subnet.id) {
 			data.set('subnetId', Subnet.id?.toString());
@@ -122,14 +123,18 @@
                 <div class="inline-flex items-center">
                     {#if (isValidIpAddress(subnet.subnet))}
                         {#await Device.status}
-                            <span class="pr-2">
+                            <span class="block pr-2">
                                 <Pulse size="19" color="lightgreen" unit="px" duration="1s" />
                             </span>
                         {:then isAlive}
-                            <span class="pl-2">
+                            <span class="block pr-2">
                                 <svelte:component this={getStatusIcon(isAlive)} />
                             </span>
                         {/await}
+                    {:else}
+                    <a href={`/servers/${server.id}/${Subnet.id}`} class="pr-2">
+                        <ArrowRight />
+                    </a>
                     {/if}
                         <!-- <button class="bg-blue-500 px-3 py-1 rounded-md ml-5" on:click={()=>Device.status = Server.isDeviceOnline(Device)}>Probe</button> -->
 					<button

@@ -9,7 +9,7 @@
 
 <div class="p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
     <h5 class="flex items-center justify-between w-full text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-        {device.description}
+        {device.description || '-'}
         <span>
             <a href="/servers/{serverId}/{subnetId}/{device.id}" class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                 Show detail
@@ -19,6 +19,12 @@
             </a>
         </span>
     </h5>
-    <span class="block mb-2 text-xs text-white">{device.hostname}</span>
-    
+    {#if (device.hostname)}
+        <span class="block mb-2 text-sm font-bold text-white">{device.hostname} 
+            <span class="mb-2 text-xs font-normal text-white">({device.address})</span>
+        </span>
+        
+    {:else}
+        <span class="block mb-2 text-sm font-bold text-white">{device.address}</span>
+    {/if}
 </div>
