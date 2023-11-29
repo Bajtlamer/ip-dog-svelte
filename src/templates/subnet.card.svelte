@@ -4,20 +4,17 @@
 	import ConfirmationDialog from '../modals/confirmation-dialog.svelte';
 	import { ModalDialog } from '../models/modal';
 	import { invalidate } from '$app/navigation';
-	import { applyAction, deserialize } from '$app/forms';
 	import { getStatusIcon, getSubnetDeviceIcon, isValidIpAddress } from '$lib/functions';
 	import { Pulse } from 'svelte-loading-spinners';
-	// import { pingDevice } from '$lib/service/network.service';
-	import type { TServer } from '../models/types';
-	import { browser } from '$app/environment';
 	import { onMount } from 'svelte';
 	import { CSubnet, type iSubnet } from '../models/subnet';
 	import { ProxyServer } from '../models/proxy';
 	import { CDevice } from '../models/device';
-	// import type { iSubnet } from '../models/subnet';
+	import type { TServer } from '../models/types';
+	import { deserialize } from '$app/forms';
 
+    
 	export let subnet: iSubnet;
-	// export let serverIdw: number;
 	export let server: TServer;
 
 	let delConfirmationDialog: HTMLDialogElement;
@@ -35,19 +32,15 @@
         description: subnet.description
     });
 
-    // Subnet.setProxyServer(Server);
-    // Device.setSubnet(Subnet);
-
-    // console.log(Device);
-
     onMount(async () => {
-		// subnet.status = pingDevice(Subnet.subnet, server);
         Device.status = Server.isDeviceOnline(Device);
 	});
+    
+    const subject = (Subnet.isSubnet()? 'subnet' : 'device');
 
 	modal = modal.createModalConfirmationDialog(
-		'Delete Subnet',
-		`Are you sure you want to delete subent '${Subnet.subnet}'?`,
+		'Delete ' + subject,
+		`Are you sure you want to delete ${subject} with IP '${Subnet.subnet}'?`,
 		[
 			{ text: 'Cancel', class: 'cancel', handler: () => delConfirmationDialog.close() },
 			{
@@ -59,7 +52,6 @@
 	);
 
 	const onClickOutsideEventHandler = (event: MouseEvent) => {
-		// console.log('clicked_outside', event);
 		saveDropdownShow = false;
 	};
 
@@ -98,12 +90,9 @@
 			if (result.type === 'success') {
 				delConfirmationDialog.close();
 				await invalidate('/servers/' + server.id);
-				// await invalidateAll();
-				console.log('Invalidate URL:', '/servers/' + server.id);
-				applyAction(result);
+				// console.log('Invalidate URL:', '/servers/' + server.id);
 			} else if (result.type === 'failure') {
 				modal = modal.createModalWarningDialog('Delete Server', 'Server deletion failed.');
-				// delConfirmationDialog.close();
 			}
 		} catch (error: any) {
 			modal = modal.createModalWarningDialog('Delete Server', error?.message);
@@ -121,15 +110,6 @@
 	<div class="flex-1 min-w-0">
 		<p class="inline-flex items-center text-sm font-medium text-gray-900 truncate dark:text-white">
 			{Subnet.subnet}
-			<!-- {#await pingDevice(subnet.subnet, server)}
-                <span class="pr-2">
-                    <Pulse size="19" color="lightgreen" unit="px" duration="1s"/>
-                </span>
-            {:then isAlive}
-            <span class="pl-2">
-                <svelte:component this={getStatusIcon(isAlive)}/>
-            </span>
-            {/await} -->
 		</p>
 		<p class="text-sm text-gray-500 truncate dark:text-gray-400">
 			{Subnet.description}
