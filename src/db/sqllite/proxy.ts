@@ -30,7 +30,7 @@ export const createProxyServer = async (proxy: TProxyServerCreatePrototype): Pro
 	});
 };
 
-export const findProxyServerById = async (id: number): Promise<TServer | null> => {
+export const getProxyServerById = async (id: number): Promise<TServer | null> => {
 	return await db.server.findFirst({
 		where: {
 			id

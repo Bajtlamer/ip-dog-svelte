@@ -2,7 +2,7 @@ import type { Actions } from './$types';
 import type { PageServerLoad } from '../$types';
 import { ProxyServer, type TProxyServerCreatePrototype } from '../../models/proxy';
 import { fail, redirect } from '@sveltejs/kit';
-import { createProxyServer, deleteProxyServer, getProxyServers } from '$db/sqllite/servers';
+import { createProxyServer, deleteProxyServer, getProxyServers } from '$db/sqllite/proxy';
 import type { TServer } from '../../models/types';
 import { error } from 'console';
 

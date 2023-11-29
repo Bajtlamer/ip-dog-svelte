@@ -7,7 +7,7 @@ import DeviceIcon from '../templates/icons/device-icon.svelte';
 
 import { fail } from '@sveltejs/kit';
 
-export const validateIPaddress = (ipaddress: string) => {
+export const isValidIpAddress = (ipaddress: string) => {
 	if (
 		/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(
 			ipaddress
@@ -18,13 +18,13 @@ export const validateIPaddress = (ipaddress: string) => {
 	return false;
 };
 
-export const getStatusIcon = (status: boolean) => {
+export const getStatusIcon = (status?: boolean) => {
 	return status ? OkIconGreen : OkIconGrey;
 };
 
 export const getSubnetDeviceIcon = (subnet: string) => {
 	// const isNet = status.match(/\//gi);
-	return validateIPaddress(subnet) ? DeviceIcon : NetworkIcon;
+	return isValidIpAddress(subnet) ? DeviceIcon : NetworkIcon;
 };
 
 export const getServerStatusIcon = (status: boolean) => {

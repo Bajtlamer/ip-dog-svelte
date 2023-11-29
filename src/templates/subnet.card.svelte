@@ -1,18 +1,22 @@
 <script lang="ts">
 	import { clickOutside } from '$lib/event';
 	import Modal from '../modals/modal.svelte';
-	import type { Subnet } from '../models/proxy';
 	import ConfirmationDialog from '../modals/confirmation-dialog.svelte';
 	import { ModalDialog } from '../models/modal';
-	import { invalidate, invalidateAll } from '$app/navigation';
+	import { invalidate } from '$app/navigation';
 	import { applyAction, deserialize } from '$app/forms';
-	import { getStatusIcon, getSubnetDeviceIcon, validateIPaddress } from '$lib/functions';
+	import { getStatusIcon, getSubnetDeviceIcon, isValidIpAddress } from '$lib/functions';
 	import { Pulse } from 'svelte-loading-spinners';
-	import { pingDevice } from '$lib/service/network.service';
+	// import { pingDevice } from '$lib/service/network.service';
 	import type { TServer } from '../models/types';
 	import { browser } from '$app/environment';
+	import { onMount } from 'svelte';
+	import { CSubnet, type iSubnet } from '../models/subnet';
+	import { ProxyServer } from '../models/proxy';
+	import { CDevice } from '../models/device';
+	// import type { iSubnet } from '../models/subnet';
 
-	export let subnet: Subnet;
+	export let subnet: iSubnet;
 	// export let serverIdw: number;
 	export let server: TServer;
 
@@ -20,10 +24,30 @@
 	let saveDropdownShow: boolean = false;
 	let modal: ModalDialog = new ModalDialog();
 	let deleting: boolean;
+    let Subnet = new CSubnet(subnet);
+    let Server = new ProxyServer(server);
+    
+    let Device = new CDevice({
+        serverId: server.id,
+        subnetId: subnet.id,
+        address: subnet.subnet,
+        status: subnet.status,
+        description: subnet.description
+    });
+
+    // Subnet.setProxyServer(Server);
+    // Device.setSubnet(Subnet);
+
+    // console.log(Device);
+
+    onMount(async () => {
+		// subnet.status = pingDevice(Subnet.subnet, server);
+        Device.status = Server.isDeviceOnline(Device);
+	});
 
 	modal = modal.createModalConfirmationDialog(
 		'Delete Subnet',
-		`Are you sure you want to delete subent '${subnet.subnet}'?`,
+		`Are you sure you want to delete subent '${Subnet.subnet}'?`,
 		[
 			{ text: 'Cancel', class: 'cancel', handler: () => delConfirmationDialog.close() },
 			{
@@ -54,8 +78,8 @@
 		// await sleep(5000);
 		console.log('start deleting subnte...');
 		const data = new FormData();
-		if (subnet.id) {
-			data.set('subnetId', subnet.id?.toString());
+		if (Subnet.id) {
+			data.set('subnetId', Subnet.id?.toString());
 		} else {
 			return (modal = modal.createModalWarningDialog(
 				'Delete Subnet',
@@ -91,12 +115,12 @@
 
 <div class="flex items-center space-x-4 rtl:space-x-reverse bg-gray-700xxx">
 	<div class="flex-shrink-0">
-		<svelte:component this={getSubnetDeviceIcon(subnet?.subnet)} />
+		<svelte:component this={getSubnetDeviceIcon(Subnet.subnet)} />
 	</div>
 
 	<div class="flex-1 min-w-0">
 		<p class="inline-flex items-center text-sm font-medium text-gray-900 truncate dark:text-white">
-			{subnet.subnet}
+			{Subnet.subnet}
 			<!-- {#await pingDevice(subnet.subnet, server)}
                 <span class="pr-2">
                     <Pulse size="19" color="lightgreen" unit="px" duration="1s"/>
@@ -108,7 +132,7 @@
             {/await} -->
 		</p>
 		<p class="text-sm text-gray-500 truncate dark:text-gray-400">
-			{subnet.description}
+			{Subnet.description}
 		</p>
 	</div>
 
@@ -116,18 +140,18 @@
 		<div class="relative inline-block text-left" id="dropdown">
 			<div id="button" class="rounded-lg hover:bg-gray-700 hover:border-gray-500">
                 <div class="inline-flex items-center">
-                    {#if (validateIPaddress(subnet?.subnet)) && browser}
-					{#await pingDevice(subnet.subnet, server)}
-						<span class="pr-2">
-							<Pulse size="19" color="lightgreen" unit="px" duration="1s" />
-						</span>
-					{:then isAlive}
-						<span class="pl-2">
-							<svelte:component this={getStatusIcon(isAlive)} />
-						</span>
-					{/await}
+                    {#if (isValidIpAddress(subnet.subnet))}
+                        {#await Device.status}
+                            <span class="pr-2">
+                                <Pulse size="19" color="lightgreen" unit="px" duration="1s" />
+                            </span>
+                        {:then isAlive}
+                            <span class="pl-2">
+                                <svelte:component this={getStatusIcon(isAlive)} />
+                            </span>
+                        {/await}
                     {/if}
-
+                        <!-- <button class="bg-blue-500 px-3 py-1 rounded-md ml-5" on:click={()=>Device.status = Server.isDeviceOnline(Device)}>Probe</button> -->
 					<button
 						use:clickOutside={onClickOutsideEventHandler}
 						on:keyup={onKeyUpEventHandler}
@@ -158,7 +182,7 @@
 			>
 				<div class="py-1" role="none">
 					<a
-						href={`/servers/${server.id}/${subnet.id}`}
+						href={`/servers/${server.id}/${Subnet.id}`}
 						type="submit"
 						class="block w-full px-4 py-2 text-left text-sm hover:bg-gray-700"
 						role="menuitem"
@@ -166,6 +190,15 @@
 						id="menu-item-2"
 						>Show subnet devices
 					</a>
+                    <button disabled={!Subnet.isDevice()}
+                        on:click={()=>Device.status = Server.isDeviceOnline(Device)}
+                        type="submit"
+                        class="{Subnet.isDevice() || 'text-gray-700 hover:bg-gray-800'} block w-full px-4 py-2 text-left text-sm hover:bg-gray-700 border-b-2 border-gray-700"
+                        role="menuitem"
+                        tabindex="-1"
+                        id="menu-item-2"
+                        >Probe device
+                    </button>
 					<button
 						on:click={() => delConfirmationDialog.showModal()}
 						type="submit"

@@ -1,7 +1,7 @@
 
 import { error } from '@sveltejs/kit';
 // import { type Subnet } from '../../../../models/proxy.js';
-import { findSubnetById } from '$db/sqllite/servers.js';
+import { findSubnetById } from '$db/sqllite/proxy.js';
 import type { Subnet } from '../../../../models/proxy.js';
 // import type { Subnet } from '@prisma/client';
 

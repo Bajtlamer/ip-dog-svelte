@@ -32,7 +32,7 @@ export const scanSubnet = async (userToken: string, subnet: string, hostname: st
         throw new Error('Subnet scanning failed, with an unexpected error');
 }
 
-export const pingDevice = async (deviceString?: string, server?: ProxyServerInterface): Promise<boolean> => {
+export const pingDevice = async (deviceString?: string, server?: ProxyServerInterface | null): Promise<boolean> => {
     if (!deviceString || !server) return false;
 
     const authResponse: AuthTokenResponse = await authenticateUser(server.username, server.password, server.hostname);

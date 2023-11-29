@@ -1,3 +1,8 @@
+import { isValidIpAddress } from "$lib/functions";
+import { pingDevice } from "$lib/service/network.service";
+import type { iSubnet } from "./subnet";
+import type { TDevice } from "./types";
+
 export type TProxyServerCreatePrototype = {
     name: string;
     username: string;
@@ -26,13 +31,6 @@ export interface SecureProxyServer {
     
 }
 
-export interface Subnet {
-    id?: number
-    subnet: string,
-    description?: string | null
-    devices?: any[]
-}
-
 export interface Device {
     id?: number
     address: string;
@@ -50,8 +48,16 @@ export class ProxyServer implements ProxyServerInterface {
     public token = ''
     public status = false
 
-    constructor(proxy: ProxyServerInterface) {
-        Object.assign(this, proxy);
+    constructor(proxy?: ProxyServerInterface) {
+        if (proxy) Object.assign(this, proxy);
+    }
+
+    isDeviceOnline = async (device: TDevice): Promise<boolean> => {
+        if (true === isValidIpAddress(device.address)) {
+            return await pingDevice(device.address, this);
+        }else {
+            return false;
+        }
     }
 
     toArray(): ProxyServerInterface {

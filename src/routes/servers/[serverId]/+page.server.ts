@@ -1,5 +1,5 @@
 import { error } from '@sveltejs/kit';
-import { findProxyServerById } from '$db/sqllite/servers.js';
+import { getProxyServerById } from '$db/sqllite/proxy.js';
 import type { TServer } from '../../../models/types.js';
 
 export const load: import('./$types.js').PageServerLoad = async ({ params }) => {
@@ -8,7 +8,7 @@ export const load: import('./$types.js').PageServerLoad = async ({ params }) => 
 		throw error(404, 'Page not found');
 	}
 
-	const server: TServer | null = await findProxyServerById(serverId);
+	const server: TServer | null = await getProxyServerById(serverId);
 
 	if (server) {
 		return { server, serverId };

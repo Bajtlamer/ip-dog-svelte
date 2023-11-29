@@ -1,4 +1,11 @@
-import type { TDevice } from "./types";
+import { isValidIpAddress } from "$lib/functions";
+import { pingDevice } from "$lib/service/network.service";
+import { ProxyServer, type ProxyServerInterface } from "./proxy";
+import type { TServer } from "./types";
+import { PrismaClient } from '@prisma/client'
+
+// expose a singleton
+export const db = new PrismaClient()
 
 export interface ScanResult {
     devices:string[],
@@ -30,17 +37,47 @@ export interface iSubnet {
     subnet: string
     description?: string | null;
     serverId: number
+    status?: Promise<boolean> | boolean
+    server?: ProxyServerInterface | null
 }
 
-export class Subnet implements iSubnet {
+export class CSubnet implements iSubnet {
     id = 0;
     subnet = ''
     description = ''
     serverId = 0;
     devices = []
+    status = new Promise<boolean>((resolve) => resolve);
+    server = new ProxyServer();
 
-    constructor(subnet?: iSubnet) {
-        Object.assign(this, subnet);
+    constructor(subnet?: iSubnet | null) {
+        if (subnet) Object.assign(this, subnet);
+    }
+
+    isSubnet = () => {
+        return !isValidIpAddress(this.subnet);
+    }
+
+    isDevice = () => {
+        return isValidIpAddress(this.subnet);
+    }
+
+    getServerId = () => this.serverId;
+    
+    setProxyServer = (server: ProxyServerInterface) => {
+        this.server = new ProxyServer(server);
+    }
+
+    getServer = (): ProxyServerInterface | null => {
+        return new ProxyServer(this.server);
+    }
+
+    probe = async (server: TServer) => {
+        return await pingDevice(this.subnet, server);
+    }
+
+    isOnline = async (server: TServer): Promise<boolean> => {
+        return await pingDevice(this.subnet, server);
     }
 
     toArray(): iSubnet {
