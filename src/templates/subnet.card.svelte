@@ -26,8 +26,7 @@
     let Server = new ProxyServer(server);
     
     let Device = new CDevice({
-        serverId: server.id,
-        subnetId: subnet.id ?? 0,
+        subnetId: subnet.id || 0,
         address: subnet.subnet,
         status: subnet.status,
         description: subnet.description

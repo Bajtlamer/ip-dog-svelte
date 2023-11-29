@@ -27,13 +27,6 @@
 	let saveDropdownShow: boolean = false;
 	let disabled = true;
 
-	// type TSubnetFormResult = {
-	//     subnet?: string;
-	//     message?: string | undefined;
-	//     description?: string | undefined;
-	//     invalidSubnet?: boolean;
-	// }
-
 	let form: Record<string, any> | undefined = {};
 
 	const onClickOutsideEventHandler = (event: MouseEvent) => {
@@ -68,13 +61,7 @@
         return;
 	};
 
-	const submitScanResultForm: SubmitFunction = ({
-		formElement,
-		formData,
-		action,
-		cancel,
-		submitter
-	}) => {
+	const submitScanResultForm: SubmitFunction = ({formData, cancel }) => {
 		const serverId = server.id?.toString();
 		if (!serverId) {
 			message = 'Save subnet failed, empty server ID!';
@@ -133,7 +120,7 @@
 
 	// };
 
-	const submitScanForm: SubmitFunction = ({ formElement, formData, action, cancel, submitter }) => {
+	const submitScanForm: SubmitFunction = ({ formData, cancel }) => {
 		for (const [key, value] of Object.entries(server)) {
 			formData.append(key, value);
 		}
