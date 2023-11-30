@@ -9,7 +9,7 @@
 	let serverScanDialog: HTMLDialogElement;
 
 	$: ({ server } = data);
-	let serverId: number = data.serverId;
+	// let serverId: number = data.serverId;
 	let subnet: string;
 
 	const closeDialog = () => {

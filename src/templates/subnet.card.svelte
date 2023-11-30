@@ -1,10 +1,11 @@
 <script lang="ts">
-	import ArrowRight from './icons/arrow-right-icon.svelte';
+	import DevIcon from './icons/dev-icon.svelte';
+	import SubnetNavArrow from './subnet.nav.arrow.svelte';
 	import { clickOutside } from '$lib/event';
 	import Modal from '../modals/modal.svelte';
 	import ConfirmationDialog from '../modals/confirmation-dialog.svelte';
 	import { ModalDialog } from '../models/modal';
-	import { invalidate } from '$app/navigation';
+	import { goto, invalidate, invalidateAll } from '$app/navigation';
 	import { getStatusIcon, getSubnetDeviceIcon, isValidIpAddress } from '$lib/functions';
 	import { Pulse } from 'svelte-loading-spinners';
 	import { onMount } from 'svelte';
@@ -89,7 +90,10 @@
 
 			if (result.type === 'success') {
 				delConfirmationDialog.close();
-				await invalidate('/servers/' + server.id);
+
+				// await invalidate('/servers/' + server.id);
+                console.log('invalidate:', '/servers/' + server.id);
+                await invalidateAll();
 				// console.log('Invalidate URL:', '/servers/' + server.id);
 			} else if (result.type === 'failure') {
 				modal = modal.createModalWarningDialog('Delete Server', 'Server deletion failed.');
@@ -108,11 +112,26 @@
 	</div>
 
 	<div class="flex-1 min-w-0">
-		<p class="inline-flex items-center text-sm font-medium text-gray-900 truncate dark:text-white">
-			{Subnet.subnet}
-		</p>
-		<p class="text-sm text-gray-500 truncate dark:text-gray-400">
+		<p class="inline-flex items-center text-md font-medium text-gray-900 truncate dark:text-white">
 			{Subnet.description}
+            {#if Subnet.devices?.length }
+                <span class="flex text-white font-normal text-xs items-center gap-1 px-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+                    ><g
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        ><rect width="14" height="20" x="5" y="2" rx="2" /><path d="M15 14h.01M9 6h6m-6 4h6" /></g
+                    >
+                </svg>
+                {Subnet.devices?.length}
+                </span>
+            {/if}
+		</p>
+		<p class="flex text-xs text-gray-500 truncate dark:text-gray-400">
+            {Subnet.subnet}
 		</p>
 	</div>
 
@@ -132,7 +151,7 @@
                         {/await}
                     {:else}
                     <a href={`/servers/${server.id}/${Subnet.id}`} class="pr-2">
-                        <ArrowRight />
+                        <SubnetNavArrow />
                     </a>
                     {/if}
                         <!-- <button class="bg-blue-500 px-3 py-1 rounded-md ml-5" on:click={()=>Device.status = Server.isDeviceOnline(Device)}>Probe</button> -->
@@ -165,15 +184,15 @@
 				tabindex="-1"
 			>
 				<div class="py-1" role="none">
-					<a
-						href={`/servers/${server.id}/${Subnet.id}`}
+					<button  disabled={Subnet.isDevice()}
+                        on:click={()=>goto(`/servers/${server.id}/${Subnet.id}`)}
 						type="submit"
-						class="block w-full px-4 py-2 text-left text-sm hover:bg-gray-700"
+						class="{!Subnet.isDevice() || 'text-gray-700 hover:bg-gray-800'} block w-full px-4 py-2 text-left text-sm hover:bg-gray-700"
 						role="menuitem"
 						tabindex="-1"
 						id="menu-item-2"
-						>Show subnet devices
-					</a>
+						>Show devices
+					</button>
                     <button disabled={!Subnet.isDevice()}
                         on:click={()=>Device.status = Server.isDeviceOnline(Device)}
                         type="submit"

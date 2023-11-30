@@ -61,7 +61,7 @@
         return;
 	};
 
-	const submitScanResultForm: SubmitFunction = ({formData, cancel }) => {
+	const submitScanResultForm: SubmitFunction = async ({formData, cancel }) => {
 		const serverId = server.id?.toString();
 		if (!serverId) {
 			message = 'Save subnet failed, empty server ID!';
@@ -80,12 +80,42 @@
 				console.log('result:', response?.subnet);
 
 				if (response) {
-					const subnetId = response.subnet.subnetId;
+					const subnetId = response.subnet.id;
+                    console.log('subnet ID:', subnetId);
 					saveSubnetDialog.close();
 					closeDialog();
                     console.log(devices.length);
                     // if (subnet.isSubnet() && devices.length > 0) {
-					saveDevicesToSubnet(devices, new CSubnet(response.subnet));
+					// saveDevicesToSubnet(devices, new CSubnet(response.subnet));
+
+                    const subnet:CSubnet = new CSubnet(response.subnet)
+
+                    
+                    // const subnetId:number = subnet.id;
+
+                    if (subnet.isSubnet() && devices.length > 0) {
+                        for await(const address of devices) {
+                            const dev = { address, subnetId };
+
+                            const device = new CDevice(dev);
+
+                            const response = await fetch('/api/devices', {
+                                method: 'POST',
+                                body: JSON.stringify(device.toArray()),
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                }
+                            });
+
+                            const res = await response.json();
+
+
+                            console.log('add device response:', res);
+                            invalidate('/servers/' + server.id);
+                        };
+                    }
+
+
                     // }
 					await update();
 				}

@@ -11,7 +11,7 @@ export const load: import('./$types.js').PageServerLoad = async ({ params }) => 
 	const server: TServer | null = await getProxyServerById(serverId);
 
 	if (server) {
-		return { server, serverId };
+		return { server };
 	}
 
 	throw error(404, 'Page not found');
