@@ -3,7 +3,7 @@
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import type { ProxyServerInterface } from '../models/proxy';
     // import NetworkIcon from '../templates/icons/network-icon.svelte';
-    
+
     export let server: ProxyServerInterface;
     export let subnet: string;
     // export let message: string | undefined;
@@ -12,7 +12,7 @@
     export let submitScanResultForm: SubmitFunction;
 
     /** @type {import('./$types').ActionData} */
-    export let form: any = {};
+    export let form:Record<string, any> | undefined = {};
 
 
 </script>

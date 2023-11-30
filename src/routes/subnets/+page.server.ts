@@ -6,7 +6,7 @@ import { authenticateUser } from '$lib/proxy';
 import { fail, redirect } from '@sveltejs/kit';
 import type { AuthTokenResponse, TSubnet } from '../../models/types';
 import type { ProxyServerInterface } from '../../models/proxy';
-import { createSubnet, deleteSubnet, findSubnetBySubnetName } from '$db/sqllite/subnets';
+import { createSubnet, deleteSubnet, findSubnetBySubnetName, updateSubnet } from '$db/sqllite/subnets';
 
 let scanResponse: ScanResult;
 let server: ProxyServerInterface;
@@ -59,7 +59,7 @@ export const actions: Actions = {
 	},
 	
 	save_subnet_result: async ({ request }: any) => {
-		console.log('jsem na serveru...');
+		console.log('Jsem na serveru...');
 		const data = await request.formData();
 		const subnet = data.get('subnet');
 		const serverId = Number(data.get('serverId'));
@@ -101,6 +101,7 @@ export const actions: Actions = {
 				});
             }
 			
+			console.log('Jsem na serveru...novy subnet:', subnetObj.serverId);
 			const createdSubnet = await createSubnet(subnetObj) as TSubnet;
 
 			if (createdSubnet === null) {
@@ -130,10 +131,10 @@ export const actions: Actions = {
 	},
 
 	delete_subnet: async ({ request }: any) => {
-		console.log('jsem na serveru...maszu subnet');
-        const data = await request.formData();
+		const data = await request.formData();
         // const subnet = data.get('subnetId');
         const subnetId = Number(data.get('subnetId'));
+		console.log('Jsem na serveru...maszu subnet:', subnetId);
         // const description = data.get('description');
         
         // const subnetObj: TSubnet = { subnet, serverId, description };
@@ -148,8 +149,40 @@ export const actions: Actions = {
                 message: 'Operation failed, expected subnet ID, but got null.'
             });
         }else{
-			console.log(`SUBNET_ID:`, subnetId)
+			// console.log(`SUBNET_ID:`, subnetId)
 			const response = await deleteSubnet(subnetId);
+			return { success: true, response };
+		}
+
+	},
+
+	edit_subnet: async ({ request }: any) => {
+		// console.log('Jsem na serveru...edituji subnet:');
+        const data = await request.formData();
+		// console.log(data);
+        // const subnet = data.get('subnetId');
+        const subnet = data.get('subnet');
+        const subnetId = Number(data.get('id'));
+        const serverId = Number(data.get('serverId'));
+        const description = data.get('subnet-description');
+		console.log('Jsem na serveru...edituji subnet:', subnetId);
+        // const description = data.get('description');
+        
+        const subnetObj: TSubnet = { subnet, serverId, description };
+        // console.log(subnetObj);
+        // if (typeof subnet!=='string' ||!subnet) {
+        //     return fail(400, { invalidSubnet: true, subnet });
+        // }
+        
+        if (isNaN (subnetId)) {
+            console.log('Invalid subnet ID');
+            return fail(400, { 
+                message: 'Operation failed, expected subnet ID, but got null.'
+            });
+        }else{
+			// console.log(`SUBNET_ID:`, subnetId)
+			const response = await updateSubnet(subnetId, subnetObj);
+			// console.log(response);
 			return { success: true, response };
 		}
 

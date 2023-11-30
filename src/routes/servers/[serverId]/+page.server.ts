@@ -2,7 +2,8 @@ import { error } from '@sveltejs/kit';
 import { getProxyServerById } from '$db/sqllite/proxy.js';
 import type { TServer } from '../../../models/types.js';
 
-export const load: import('./$types.js').PageServerLoad = async ({ params }) => {
+export const load: import('./$types.js').PageServerLoad = async ({ depends, params }) => {
+	depends('server:subnets');
 	const serverId = Number(params.serverId);
 	if (isNaN(serverId)) {
 		throw error(404, 'Page not found');

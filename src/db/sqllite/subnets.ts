@@ -1,6 +1,6 @@
 import { db } from '$lib/db.server';
 import type { iSubnet } from '../../models/subnet';
-import type { TSubnet } from '../../models/types';
+import type { TEditSubnet, TSubnet } from '../../models/types';
 
 
 export const createSubnet = async (subnet: iSubnet): Promise<TSubnet> => {
@@ -37,4 +37,13 @@ export const deleteSubnet = async (subnetId: number): Promise<void> => {
 			id: subnetId
 		}
 	});
+};
+
+export const updateSubnet = async (subnetId: number, data: TEditSubnet): Promise<TSubnet | null> => {
+	return await db.subnet.update({
+	where: {
+	  id: subnetId,
+	},
+	data: data,
+  })
 };

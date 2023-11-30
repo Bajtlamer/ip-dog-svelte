@@ -6,3 +6,6 @@ export const SALT_ROUNDS = 10;
 export const MODAL_TYPE_WARNING = 'warning';
 export const MODAL_TYPE_INFO = 'info';
 export const MODAL_TYPE_CONFIRM = 'confirmation';
+
+export const FORM_MODE_EDIT = 'edit';
+export const FORM_MODE_NEW = 'new';

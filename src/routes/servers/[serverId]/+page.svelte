@@ -3,17 +3,26 @@
 	import type { PageData } from './$types';
 	import NewServerScan from '../../../modals/add-network.modal.svelte';
 	import Subnet from '../../../templates/subnet.card.svelte';
+	import { invalidate, invalidateAll } from '$app/navigation';
+	import { CSubnet } from '../../../models/subnet';
 
 	export let data: PageData;
 
 	let serverScanDialog: HTMLDialogElement;
 
-	$: ({ server } = data);
+	
+	$: ({ server } = data) 
+	// console.log('SERVER_CHANGED:', JSON.stringify(server))
+	// $: ( console.log('servers changed:',server) );
 	// let serverId: number = data.serverId;
 	let subnet: string;
-
 	const closeDialog = () => {
 		serverScanDialog.close();
+	};
+
+	const refresh = async () => {
+		console.log('refreshing');
+		invalidateAll();
 	};
 </script>
 
@@ -56,7 +65,7 @@
 						id={index.toString()}
 						class="py-3 px-3 sm:py-4 bg-slate-700 border-gray-600 rounded-md"
 					>
-						<Subnet {subnet} {server} />
+						<Subnet subnet={new CSubnet(subnet)} {server} />
 					</li>
 				{/each}
 			{/if}

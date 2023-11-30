@@ -28,6 +28,12 @@ export type TSubnet = {
     serverId: number
 }
 
+export type TEditSubnet = {
+    subnet: string
+    description?: string | null
+    serverId: number
+}
+
 export type TDevice = {
     id?: number
     address: string
