@@ -124,8 +124,9 @@
 				delConfirmationDialog.close();
 
 				// await invalidate('/servers/' + server.id);
-                console.log('invalidate:', '/servers/' + server.id);
-                await invalidateAll();
+                // console.log('invalidate:', '/servers/' + server.id);
+                // await invalidateAll();
+				await invalidate('server:subnets');
 				// console.log('Invalidate URL:', '/servers/' + server.id);
 			} else if (result.type === 'failure') {
 				modal = modal.createModalWarningDialog('Delete Server', 'Server deletion failed.');
@@ -148,7 +149,7 @@
 			{subnet.description}
             {#if subnet.devices?.length }
                 <span class="flex text-white font-normal text-sm items-center gap-1 px-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                    <!-- <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
                     ><g
                         fill="none"
                         stroke="currentColor"
@@ -157,8 +158,8 @@
                         stroke-width="2"
                         ><rect width="14" height="20" x="5" y="2" rx="2" /><path d="M15 14h.01M9 6h6m-6 4h6" /></g
                     >
-                </svg>
-                {subnet.devices?.length}
+                </svg> -->
+                ({subnet.devices?.length})
                 </span>
             {/if}
 		</p>
