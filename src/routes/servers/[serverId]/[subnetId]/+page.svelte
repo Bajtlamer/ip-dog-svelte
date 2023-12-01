@@ -13,9 +13,10 @@
     let subnetId: number = data.subnetId;
     let subnet: iSubnet = data.subnet;
     let server: ProxyServerInterface | null = data.server;
-    
-    const submitDeviceForm = () => {
+    let Subnet = new CSubnet(subnet);
 
+    const submitDeviceForm = () => {
+        console.log('submitting device form');
     };
 
     $: Subnet = new CSubnet(subnet);
@@ -45,7 +46,7 @@
             {#if Subnet?.devices}
             {#each Subnet?.devices as device, index}
             <li id={index?.toString()} class="block shadow-lg my-2 items-center min-w-full">
-                <Device device={new CDevice(device)} iServer={server}/>
+                <Device device={new CDevice(device)} on:submitForm={submitDeviceForm} iServer={server}/>
             </li>
         {/each}
         {/if}

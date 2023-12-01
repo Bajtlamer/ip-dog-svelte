@@ -12,6 +12,9 @@
 	// export let subnetId: number;
 	export let device: CDevice;
 	export let iServer: ProxyServerInterface | null;
+	let server = new ProxyServer(iServer);
+
+	$: server = new ProxyServer(iServer);
 
 	let delConfirmationDialog: HTMLDialogElement;
 	let subnetFormDialog: HTMLDialogElement;
@@ -23,7 +26,6 @@
 		}
 	};
 
-	$: server = new ProxyServer(iServer);
 
 	onMount(async () => {
 		device.status = server.isDeviceOnline(device);
@@ -32,9 +34,11 @@
 	const showDeviceEditForm = (event: Event) => {
         subnetFormDialog.showModal();
     };
-    const submitDeviceForm: SubmitFunction = async ({ formData, cancel }) => {
+
+    const submitDeviceForm = async (): Promise<void> => {
         console.log('submit subnet form');
     };
+	
 </script>
 
 <div class="flex items-center space-x-4 rtl:space-x-reverse bg-gray-700xxx">
@@ -147,5 +151,5 @@
 
 <!-- SUBNET EDIT DIALOG -->
 <Modal bind:dialog={subnetFormDialog} >
-	<DeficeForm {device} dialog={subnetFormDialog} {submitDeviceForm} />
+	<DeficeForm {device} on:submit-form={submitDeviceForm} dialog={subnetFormDialog} />
 </Modal>
