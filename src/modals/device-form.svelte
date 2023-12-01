@@ -19,9 +19,9 @@
             <div class="flex items-center justify-between p-5 border-b rounded-t dark:border-gray-600">
                 <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
                     {#if isEditMode()}
-                    Edit Subnet form
+                    Edit Devce form
                     {:else}
-                    New Subnet form
+                    New Device form
                     {/if}
                 </h3>
                 <button on:click={()=>dialog.close()} type="button" class="inline-flex items-center justify-center w-8 h-8 text-sm text-gray-400 bg-transparent rounded-lg hover:bg-gray-200 hover:text-gray-900 ms-auto dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="default-modal">

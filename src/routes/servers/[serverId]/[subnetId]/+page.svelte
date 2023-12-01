@@ -1,20 +1,24 @@
 <script lang="ts">
 	import type { PageData } from './$types';
     import Device from '../../../../templates/device.card.svelte'
-	import type { CSubnet } from '../../../../models/subnet';
+	import { CSubnet, type iSubnet } from '../../../../models/subnet';
 	import Modal from '../../../../modals/modal.svelte';
 	import { CDevice } from '../../../../models/device';
+	import type { ProxyServerInterface } from '../../../../models/proxy';
 
     export let data: PageData;
 
     let dialog: HTMLDialogElement;
     let serverId: number = data.serverId;
     let subnetId: number = data.subnetId;
-    let subnet: CSubnet = data.subnet;
+    let subnet: iSubnet = data.subnet;
+    let server: ProxyServerInterface | null = data.server;
     
     const submitDeviceForm = () => {
 
     };
+
+    $: Subnet = new CSubnet(subnet);
 
 </script>
 
@@ -30,18 +34,18 @@
             </button>
         </div>
 
-        <h1 class="pt-4 text-2xl font-bold text-white">{subnet.description}</h1>
-        <p class="text-white text-xs">{subnet.subnet}</p>
+        <h1 class="pt-4 text-2xl font-bold text-white">{Subnet.description}</h1>
+        <p class="text-white text-xs">{Subnet.subnet}</p>
         <h4 class="text-white text-sm font-bold pt-4">Description:</h4>
-        <p class="font-normal text-gray-700 dark:text-gray-400">{subnet?.description}</p>
+        <p class="font-normal text-gray-700 dark:text-gray-400">{Subnet?.description}</p>
         <h2 class="pt-4 mb-2 text-lg font-semibold text-gray-900 dark:text-white">
             Devices list:
         </h2>
 		<ul class="block justify-between gap-4 text-gray-500 list-inside dark:text-gray-400 hover:shadow-sm">
-            {#if subnet?.devices}
-            {#each subnet?.devices as device, index}
+            {#if Subnet?.devices}
+            {#each Subnet?.devices as device, index}
             <li id={index?.toString()} class="block shadow-lg my-2 items-center min-w-full">
-                <Device device={new CDevice(device)} {subnetId} {serverId}/>
+                <Device device={new CDevice(device)} iServer={server}/>
             </li>
         {/each}
         {/if}

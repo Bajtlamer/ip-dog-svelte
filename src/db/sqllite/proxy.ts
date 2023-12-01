@@ -1,5 +1,6 @@
 import { db } from '$lib/db.server';
 import type { TProxyServerCreatePrototype } from '../../models/proxy';
+import type { iSubnet } from '../../models/subnet';
 import type { TServer, TSubnet } from '../../models/types';
 
 export const getProxyServers = async (): Promise<TServer[]> => {
@@ -45,7 +46,7 @@ export const getProxyServerById = async (id: number): Promise<TServer | null> =>
 	});
 };
 
-export const findSubnetById = async (id: number): Promise<TSubnet | null> => {
+export const findSubnetById = async (id: number): Promise<iSubnet | null> => {
 	return await db.subnet.findUnique({
 		where: {
 			id

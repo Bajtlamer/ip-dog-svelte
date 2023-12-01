@@ -48,7 +48,7 @@ export class ProxyServer implements ProxyServerInterface {
     public token = ''
     public status = false
 
-    constructor(proxy?: ProxyServerInterface) {
+    constructor(proxy?: ProxyServerInterface | null) {
         if (proxy) Object.assign(this, proxy);
     }
 

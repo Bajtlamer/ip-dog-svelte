@@ -1,7 +1,7 @@
 
 import { error } from '@sveltejs/kit';
 import { findSubnetById, getProxyServerById } from '$db/sqllite/proxy.js';
-import type { iSubnet } from '../../../../models/subnet.js';
+import type { CSubnet, iSubnet } from '../../../../models/subnet.js';
 import type { ProxyServerInterface } from '../../../../models/proxy.js';
 
 export const load: import('./$types.js').PageServerLoad = async ({ params }) => {
