@@ -2,6 +2,8 @@
 	import type { PageData } from './$types';
     import Device from '../../../../templates/device.card.svelte'
 	import type { CSubnet } from '../../../../models/subnet';
+	import Modal from '../../../../modals/modal.svelte';
+	import { CDevice } from '../../../../models/device';
 
     export let data: PageData;
 
@@ -10,6 +12,10 @@
     let subnetId: number = data.subnetId;
     let subnet: CSubnet = data.subnet;
     
+    const submitDeviceForm = () => {
+
+    };
+
 </script>
 
 <div class="items-center h-screen max-w-full p-2 mx-auto bg-gray-800 lg:p-20">
@@ -35,16 +41,13 @@
             {#if subnet?.devices}
             {#each subnet?.devices as device, index}
             <li id={index?.toString()} class="block shadow-lg my-2 items-center min-w-full">
-                <Device {device} {subnetId} {serverId}/>
+                <Device device={new CDevice(device)} {subnetId} {serverId}/>
             </li>
         {/each}
         {/if}
     	</ul>
     </div>
 </div>
-
-
-
 
 
 

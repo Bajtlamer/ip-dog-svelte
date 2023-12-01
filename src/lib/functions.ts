@@ -27,6 +27,10 @@ export const getSubnetDeviceIcon = (subnet: string) => {
 	return isValidIpAddress(subnet) ? DeviceIcon : NetworkIcon;
 };
 
+export const getDeviceTypeIcon = (subnet: string) => {
+	return DeviceIcon;
+};
+
 export const getServerStatusIcon = (status: boolean) => {
 	return status ? ServerIconGreen : ServerIconRed;
 };
