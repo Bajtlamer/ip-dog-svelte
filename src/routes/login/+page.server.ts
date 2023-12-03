@@ -6,7 +6,6 @@ import bcrypt from 'bcrypt';
 import crypto from 'crypto';
 import type { PageServerLoad } from '../$types';
 
-
 let message = '';
 
 export const load: PageServerLoad = async ({ locals }) => {
@@ -31,36 +30,48 @@ export const actions: Actions = {
 		}
 
 		// const password = await bcrypt.hash(password, SALT_ROUNDS);
-		
-		const user = new User({ username, password });
-		const claim = await getUserByName(user.username);
-		
-		if (!claim) {
-			message = 'Login failed, user not found.'
-			return fail(400, { message, ...user });
+		try {
+			const user = new User({ username, password });
+			const claim = await getUserByName(user.username);
+
+			if (!claim) {
+				message = 'Login failed, user not found.';
+				return fail(400, { message, ...user });
+			}
+
+			const passwordMatch = await bcrypt.compare(password, claim.password);
+
+			if (passwordMatch === false) {
+				message = 'Login failed. Invalid credentials.';
+				return fail(400, { message, ...user });
+			}
+
+			//Renew a token...
+			user.token = crypto.randomUUID();
+			const updatedUser = await updateUsersToken(user);
+
+			if (!updatedUser) {
+				return fail(400, { message: "User's token has not been updated!" });
+			}
+
+			cookies.set('session', user.token, {
+				path: '/',
+				httpOnly: true,
+				sameSite: 'strict',
+				secure: process.env.NODE_ENV === 'production',
+				maxAge: 60 * 60 * 24 * 30
+			});
+
+			// console.log('redirecting');
+		} catch (err) {
+			console.log('ERR:',err);
+			if(err && typeof err === 'object') {
+				const message = ('message' in err)? err.message : 'Unknown or unexpected error.'
+				return fail(400, { message });
+			}
 		}
 
-		const passwordMatch = await bcrypt.compare(password, claim.password);
-
-		if (passwordMatch === false) {
-			message = 'Login failed. Invalid credentials.'
-			return fail(400, { message, ...user })
-		}
-		
-		//Renew a token...
-		user.token = crypto.randomUUID();
-		const updatedUser = await updateUsersToken(user);
-		// console.log(updateUser);
-
-		cookies.set("session", user.token, {
-			path: "/",
-			httpOnly: true,
-			sameSite: "strict",
-			secure: process.env.NODE_ENV === "production",
-			maxAge: 60 * 60 * 24 * 30,
-		})
-
-		console.log('redirecting');
+		// ! be carefull for this redirestion type, throwing error inside try catch vlock!
 		throw redirect(302, '/');
 	}
 };

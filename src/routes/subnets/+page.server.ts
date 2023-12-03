@@ -15,56 +15,89 @@ import {
 
 let scanResponse: ScanResult;
 let server: ProxyServerInterface;
-let status: boolean = false;
+// let status: boolean = false;
 
-export const load: PageServerLoad = async ({ cookies, locals }: any) => {
+export const load: PageServerLoad = async ({ locals }) => {
+	console.log(locals)
 	if (!locals.user) {
 		throw redirect(302, '/');
 	}
 };
 
 export const actions: Actions = {
-	subnets: async ({ request }: any) => {
+	subnets: async ({ request }) => {
 		const data = await request.formData();
-		const subnet = data.get('subnet');
-		const username = data.get('username');
-		const password = data.get('password');
-		const hostname = data.get('hostname');
-		const name = data.get('name');
-		const id = data.get('id');
+		const subnet = data.get('subnet')?.slice();
+		const username = data.get('username')?.toString();
+		const password = data.get('password')?.toString();
+		const hostname = data.get('hostname')?.toString();
+		const name = data.get('name')?.toString();
+		const id = Number(data.get('id'));
+		let status: boolean = false;
+
+
+		if (typeof password !== 'string' || !password) {
+			return fail(400, { message: 'Invalid password' });
+		}
+
+		if (typeof username !== 'string' || !username) {
+			return fail(400, { message: 'Invalid username' });
+		}
+
+		if (typeof hostname !== 'string' || !hostname) {
+			return fail(400, { message: 'Invalid hostname' });
+		}
+
+		if (typeof subnet !== 'string' || !subnet) {
+			return fail(400, { message: 'Invalid subnet' });
+		}
+
+		if (typeof name !== 'string' || !name) {
+			return fail(400, { message: 'Invalid subnet name' });
+		}
 
 		try {
-			const _authResponse: AuthTokenResponse = await authenticateUser(username, password, hostname);
+			if (username && password && hostname) {
+				const _authResponse: AuthTokenResponse = await authenticateUser(username, password, hostname);
 
-			if (!_authResponse.auth || !_authResponse?.token) {
-				return { subnet };
-			}
+				if (!_authResponse.auth || !_authResponse?.token) {
+					return { subnet };
+				}else{
+					status = true;
+				}
 
-			const token: string = _authResponse.token;
+				const token: string = _authResponse.token;
 
-			server = { id, name, username, password, hostname, status, token };
+				server = { id, name, username, password, hostname, status, token };
 
-			const response: any = await scanSubnet(token, subnet, hostname);
+				const response: Response = await scanSubnet(token, subnet, hostname);
 
-			if (response instanceof Response && response?.status === 200) {
-				const data = await response.json();
-				scanResponse = new ScanResult(data);
+				if (response instanceof Response && response?.status === 200) {
+					const data = await response.json();
+					scanResponse = new ScanResult(data);
 
-				return { subnet, server, token, ...scanResponse };
-			} else {
-				return fail(400, { subnet, server, ...response });
+					return { subnet, server, token, ...scanResponse };
+				} else {
+					return fail(400, { subnet, server, ...response });
+				}
 			}
 		} catch (error: any) {
 			return fail(400, { subnet, message: error.message });
 		}
 	},
 
-	save_subnet_result: async ({ request }: any) => {
+	save_subnet_result: async ({ request }) => {
 		console.log('Jsem na serveru...');
 		const data = await request.formData();
-		const subnet = data.get('subnet');
+		const subnet = data.get('subnet')?.toString();
 		const serverId = Number(data.get('serverId'));
-		const description = data.get('description');
+		const description = data.get('description')?.toString();
+
+		if (!subnet) return fail(400, {
+			message: 'Subnet cannot be empty.',
+			subnet,
+			description
+		});
 
 		const subnetObj: TSubnet = { subnet, serverId, description };
 
@@ -81,7 +114,7 @@ export const actions: Actions = {
 			});
 		}
 
-		console.log(`save_subnet_result`, subnetObj);
+		// console.log(`save_subnet_result`, subnetObj);
 
 		try {
 			// const _authResponse: AuthTokenResponse = await authenticateUser(username, password, hostname);
@@ -124,9 +157,9 @@ export const actions: Actions = {
 			// 	return fail(400, { subnet, ...response });
 			// }
 			// return { subnet, server };
-		} catch (error: any) {
-			// console.log(error);
-			return fail(400, { subnet, message: error.message });
+		} catch (err: any) {
+			// console.log(err);
+			return fail(400, { subnet, message: err?.message });
 		}
 	},
 

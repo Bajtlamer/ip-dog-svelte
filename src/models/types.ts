@@ -57,5 +57,5 @@ export type TModal = {
 export type TButton = {
     text: string,
     class?: string
-    handler?: Promise<void> | Function,
+    handler?: Promise<void> | void,
 }

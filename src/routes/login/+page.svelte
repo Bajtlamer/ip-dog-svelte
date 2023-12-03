@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Pulse } from 'svelte-loading-spinners';
+	// import { Pulse } from 'svelte-loading-spinners';
 	import type { ActionData } from './$types';
 	import { page } from '$app/stores';
 	import { signing } from '../../store/loader';
@@ -118,7 +118,7 @@
 						>Create Account</a
 					>
 				</p>
-				
+
 				{#if form?.message}
 					<p class="text-red-500 text-sm">{form.message}!</p>
 				{/if}
