@@ -6,3 +6,12 @@ export const insertDevice = async (device: iDevice): Promise<iDevice> => {
 		data: device
 	});
 };
+
+export const updateDevice = async (deviceId: number, data: iDevice): Promise<iDevice | null> => {
+	return await db.device.update({
+	where: {
+	  id: deviceId,
+	},
+	data: data,
+  })
+};

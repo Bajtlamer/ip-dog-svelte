@@ -18,7 +18,7 @@ export let mode: string = FORM_MODE_EDIT;
 const isEditMode = (): boolean => mode === FORM_MODE_EDIT;
 </script>
 
-<div class="relative w-96 items-center mx-auto bg-gray-800 lg:p-4">
+<div class="relative w-96 items-center mx-auto bg-gray-800 p-2 rounded-lg">
     <!-- Modal content -->
     <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
         <!-- Modal header -->

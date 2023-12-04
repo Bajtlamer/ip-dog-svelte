@@ -1,6 +1,5 @@
 import { isValidIpAddress } from "$lib/functions";
 import { pingDevice } from "$lib/service/network.service";
-import type { iSubnet } from "./subnet";
 import type { TDevice } from "./types";
 
 export type TProxyServerCreatePrototype = {
@@ -21,6 +20,7 @@ export interface ProxyServerInterface {
     description?: string | null
     token?: string | null
     status: boolean
+    // subnets: iSubnet[]
 }
 
 export interface SecureProxyServer {
@@ -28,14 +28,14 @@ export interface SecureProxyServer {
     hostname: string,
     description?: string | null,
     status: boolean,
-    
+
 }
 
 export interface Device {
     id?: number
     address: string;
     hostname?: string
-    description?: string    
+    description?: string
 }
 
 export class ProxyServer implements ProxyServerInterface {

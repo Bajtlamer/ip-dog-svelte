@@ -1,5 +1,6 @@
 import { isValidIpAddress } from "$lib/functions";
 import { pingDevice } from "$lib/service/network.service";
+import type { iDevice } from "./device";
 import { ProxyServer, type ProxyServerInterface } from "./proxy";
 import type { TServer } from "./types";
 import { PrismaClient } from '@prisma/client'
@@ -7,14 +8,14 @@ import { PrismaClient } from '@prisma/client'
 // expose a singleton
 export const db = new PrismaClient()
 
-export interface ScanResult {
+export interface IScanResult {
     devices:string[],
     count:number,
     message?:string,
     // auth:boolean
 }
 
-export class ScanResult implements ScanResult  {
+export class ScanResult implements IScanResult  {
 	public devices = ['']
 	public count = 0
 	// public message = ''
@@ -25,10 +26,7 @@ export class ScanResult implements ScanResult  {
         if (result === null || result === undefined) {
             return;
         }
-        Object.keys(result).forEach((key, index) => {
-            let k = key as keyof ScanResult;
-            this[k] = result[k as keyof object];
-        });
+        Object.assign(this, result);
     }
 }
 
@@ -39,6 +37,7 @@ export interface iSubnet {
     serverId: number
     status?: Promise<boolean> | boolean
     server?: ProxyServerInterface | null
+    devices?: iDevice[]
 }
 
 export class CSubnet implements iSubnet {
@@ -63,7 +62,7 @@ export class CSubnet implements iSubnet {
     }
 
     getServerId = () => this.serverId;
-    
+
     setProxyServer = (server: ProxyServerInterface) => {
         this.server = new ProxyServer(server);
     }

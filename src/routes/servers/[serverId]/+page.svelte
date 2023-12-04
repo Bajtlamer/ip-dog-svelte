@@ -6,7 +6,7 @@
 	import { CSubnet } from '../../../models/subnet';
 
 	export let data: PageData;
-	
+
 	// let subnet: string;
 	let serverScanDialog: HTMLDialogElement;
 

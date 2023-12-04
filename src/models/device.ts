@@ -1,7 +1,7 @@
 import { pingDevice } from '$lib/service/network.service';
 // import { ProxyServer, type ProxyServerInterface } from "./proxy";
 // import { CSubnet, type iSubnet } from "./subnet";
-import type { TServer, TSubnet } from './types';
+import type { TServer } from './types';
 import { PrismaClient } from '@prisma/client';
 
 // expose a singleton
