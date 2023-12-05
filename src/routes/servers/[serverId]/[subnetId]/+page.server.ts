@@ -9,16 +9,18 @@ export const load: import('./$types.js').PageServerLoad = async ({ depends, para
     const subnetId = Number(params.subnetId);
     const serverId = Number(params.serverId);
 
-    if(isNaN(subnetId) || isNaN(subnetId)){
-        throw error(404, 'Page not found');
-    }
+    if(!isNaN(subnetId) && !isNaN(subnetId)){
+        const foundSubnet: iSubnet | null = await findSubnetById(subnetId);
+        const foundServer: ProxyServerInterface | null = await getProxyServerById(serverId);
 
-    const subnet: iSubnet | null = await findSubnetById(subnetId);
-    const server: ProxyServerInterface | null = await getProxyServerById(serverId);
-
-	if (subnet) {
+        if( foundSubnet === null || foundServer === null){
+            throw error(404, 'Subnet not found');
+        }
+        const subnet: iSubnet = foundSubnet;
+        const server: ProxyServerInterface = foundServer;
+    
         return { subnet, serverId, subnetId, server };
-	}
+    }
 
 	throw error(404, 'Page not found');
 }

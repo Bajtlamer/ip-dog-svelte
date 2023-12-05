@@ -39,6 +39,8 @@
         deviceFormDialog.showModal();
     };
 
+	/** ! Need to solve the issue with the deviceFormDialog **/
+
     const submitDeviceForm: SubmitFunction = async ({ formData, cancel }) => {
         console.log('submitting device form...');
 
@@ -49,8 +51,8 @@
 				if (data) {
 					console.log(data);
 					deviceFormDialog.close();
-					// await invalidate('subnet:devices');
-					await invalidateAll();
+					await invalidate('subnet:devices');
+					// await invalidateAll();
 				}
 			} else if (result.type === 'failure') {
 				message = result.data?.message;

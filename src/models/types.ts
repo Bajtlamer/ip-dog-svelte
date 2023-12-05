@@ -1,3 +1,5 @@
+import type { iSubnet } from "./subnet"
+
 export type TUser = {
     id?: number
     username: string
@@ -17,7 +19,7 @@ export type TServer = {
     password: string
     description?: string | null
     status: boolean
-    subnets?: TSubnet[]
+    subnets?: iSubnet[]
 }
 
 export type TSubnet = {

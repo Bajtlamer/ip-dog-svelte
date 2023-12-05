@@ -1,6 +1,6 @@
 import { db } from '$lib/db.server';
 import type { TProxyServerCreatePrototype } from '../../models/proxy';
-import type { iSubnet } from '../../models/subnet';
+import type { CSubnet, iSubnet } from '../../models/subnet';
 import type { TServer, TSubnet } from '../../models/types';
 
 export const getProxyServers = async (): Promise<TServer[]> => {

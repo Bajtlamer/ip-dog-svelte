@@ -12,22 +12,22 @@
 
     let dialog: HTMLDialogElement;
     let serverId: number = data.serverId;
-    let subnetId: number = data.subnetId;
-    let subnet: iSubnet = data.subnet;
-    let server: ProxyServerInterface | null = data.server;
+    // let subnetId: number = data.subnetId;
+    // let subnet: iSubnet = data.subnet;
+    // let server: ProxyServerInterface | null = data.server;
     // let Subnet = new CSubnet(subnet);
     let devicesCount: number = 0;
-    let devices: iDevice[] = [];
+    // let devices: iDevice[] = [];
 
-    onMount(async () => {
-        if ("devices" in subnet) {
-            if (Array.isArray(subnet.devices)) {
-                console.log(subnet.devices)
-                devices = subnet.devices;
-                devicesCount = subnet.devices.length;
-            }
-        }
-	});
+    // onMount(async () => {
+    //     if ("devices" in subnet) {
+    //         if (Array.isArray(subnet.devices)) {
+    //             console.log(subnet.devices)
+    //             devices = subnet.devices;
+    //             devicesCount = subnet.devices.length;
+    //         }
+    //     }
+	// });
 
     // const submitDeviceForm: SubmitFunction = async ({ formData, cancel }) => {
     //     console.log('submitting device form');
@@ -50,7 +50,10 @@
 
     // };
 
-    $: Subnet = new CSubnet(subnet);
+    // $: Subnet = new CSubnet(subnet);
+    $: ({ subnet } = data);
+    $: ({ server } = data);
+    // $: ({ devices } = data.subnet);
 
 </script>
 
@@ -66,8 +69,8 @@
             </button>
         </div>
 
-        <h1 class="pt-4 text-2xl font-bold text-white">{Subnet.description}</h1>
-        <p class="text-white text-xs">{Subnet.subnet}</p>
+        <h1 class="pt-4 text-2xl font-bold text-white">{subnet.description}</h1>
+        <p class="text-white text-xs">{subnet.subnet}</p>
         <!-- <h4 class="text-white text-sm font-bold pt-4">Description:</h4>
         <p class="font-normal text-gray-700 dark:text-gray-400">{Subnet?.description}</p> -->
         <h2 class="pt-4 mb-2 text-lg font-semibold text-gray-900 dark:text-white">
@@ -75,11 +78,11 @@
         </h2>
 		<ul class="max-w-full divide-y divide-gray-200 dark:divide-gray-700">
             <!-- {#if Subnet?.devices} -->
-            {#each devices as device, index}
+            {#each subnet.devices as device, index}
             <li class:mb-1={devicesCount - 1 > index}
                 id={index.toString()}
                 class="py-3 px-3 sm:py-4 bg-slate-700 border-gray-600 rounded-md">
-                {device.description}
+                <!-- {device.description} -->
                 <Device device={new CDevice(device)} iServer={server}/>
             </li>
         {/each}
