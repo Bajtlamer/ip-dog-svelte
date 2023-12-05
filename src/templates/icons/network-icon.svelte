@@ -1,4 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+<script lang="ts">
+	export let size: string = '24';
+</script>
+<svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24"
 	><g fill="none" stroke="white" stroke-width="1.5"
 		><rect width="7" height="5" x="3" y="2" rx=".6" /><rect
 			width="7"

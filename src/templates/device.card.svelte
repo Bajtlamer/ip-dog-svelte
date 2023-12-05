@@ -9,15 +9,14 @@
     import DeviceForm from './../modals/device-form.svelte';
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import { invalidate, invalidateAll } from '$app/navigation';
-	// export let serverId: number;
-	// export let subnetId: number;
+
 	export let device: CDevice;
 	export let iServer: ProxyServerInterface | null;
-	// export let message: string = '';
-
-	let server = new ProxyServer(iServer);
 
 	$: server = new ProxyServer(iServer);
+	// ! This is a problem that we need to solve.
+	// We cannot fetch the data from cienter because it is not available in the server.
+	$: device.status = server.isDeviceOnline(device);
 
 	let delConfirmationDialog: HTMLDialogElement;
 	let deviceFormDialog: HTMLDialogElement;
