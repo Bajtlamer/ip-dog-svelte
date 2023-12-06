@@ -66,7 +66,7 @@
 					class="py-3 px-3 sm:py-4 bg-slate-700 border-gray-600 rounded-md"
 				>
 					<!-- {device.description} -->
-					<Device device={new CDevice(device)} iServer={server} />
+					<Device device={device} iServer={server} />
 				</li>
 			{/each}
 			<!-- {/if} -->

@@ -5,13 +5,13 @@ const SALT_ROUNDS = 10;
 const prisma = new PrismaClient();
 
 async function main() {
-  
+
 	const users   = await prisma.user.findMany();
 	const servers = await prisma.server.findMany();
 	const subnets = await prisma.subnet.findMany();
 	const devices = await prisma.device.findMany();
 
-	const user = await prisma.user.create({
+	const admin = await prisma.user.create({
 		data: {
 			fullname: 'Administrator',
 			username: 'admin',
@@ -133,7 +133,7 @@ async function main() {
 			}
 		}
 	});
-  console.log(server1, server2);
+  console.log(server1, server2, admin);
 }
 
 main()

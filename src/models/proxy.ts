@@ -56,6 +56,7 @@ export class ProxyServer implements ProxyServerInterface {
         if (true === isValidIpAddress(device.address)) {
             return await pingDevice(device.address, this);
         }else {
+            console.log('invalid IP')
             return false;
         }
     }

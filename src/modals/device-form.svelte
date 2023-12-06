@@ -12,6 +12,7 @@
 	export let device: iDevice;
 	export let mode: string = FORM_MODE_EDIT;
 	export let submitDeviceForm: SubmitFunction;
+	export let serverId: number | null;
 
 	const isEditMode = (): boolean => mode === FORM_MODE_EDIT;
 	// const dispatch = createEventDispatcher();
@@ -108,6 +109,7 @@
 					<input type="hidden" bind:value={device.address} name="address" />
 					<input type="hidden" bind:value={device.id} name="deviceId" />
 					<input type="hidden" bind:value={device.subnetId} name="subnetId" />
+					<input type="hidden" bind:value={serverId} name="serverId" />
 				{/if}
 				<div class="relative z-0 w-full mb-6 group">
 					<label

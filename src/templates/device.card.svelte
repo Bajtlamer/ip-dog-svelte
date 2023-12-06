@@ -2,26 +2,28 @@
 	import { clickOutside } from '$lib/event';
 	import { getDeviceTypeIcon, getStatusIcon, isValidIpAddress } from '$lib/functions';
 	import { Pulse } from 'svelte-loading-spinners';
-	import type { CDevice } from '../models/device';
 	import { onMount } from 'svelte';
 	import { ProxyServer, type ProxyServerInterface } from '../models/proxy';
 	import Modal from '../modals/modal.svelte';
     import DeviceForm from './../modals/device-form.svelte';
 	import type { SubmitFunction } from '@sveltejs/kit';
-	import { invalidate, invalidateAll } from '$app/navigation';
+	import type { iDevice } from '../models/device';
 
-	export let device: CDevice;
+	export let device: iDevice;
 	export let iServer: ProxyServerInterface | null;
 
-	$: server = new ProxyServer(iServer);
-	// ! This is a problem that we need to solve.
-	// We cannot fetch the data from cienter because it is not available in the server.
-	$: device.status = server.isDeviceOnline(device);
 
 	let delConfirmationDialog: HTMLDialogElement;
 	let deviceFormDialog: HTMLDialogElement;
 	let toggleDropDown: boolean = false;
 	let message: string = '';
+	let serverId: number | null;
+
+	$: server = new ProxyServer(iServer);
+	// $: serverId = server.id;
+	// ! This is a problem that we need to solve.
+	// We cannot fetch the data from cienter because it is not available in the server.
+	// $: device.status = server.isDeviceOnline(device);
 
 	const onKeyUpEscape = (event: KeyboardEvent) => {
 		if (event.key === 'Escape') {
@@ -32,6 +34,7 @@
 
 	onMount(async () => {
 		device.status = server.isDeviceOnline(device);
+		serverId = server.id;
 	});
 
 	const showDeviceEditForm = (event: Event) => {
@@ -45,17 +48,25 @@
 
         return async ({ result, update }) => {
 			if (result.type === 'success') {
-				const data = result.data?.device;
-
+				const data = result.data;
 				if (data) {
-					console.log(data);
+					// await invalidate('subnet:devices');
+					// server = new ProxyServer(data.server)
+					// device = new CDevice(data.device);
+					// device = data.device;
+					// device.description = "Blabol"
+					// device.address = "172.16.24.20"
+					device.status = server.isDeviceOnline(device);
+					// console.log(data);
 					deviceFormDialog.close();
-					await invalidate('subnet:devices');
+					// update()
+					// applyAction(result);
 					// await invalidateAll();
 				}
 			} else if (result.type === 'failure') {
 				message = result.data?.message;
-				cancel();
+				// console.log(message)
+				update();
 			}
 
 			// loader = false;
@@ -175,5 +186,12 @@
 
 <!-- SUBNET EDIT DIALOG -->
 <Modal bind:dialog={deviceFormDialog} >
-	<DeviceForm mode="edit" {device} dialog={deviceFormDialog} {submitDeviceForm} />
+	<DeviceForm
+		mode="edit"
+		dialog={deviceFormDialog}
+		{message}
+		{device}
+		{submitDeviceForm}
+		{serverId}
+	/>
 </Modal>

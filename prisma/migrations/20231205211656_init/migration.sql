@@ -25,10 +25,10 @@ CREATE TABLE "Server" (
 -- CreateTable
 CREATE TABLE "Subnet" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "subnet" TEXT,
+    "subnet" TEXT NOT NULL,
     "description" TEXT,
     "serverId" INTEGER NOT NULL,
-    CONSTRAINT "Subnet_serverId_fkey" FOREIGN KEY ("serverId") REFERENCES "Server" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    CONSTRAINT "Subnet_serverId_fkey" FOREIGN KEY ("serverId") REFERENCES "Server" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -38,7 +38,7 @@ CREATE TABLE "Device" (
     "hostname" TEXT,
     "description" TEXT,
     "subnetId" INTEGER NOT NULL,
-    CONSTRAINT "Device_subnetId_fkey" FOREIGN KEY ("subnetId") REFERENCES "Subnet" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    CONSTRAINT "Device_subnetId_fkey" FOREIGN KEY ("subnetId") REFERENCES "Subnet" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- CreateIndex

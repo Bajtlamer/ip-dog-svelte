@@ -5,7 +5,6 @@ import type { Handle } from '@sveltejs/kit'
 export const handle: Handle = async ({ event, resolve }) => {
   // get cookies from browser
   const session = event.cookies.get('session');
-
   if (!session) {
     // if there is no session load page as normal
     return await resolve(event);
@@ -13,6 +12,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 
   // find the user based on the session
   const user = await getUserBySessionToken(session);
+  // console.log(user)
   // console.log(user)
 
   // if `user` exists set `events.local`
@@ -23,6 +23,7 @@ export const handle: Handle = async ({ event, resolve }) => {
       isAdmin: user.isAdmin
     }
   }
+  // console.log(user)
 
   // load page as normal
   return await resolve(event)
