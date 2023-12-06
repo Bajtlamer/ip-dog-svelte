@@ -15,7 +15,6 @@
 	export let iServer: ProxyServerInterface | null;
 
 
-	let dDialog: HTMLDialogElement;
 	let deviceFormDialog: HTMLDialogElement;
 	let toggleDropDown: boolean = false;
 	let message: string = '';
@@ -23,10 +22,6 @@
 	let modal: ModalDialog = new ModalDialog();
 
 	$: server = new ProxyServer(iServer);
-	// $: serverId = server.id;
-	// ! This is a problem that we need to solve.
-	// We cannot fetch the data from cienter because it is not available in the server.
-	// $: device.status = server.isDeviceOnline(device);
 
 	const onKeyUpEscape = (event: KeyboardEvent) => {
 		if (event.key === 'Escape') {
@@ -77,16 +72,17 @@
 
     };
 
-	const deleteDevice = () => {
+
+	const deleteDevice = async () => {
 		console.log('deleting device:', device.description, device.id)
-		dDialog.close();
+		deviceFormDialog.close();
 	}
 
 	modal = modal.createModalConfirmationDialog(
 		'Delete device',
 		`Are you sure you want to delete device '${device.description}'?`,
 		[
-			{ text: 'Cancel', class: 'cancel', handler: () => dDialog.close() },
+			{ text: 'Cancel', class: 'cancel', handler: () => deviceFormDialog.close() },
 			{
 				text: 'Delete',
 				class: 'bg-red-700 dark:bg-red-700 dark:hover:bg-red-600 dark:focus:ring-red-600',
@@ -183,7 +179,7 @@
 						>Probe device
 					</button>
 					<button
-						on:click={() => dDialog.showModal()}
+						on:click={() => deviceFormDialog.showModal()}
 						type="submit"
 						class="block w-full px-4 py-2 text-left hover:bg-gray-700"
 						role="menuitem"
@@ -210,6 +206,6 @@
 </Modal>
 
 <!-- CONFIRMATION DIALOG -->
-<Modal bind:dialog={dDialog} on:close>
-	<ConfirmationDialog dialog={dDialog} {modal} />
+<Modal bind:dialog={deviceFormDialog} on:close>
+	<ConfirmationDialog dialog={deviceFormDialog} {modal} />
 </Modal>

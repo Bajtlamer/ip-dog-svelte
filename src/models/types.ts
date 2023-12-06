@@ -56,8 +56,10 @@ export type TModal = {
     type?: string
 }
 
+type ModalFunction = () => void;
+
 export type TButton = {
     text: string,
     class?: string
-    handler?: Promise<void> | void,
+    handler: Promise<ModalFunction> | ModalFunction,
 }
