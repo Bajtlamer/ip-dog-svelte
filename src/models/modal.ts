@@ -36,11 +36,11 @@ export class ModalDialog implements IModalInterface  {
         })
     }
 
-    createModalConfirmationDialog(title: string, message: string, buttond:TButton[]): ModalDialog {
+    createModalConfirmationDialog(title: string, message: string, buttons:TButton[]): ModalDialog {
         return new ModalDialog({
             title: title,
             message: message,
-            buttons: buttond,
+            buttons: buttons,
             type: MODAL_TYPE_CONFIRM
         })
     }

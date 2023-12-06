@@ -52,7 +52,7 @@
 		<h1 class="pt-4 text-2xl font-bold text-white">{subnet.description}</h1>
 		<div class="flex text-white text-xs items-center">
             <NetworkIcon size="14" />
-            <span class="pl-2">{subnet.subnet}</span>
+            <span class="pl-1">{subnet.subnet}</span>
         </div>
 		<!-- <h4 class="text-white text-sm font-bold pt-4">Description:</h4>
         <p class="font-normal text-gray-700 dark:text-gray-400">{Subnet?.description}</p> -->

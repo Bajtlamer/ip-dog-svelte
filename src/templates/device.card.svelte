@@ -8,16 +8,19 @@
     import DeviceForm from './../modals/device-form.svelte';
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import type { iDevice } from '../models/device';
+	import ConfirmationDialog from '../modals/confirmation-dialog.svelte';
+	import { ModalDialog } from '../models/modal';
 
 	export let device: iDevice;
 	export let iServer: ProxyServerInterface | null;
 
 
-	let delConfirmationDialog: HTMLDialogElement;
+	let dDialog: HTMLDialogElement;
 	let deviceFormDialog: HTMLDialogElement;
 	let toggleDropDown: boolean = false;
 	let message: string = '';
 	let serverId: number | null;
+	let modal: ModalDialog = new ModalDialog();
 
 	$: server = new ProxyServer(iServer);
 	// $: serverId = server.id;
@@ -73,6 +76,25 @@
 		};
 
     };
+
+	const deleteDevice = () => {
+		console.log('deleting device:', device.description, device.id)
+		dDialog.close();
+	}
+
+	modal = modal.createModalConfirmationDialog(
+		'Delete device',
+		`Are you sure you want to delete device '${device.description}'?`,
+		[
+			{ text: 'Cancel', class: 'cancel', handler: () => dDialog.close() },
+			{
+				text: 'Delete',
+				class: 'bg-red-700 dark:bg-red-700 dark:hover:bg-red-600 dark:focus:ring-red-600',
+				handler: () => deleteDevice()
+			}
+		]
+	);
+
 
 </script>
 
@@ -143,15 +165,6 @@
 			>
 				<div class="py-1 font-normal text-sm" role="none">
 					<button
-						on:click={() => console.log('showDeviceProperties')}
-						type="submit"
-						class="font-normal block w-full px-4 py-2 text-left hover:bg-gray-700"
-						role="menuitem"
-						tabindex="-1"
-						id="menu-item-2"
-						>Devices properties
-					</button>
-					<button
 						on:click={showDeviceEditForm}
 						type="submit"
 						class="block w-full px-4 py-2 text-left hover:bg-gray-700"
@@ -170,7 +183,7 @@
 						>Probe device
 					</button>
 					<button
-						on:click={() => delConfirmationDialog.showModal()}
+						on:click={() => dDialog.showModal()}
 						type="submit"
 						class="block w-full px-4 py-2 text-left hover:bg-gray-700"
 						role="menuitem"
@@ -194,4 +207,9 @@
 		{submitDeviceForm}
 		{serverId}
 	/>
+</Modal>
+
+<!-- CONFIRMATION DIALOG -->
+<Modal bind:dialog={dDialog} on:close>
+	<ConfirmationDialog dialog={dDialog} {modal} />
 </Modal>
