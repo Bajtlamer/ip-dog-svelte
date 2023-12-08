@@ -1,15 +1,23 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	// import { hostname } from 'os';
 	import { FORM_MODE_EDIT } from '../constants';
-	import type { iSubnet } from '../models/subnet';
+	import type { ProxyServerInterface } from '../models/proxy';
+	import { createEventDispatcher } from 'svelte';
 
 	export let dialog: HTMLDialogElement;
-	export let submitSubnetForm: any;
+	// export let submitServerForm: any;
 	export let message: string | undefined | unknown = '';
-	export let subnet: iSubnet;
+	export let server: ProxyServerInterface;
 	export let mode: string = FORM_MODE_EDIT;
 
 	const isEditMode = (): boolean => mode === FORM_MODE_EDIT;
+
+	const dispatch = createEventDispatcher();
+
+	function submitProxyServerForm() {
+		dispatch('SaveProxyServer', server);
+	}
 </script>
 
 <div class="relative w-96 items-center mx-auto bg-gray-800 p-2 rounded-lg">
@@ -19,9 +27,9 @@
 		<div class="flex items-center justify-between p-5 border-b rounded-t dark:border-gray-600">
 			<h3 class="text-xl font-semibold text-gray-900 dark:text-white">
 				{#if isEditMode()}
-					Edit Subnet form
+					Edit Proxy Server
 				{:else}
-					New Subnet form
+					New Proxy Server
 				{/if}
 			</h3>
 			<button
@@ -50,46 +58,45 @@
 		<!-- Modal body -->
 		<div class="p-5 space-y-4">
 			<form
-				action="/subnets?/edit_subnet"
+				action="/devices?/edit"
 				method="POST"
 				class="space-y-4 md:space-y-6"
-				use:enhance={submitSubnetForm}
+				use:enhance={submitProxyServerForm}
 			>
 				<div class="relative z-0 w-full mb-6 group">
 					<input
 						disabled={isEditMode()}
-						bind:value={subnet.subnet}
+						bind:value={server.hostname}
 						type="text"
-						name="subnet"
-						id="subnet"
+						name="address"
+						id="address"
 						class="{isEditMode()
 							? 'dark:text-gray-400'
 							: 'dark:text-white'} block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-						placeholder={isEditMode() ? subnet.subnet : 'Enter an subnet name'}
+						placeholder={isEditMode() ? server.hostname : 'Enter an IP address'}
 					/>
 					<label
-						for="subnet"
+						for="address"
 						class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-						>Server Name</label
-					>
+						>Server hostname
+					</label>
 				</div>
 				{#if isEditMode()}
-					<input type="hidden" bind:value={subnet.subnet} name="subnet" />
-					<input type="hidden" bind:value={subnet.id} name="id" />
-					<input type="hidden" bind:value={subnet.serverId} name="serverId" />
+					<input type="hidden" bind:value={server.id} name="id" />
 				{/if}
 				<div class="relative z-0 w-full mb-6 group">
 					<label
 						for="subnet-description"
-						class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Description</label
+						class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+						>Server description</label
 					>
 					<textarea
-						bind:value={subnet.description}
-						name="subnet-description"
-						id="subnet-description"
+						bind:value={server.description}
+						name="device-description"
+						id="device-description"
 						rows="4"
 						class="block p-2.5 w-full text-sm font-normal text-gray-900 bg-gray-50 rounded-md border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-						placeholder="Write an subnet description here..."
+						placeholder="Write an device description here..."
 					/>
 				</div>
 				<div class="block text-right">
@@ -97,15 +104,15 @@
 						data-modal-hide="default-modal"
 						type="submit"
 						class="w-24 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-						>Update
+						>Save
 					</button>
-					<button
+					<!-- <button
 						on:click|preventDefault={() => dialog.close()}
 						data-modal-hide="default-modal"
 						type="button"
 						class="ml-2 w-24 text-white bg-gray-400 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:hover:bg-gray-500 dark:focus:ring-blue-800"
 						>Cancel
-					</button>
+					</button> -->
 				</div>
 				{#if message}
 					<p class="text-red-500">{message}!</p>

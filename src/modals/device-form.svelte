@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	// import { createEventDispatcher } from 'svelte';
 	import { FORM_MODE_EDIT } from '../constants';
 	import type { iDevice } from '../models/device';
 	import type { SubmitFunction } from '@sveltejs/kit';
@@ -15,33 +14,7 @@
 	export let serverId: number | null;
 
 	const isEditMode = (): boolean => mode === FORM_MODE_EDIT;
-	// const dispatch = createEventDispatcher();
 
-    // const submitDeviceForm: SubmitFunction = async ({ formData, cancel }) => {
-    //     console.log('submitting device form...');
-
-    //     return async ({ result, update }) => {
-	// 		// console.log('RESULT:',result)
-	// 		if (result.type === 'success') {
-	// 			const data = result.data;
-
-	// 			if (data) {
-	// 				console.log(data?.device)
-	// 				dialog.close();
-	// 				// await invalidate('subnet:devices');
-	// 				await invalidateAll();
-	// 				// update()
-	// 			}
-	// 		} else if (result.type === 'failure') {
-	// 			console.log('canceling')
-	// 			message = result.data?.message;
-	// 			cancel();
-	// 		}
-
-	// 		// loader = false;
-	// 	};
-
-    // };
 </script>
 
 <div class="relative w-96 items-center mx-auto bg-gray-800 p-2 rounded-lg">

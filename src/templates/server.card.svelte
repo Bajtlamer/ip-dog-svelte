@@ -9,16 +9,23 @@
 	import ConfirmationDialog from '../modals/confirmation-dialog.svelte';
 	import { invalidate } from '$app/navigation';
 	import { ModalDialog } from '../models/modal';
+	import EditServerForm from '../modals/proxy-form.svelte';
 
 	export let server: any;
 	export let serverDropdownShow = false;
     let modal: ModalDialog = new ModalDialog();
 
 	let deleting: boolean = false;
-	let dialog: HTMLDialogElement;
+	let confirmationDialog: HTMLDialogElement;
+	let ProxyFormDialog: HTMLDialogElement;
 
     // const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
-	
+
+	const updateProxy = async (server: any) => {
+		console.log('updateProxy');
+		ProxyFormDialog.close();
+	};
+
 	const onClickOutsideEventHandler = (event: MouseEvent) => {
 		console.log('clicked_outside', event);
 		serverDropdownShow = false;
@@ -36,24 +43,24 @@
 
 	const newSubnetMenuClick = () => {
         modal = modal.createModalWarningDialog('Add Subnet', 'Add a new subnet to this server.');
-		dialog.showModal();
+		confirmationDialog.showModal();
 	};
 
 	const editProxyServerMenuClick = () => {
         modal = modal.createModalInfoDialog('Edit Proxy Server', 'Edit existing Proxy Server.');
-        dialog.showModal();
+        confirmationDialog.showModal();
 	};
 
 	const deleteProxyServerMenuClick = () => {
         modal = modal.createModalConfirmationDialog(
-            'Delete Server', 
+            'Delete Server',
             `Are you sure you want to delete server '${server.name}'? This operation cannot be undone.`, [
-                { text: 'Cancel', class: 'cancel', handler: () => dialog.close() },
+                { text: 'Cancel', class: 'cancel', handler: () => confirmationDialog.close() },
                 { text: 'Delete', class: 'bg-red-700 dark:bg-red-700 dark:hover:bg-red-600 dark:focus:ring-red-600', handler: () => deleteServer() }
             ]
         );
 
-		dialog.showModal();
+		confirmationDialog.showModal();
 		console.log('menu_click');
 	};
 
@@ -72,7 +79,7 @@
 		const result: import('@sveltejs/kit').ActionResult = deserialize(await response.text());
 		if (result.type === 'success') {
             await invalidate('/servers');
-            
+
 		} else if (result.type === 'failure') {
             modal = modal.createModalWarningDialog('Delete Server', 'Server deletion failed.');
 			// dialog.close();
@@ -121,8 +128,7 @@
 				<div class="py-1" role="none">
 					<!-- <form method="POST" action="?/delete_server" role="none" use:enhance|preventDefault={success}> -->
 					<button
-						on:click={editProxyServerMenuClick}
-						on:keyup={editProxyServerMenuClick}
+						on:click={()=>ProxyFormDialog.showModal()}
 						type="submit"
 						class="block w-full px-4 py-2 text-left text-sm hover:bg-gray-700"
 						role="menuitem"
@@ -195,6 +201,10 @@
 	</div>
 </div>
 
-<Modal bind:dialog on:close>
-	<ConfirmationDialog {dialog} {modal} />
+<Modal bind:dialog={confirmationDialog} on:close>
+	<ConfirmationDialog dialog={confirmationDialog} {modal} />
+</Modal>
+
+<Modal bind:dialog={ProxyFormDialog} on:close>
+	<EditServerForm on:SaveProxyServer={updateProxy} {server} dialog={ProxyFormDialog} />
 </Modal>
