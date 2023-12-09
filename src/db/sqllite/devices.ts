@@ -15,3 +15,11 @@ export const updateDevice = async (deviceId: number, data: iDevice): Promise<iDe
 	data: data,
   })
 };
+
+export const deleteDevice = async (deviceId: number): Promise<iDevice | null> => {
+	return await db.device.delete({
+		where: {
+			id: deviceId
+		}
+	});
+};

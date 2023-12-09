@@ -10,6 +10,8 @@
 	import type { iDevice } from '../models/device';
 	import ConfirmationDialog from '../modals/confirmation-dialog.svelte';
 	import { ModalDialog } from '../models/modal';
+	import { invalidate } from '$app/navigation';
+	import { deserialize } from '$app/forms';
 
 	export let device: iDevice;
 	export let iServer: ProxyServerInterface | null;
@@ -76,7 +78,31 @@
 
 	const deleteDevice = async () => {
 		console.log('deleting device:', device.description, device.id)
-		deviceFormDialog.close();
+		const data = new FormData();
+
+		if(device.id) {
+			data.set('deviceId', device.id.toString());
+		}else{
+			modal = modal.createModalWarningDialog(
+				'Delete Device',
+				'Device deletion failed. Device ID is missing.');
+		}
+
+		const response = await fetch('/devices?/delete', {
+			method: 'POST',
+			body: data
+		});
+
+		const result: import('@sveltejs/kit').ActionResult = deserialize(await response.text());
+
+		if (result.type === 'success') {
+			console.log('success', result.data)
+			await invalidate('subnet:devices');
+			// deleteDeviceDialog.close();
+		} else if (result.type === 'failure') {
+			message = result.data?.message;
+			// dialog.close();
+		}
 	}
 
 	modal = modal.createModalConfirmationDialog(
@@ -208,5 +234,5 @@
 
 <!-- CONFIRM DEVICE DELETE DIALOG -->
 <Modal bind:dialog={deleteDeviceDialog} on:close>
-	<ConfirmationDialog dialog={deleteDeviceDialog} {modal} />
+	<ConfirmationDialog on:close={()=>deleteDeviceDialog.close()} {modal} />
 </Modal>

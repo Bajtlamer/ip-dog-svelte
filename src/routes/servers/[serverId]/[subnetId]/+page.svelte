@@ -1,7 +1,7 @@
 <script lang="ts">
 	import NetworkIcon from './../../../../templates/icons/network-icon.svelte';
 	import type { PageData } from './$types';
-	import Device from '../../../../templates/device.card.svelte';
+	import DeviceCard from '../../../../templates/device.card.svelte';
 	import { CDevice } from '../../../../models/device';
 	import { onMount } from 'svelte';
 
@@ -66,7 +66,7 @@
 					class="py-3 px-3 sm:py-4 bg-slate-700 border-gray-600 rounded-md"
 				>
 					<!-- {device.description} -->
-					<Device device={device} iServer={server} />
+					<DeviceCard device={device} iServer={server} />
 				</li>
 			{/each}
 			<!-- {/if} -->

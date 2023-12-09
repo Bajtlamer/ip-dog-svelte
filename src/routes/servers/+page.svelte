@@ -4,7 +4,7 @@ import type { SubmitFunction } from './$types';
 import NewServer from '../../modals/add-server.modal.svelte';
 import type { ProxyServerInterface } from '../../models/proxy';
 import type { PageData } from './$types';
-import Server from '../../templates/server.card.svelte'
+import ServerCard from '../../templates/server.card.svelte'
 import AddServerIcon from "../../templates/icons/server-icon-add.svelte";
 import DeleteServerIcon from "../../templates/icons/server-icon-delete.svelte";
 // import type { ActionData } from './$types';
@@ -49,10 +49,6 @@ const submitNewServer: SubmitFunction= ({ formData, cancel, submitter }) => {
 					<AddServerIcon /> Add
 				</div>
 			</button>
-			<h1 class="text-2xl font-bold text-white">SERVERS</h1>
-			<button disabled class="px-4 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-md hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 md:mr-0 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 md:block">
-				<DeleteServerIcon />Del
-			</button>
 		</div>
 
 		<p class="my-3 font-normal text-gray-700 dark:text-gray-400">
@@ -67,7 +63,7 @@ const submitNewServer: SubmitFunction= ({ formData, cancel, submitter }) => {
 					id={index.toString()}
 					class:mb-1={serversCount - 1 > index}
 					class="block shadow-lg items-center min-w-full">
-					<Server id={index} {server} />
+					<ServerCard {server} />
 				</li>
 			{/each}
 		</ul>

@@ -1,6 +1,7 @@
 import { fail, type Actions } from "@sveltejs/kit";
 import type { PageServerLoad } from "../$types";
-import { updateDevice } from "$db/sqllite/devices";
+import { deleteDevice, updateDevice } from "$db/sqllite/devices";
+import { error } from "console";
 // import { getProxyServerById } from "$db/sqllite/proxy";
 
 export const load: PageServerLoad = async ({ locals }) => {
@@ -59,32 +60,29 @@ export const actions: Actions = {
 				} else {
 					fail(400, {message: 'Update device failed'});
 				}
-
-				// const _authResponse: AuthTokenResponse = await authenticateUser(username, password, hostname);
-
-				// if (!_authResponse.auth || !_authResponse?.token) {
-				// 	return { subnet };
-				// }else{
-				// 	status = true;
-				// }
-
-				// const token: string = _authResponse.token;
-
-				// server = { id, name, username, password, hostname, status, token };
-
-				// const response: Response = await scanSubnet(token, subnet, hostname);
-
-				// if (response instanceof Response && response?.status === 200) {
-				// 	const data = await response.json();
-				// 	scanResponse = new ScanResult(data);
-
-				// 	return { subnet, server, token, ...scanResponse };
-				// } else {
-				// 	return fail(400, { subnet, server, ...response });
-				// }
 			}
 		} catch (error: any) {
 			return fail(400, { device: _device, message: error.message });
 		}
+	},
+
+	delete: async ({ request }: any) => {
+		const data = await request.formData();
+		const deviceId = Number(data.get('deviceId'));
+
+		console.log("edit server data:", data)
+
+		if(isNaN(deviceId)) {
+			throw error(400, 'Update server failed, invalid deviceId.');
+		}
+
+		const device = await deleteDevice(deviceId);
+
+		console.log('Device with ID:' + deviceId + ' has deleted');
+		// const proxyServers = await getProxyServers();
+		// console.log("🚀 ~ file: +page.server.ts:64 ~ delete_server: ~ proxyServers:", proxyServers)
+
+		return { device: device };
 	}
+
 }

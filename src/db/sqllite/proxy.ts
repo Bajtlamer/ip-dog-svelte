@@ -1,5 +1,5 @@
 import { db } from '$lib/db.server';
-import type { TProxyServerCreatePrototype } from '../../models/proxy';
+import type { ProxyServerInterface, TProxyServerCreatePrototype } from '../../models/proxy';
 import type { CSubnet, iSubnet } from '../../models/subnet';
 import type { TServer, TSubnet } from '../../models/types';
 
@@ -45,6 +45,15 @@ export const getProxyServerById = async (id: number): Promise<TServer | null> =>
 		}
 	});
 };
+
+export const updateProyServer = async (id: number, proxy: TProxyServerCreatePrototype): Promise<ProxyServerInterface> => {
+	return await db.server.update({
+		where: {
+			id
+		},
+		data: proxy
+	});
+}
 
 export const findSubnetById = async (id: number): Promise<iSubnet | null> => {
 	return await db.subnet.findUnique({

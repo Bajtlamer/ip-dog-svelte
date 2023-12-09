@@ -1,12 +1,13 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import type { SubmitFunction } from '@sveltejs/kit';
 	// import { hostname } from 'os';
 	import { FORM_MODE_EDIT } from '../constants';
 	import type { ProxyServerInterface } from '../models/proxy';
 	import { createEventDispatcher } from 'svelte';
 
 	export let dialog: HTMLDialogElement;
-	// export let submitServerForm: any;
+	export let submitForm: any;
 	export let message: string | undefined | unknown = '';
 	export let server: ProxyServerInterface;
 	export let mode: string = FORM_MODE_EDIT;
@@ -15,9 +16,9 @@
 
 	const dispatch = createEventDispatcher();
 
-	function submitProxyServerForm() {
-		dispatch('SaveProxyServer', server);
-	}
+	// function submitProxyServerForm() {
+	// 	dispatch('SaveProxyServer', server);
+	// }
 </script>
 
 <div class="relative w-96 items-center mx-auto bg-gray-800 p-2 rounded-lg">
@@ -58,10 +59,10 @@
 		<!-- Modal body -->
 		<div class="p-5 space-y-4">
 			<form
-				action="/servers?/edit"
+				action="?/edit_server"
 				method="POST"
 				class="space-y-4 md:space-y-6"
-				use:enhance={submitProxyServerForm}
+				on:submit|preventDefault={submitForm}
 			>
 				{#if isEditMode()}
 					<input type="hidden" bind:value={server.id} name="id" />
@@ -71,12 +72,13 @@
 					<input
 						bind:value={server.hostname}
 						type="text"
-						name="server-hostname1"
+						name="server-hostname"
+						id="${server.id}-server-hostname"
 						class="dark:text-gray-300 block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
 						placeholder="Enter IP or hostname"
 					/>
 					<label
-						for="server-hostname"
+						for="hostname"
 						class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
 						>Server hostname
 					</label>
@@ -87,11 +89,12 @@
 						bind:value={server.name}
 						type="text"
 						name="server-name"
+						id="${server.id}-server-name"
 						class="dark:text-gray-300 block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
 						placeholder="Enter server name"
 					/>
 					<label
-						for="server-name"
+						for="name"
 						class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
 						>Server name
 					</label>
@@ -102,11 +105,12 @@
 						bind:value={server.username}
 						type="text"
 						name="server-username"
+						id="${server.id}-server-username"
 						class="dark:text-gray-300 block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
 						placeholder="Enter username"
 					/>
 					<label
-						for="server-username"
+						for="username"
 						class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
 						>Auth username
 					</label>
@@ -117,11 +121,12 @@
 						bind:value={server.password}
 						type="password"
 						name="server-password"
+						id="${server.id}-server-password"
 						class="dark:text-gray-300 block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
 						placeholder="Enter password"
 					/>
 					<label
-						for="server-password"
+						for="password"
 						class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
 						>Auth username
 					</label>
@@ -129,14 +134,14 @@
 
 				<div class="relative z-0 w-full mb-6 group">
 					<label
-						for="server-description"
+						for="description"
 						class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400"
 						>Server description</label
 					>
 					<textarea
 						bind:value={server.description}
 						name="server-description"
-						id="server-description"
+						id="${server.id}-server-description"
 						rows="4"
 						class="block p-2.5 w-full text-sm font-normal text-gray-900 bg-gray-50 rounded-md border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-300 dark:focus:ring-blue-500 dark:focus:border-blue-500"
 						placeholder="Write an server description here..."

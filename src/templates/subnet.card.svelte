@@ -246,7 +246,7 @@
 
 <!-- CONFIRMATION DIALOG -->
 <Modal bind:dialog={delConfirmationDialog} on:close>
-	<ConfirmationDialog dialog={delConfirmationDialog} {modal} />
+	<ConfirmationDialog on:close={()=>delConfirmationDialog.close()} {modal} />
 </Modal>
 
 <!-- SUBNET EDIT DIALOG -->
