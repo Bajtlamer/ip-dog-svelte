@@ -12,15 +12,17 @@ import DeleteServerIcon from "../../templates/icons/server-icon-delete.svelte";
 let dialog: HTMLDialogElement;
 let submitting = false;
 let message: string | undefined | unknown = '';
+let serversCount: number = 0;
 
 export let data: PageData;
 
 let proxyServers: ProxyServerInterface[];
 $: ({proxyServers} = data)
+$: serversCount = proxyServers.length;
 
 const submitNewServer: SubmitFunction= ({ formData, cancel, submitter }) => {
     		const req = Object.fromEntries(formData);
-    
+
     		submitting = true;
     		return async ({ result, update }) => {
     			if (result.type === 'success') {
@@ -31,10 +33,10 @@ const submitNewServer: SubmitFunction= ({ formData, cancel, submitter }) => {
 					message = result?.data?.message;
 					cancel();
                 }
-    
+
     			submitting = false;
     		};
-    
+
 };
 </script>
 
@@ -49,7 +51,7 @@ const submitNewServer: SubmitFunction= ({ formData, cancel, submitter }) => {
 			</button>
 			<h1 class="text-2xl font-bold text-white">SERVERS</h1>
 			<button disabled class="px-4 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-md hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 md:mr-0 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 md:block">
-				<DeleteServerIcon />Del 
+				<DeleteServerIcon />Del
 			</button>
 		</div>
 
@@ -61,8 +63,11 @@ const submitNewServer: SubmitFunction= ({ formData, cancel, submitter }) => {
         </h2>
 		<ul class="block justify-betweenw text-gray-500 list-inside dark:text-gray-400 hover:shadow-sm">
 			{#each proxyServers as server, index}
-				<li id={server.id?.toString()} class="block shadow-lg my-2 items-center min-w-full">
-					<Server {server} />
+				<li
+					id={index.toString()}
+					class:mb-1={serversCount - 1 > index}
+					class="block shadow-lg items-center min-w-full">
+					<Server id={index} {server} />
 				</li>
 			{/each}
 		</ul>
@@ -71,6 +76,6 @@ const submitNewServer: SubmitFunction= ({ formData, cancel, submitter }) => {
 </div>
 
 
-<Modal bind:dialog on:close>
+<Modal bind:dialog>
     <NewServer {submitNewServer} {dialog} {message}/>
 </Modal>

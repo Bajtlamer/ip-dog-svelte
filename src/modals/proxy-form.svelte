@@ -58,45 +58,88 @@
 		<!-- Modal body -->
 		<div class="p-5 space-y-4">
 			<form
-				action="/devices?/edit"
+				action="/servers?/edit"
 				method="POST"
 				class="space-y-4 md:space-y-6"
 				use:enhance={submitProxyServerForm}
 			>
+				{#if isEditMode()}
+					<input type="hidden" bind:value={server.id} name="id" />
+				{/if}
+
 				<div class="relative z-0 w-full mb-6 group">
 					<input
-						disabled={isEditMode()}
 						bind:value={server.hostname}
 						type="text"
-						name="address"
-						id="address"
-						class="{isEditMode()
-							? 'dark:text-gray-400'
-							: 'dark:text-white'} block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-						placeholder={isEditMode() ? server.hostname : 'Enter an IP address'}
+						name="server-hostname1"
+						class="dark:text-gray-300 block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+						placeholder="Enter IP or hostname"
 					/>
 					<label
-						for="address"
+						for="server-hostname"
 						class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
 						>Server hostname
 					</label>
 				</div>
-				{#if isEditMode()}
-					<input type="hidden" bind:value={server.id} name="id" />
-				{/if}
+
+				<div class="relative z-0 w-full mb-6 group">
+					<input
+						bind:value={server.name}
+						type="text"
+						name="server-name"
+						class="dark:text-gray-300 block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+						placeholder="Enter server name"
+					/>
+					<label
+						for="server-name"
+						class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+						>Server name
+					</label>
+				</div>
+
+				<div class="relative z-0 w-full mb-6 group">
+					<input
+						bind:value={server.username}
+						type="text"
+						name="server-username"
+						class="dark:text-gray-300 block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+						placeholder="Enter username"
+					/>
+					<label
+						for="server-username"
+						class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+						>Auth username
+					</label>
+				</div>
+
+				<div class="relative z-0 w-full mb-6 group">
+					<input
+						bind:value={server.password}
+						type="password"
+						name="server-password"
+						class="dark:text-gray-300 block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+						placeholder="Enter password"
+					/>
+					<label
+						for="server-password"
+						class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+						>Auth username
+					</label>
+				</div>
+
 				<div class="relative z-0 w-full mb-6 group">
 					<label
-						for="subnet-description"
-						class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+						for="server-description"
+						class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400"
 						>Server description</label
 					>
 					<textarea
 						bind:value={server.description}
-						name="device-description"
-						id="device-description"
+						name="server-description"
+						id="server-description"
 						rows="4"
-						class="block p-2.5 w-full text-sm font-normal text-gray-900 bg-gray-50 rounded-md border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-						placeholder="Write an device description here..."
+						class="block p-2.5 w-full text-sm font-normal text-gray-900 bg-gray-50 rounded-md border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-300 dark:focus:ring-blue-500 dark:focus:border-blue-500"
+						placeholder="Write an server description here..."
 					/>
 				</div>
 				<div class="block text-right">

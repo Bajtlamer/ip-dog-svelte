@@ -15,6 +15,7 @@
 	export let iServer: ProxyServerInterface | null;
 
 
+	let deleteDeviceDialog: HTMLDialogElement;
 	let deviceFormDialog: HTMLDialogElement;
 	let toggleDropDown: boolean = false;
 	let message: string = '';
@@ -82,7 +83,7 @@
 		'Delete device',
 		`Are you sure you want to delete device '${device.description}'?`,
 		[
-			{ text: 'Cancel', class: 'cancel', handler: () => deviceFormDialog.close() },
+			{ text: 'Cancel', class: 'cancel', handler: () => deleteDeviceDialog.close() },
 			{
 				text: 'Delete',
 				class: 'bg-red-700 dark:bg-red-700 dark:hover:bg-red-600 dark:focus:ring-red-600',
@@ -179,7 +180,7 @@
 						>Probe device
 					</button>
 					<button
-						on:click={() => deviceFormDialog.showModal()}
+						on:click={() => deleteDeviceDialog.showModal()}
 						type="submit"
 						class="block w-full px-4 py-2 text-left hover:bg-gray-700"
 						role="menuitem"
@@ -205,7 +206,7 @@
 	/>
 </Modal>
 
-<!-- CONFIRMATION DIALOG -->
-<Modal bind:dialog={deviceFormDialog} on:close>
-	<ConfirmationDialog dialog={deviceFormDialog} {modal} />
+<!-- CONFIRM DEVICE DELETE DIALOG -->
+<Modal bind:dialog={deleteDeviceDialog} on:close>
+	<ConfirmationDialog dialog={deleteDeviceDialog} {modal} />
 </Modal>

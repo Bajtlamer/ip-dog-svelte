@@ -13,6 +13,7 @@
 
 	export let server: any;
 	export let serverDropdownShow = false;
+	export let id: number;
     let modal: ModalDialog = new ModalDialog();
 
 	let deleting: boolean = false;
@@ -201,10 +202,21 @@
 	</div>
 </div>
 
+<!-- PROXY SERVER EDIT DIALOG -->
+<Modal bind:dialog={ProxyFormDialog} >
+	<EditServerForm
+		mode="edit"
+		dialog={ProxyFormDialog}
+		on:SaveProxyServer={updateProxy}
+		{server}
+
+	/>
+</Modal>
+
 <Modal bind:dialog={confirmationDialog} on:close>
 	<ConfirmationDialog dialog={confirmationDialog} {modal} />
 </Modal>
 
-<Modal bind:dialog={ProxyFormDialog} on:close>
+<!-- <Modal bind:dialog={ProxyFormDialog} on:close>
 	<EditServerForm on:SaveProxyServer={updateProxy} {server} dialog={ProxyFormDialog} />
-</Modal>
+</Modal> -->
