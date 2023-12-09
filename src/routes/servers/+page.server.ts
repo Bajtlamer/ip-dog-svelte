@@ -13,6 +13,7 @@ export const load: PageServerLoad = async ({ locals, depends }: any) => {
 		throw redirect(302, '/');
 	}
 	const proxyServers = await getProxyServers();
+
 	return { proxyServers };
 };
 

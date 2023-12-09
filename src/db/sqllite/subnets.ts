@@ -9,10 +9,23 @@ export const createSubnet = async (subnet: iSubnet): Promise<TSubnet> => {
 	});
 };
 
-export const findSubnetById = async (id: number): Promise<TSubnet | null> => {
-	return await db.subnet.findUnique({
+export const findSubnetById = async (serverId: number): Promise<any | null> => {
+	return await db.subnet.findMany({
 		where: {
-			id
+			serverId: serverId
+		},
+		include: {
+			_count: {
+				select: {devices: true}
+			}
+		}
+	});
+};
+
+export const getSubnetsByServerId = async (serverId: number): Promise<TSubnet[] | null> => {
+	return await db.subnet.findMany({
+		where: {
+			serverId: serverId
 		},
 		include: {
 			devices: true

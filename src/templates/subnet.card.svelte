@@ -15,6 +15,7 @@
 	import type { TServer } from '../models/types';
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import type { CSubnet } from '../models/subnet';
+	import DeviceIcon from './icons/device-icon.svelte';
 
 	export let subnet: CSubnet;
 	export let server: TServer;
@@ -139,8 +140,9 @@
 		<p class="inline-flex items-center text-md font-medium text-gray-900 truncate dark:text-white">
 			{subnet.description}
 			{#if subnet.devices?.length}
-				<span class="flex text-white font-normal text-sm items-center gap-1 px-2">
-					({subnet.devices?.length})
+				<span class="flex text-white font-normal text-md items-center gap-1 px-2">
+						<DeviceIcon size="15" />
+					{subnet.devices?.length}
 				</span>
 			{/if}
 		</p>

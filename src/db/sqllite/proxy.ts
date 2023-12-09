@@ -1,11 +1,20 @@
 import { db } from '$lib/db.server';
 import type { ProxyServerInterface, TProxyServerCreatePrototype } from '../../models/proxy';
-import type { CSubnet, iSubnet } from '../../models/subnet';
+import type { iSubnet } from '../../models/subnet';
 import type { TServer, TSubnet } from '../../models/types';
 
 export const getProxyServers = async (): Promise<TServer[]> => {
-	const proxyServer = await db.server.findMany();
-	return proxyServer;
+	return await db.server.findMany(
+		{
+			include: {
+				subnets: {
+					include: {
+						devices: true
+					}
+				}
+			}
+		}
+	);
 };
 
 export const getServerSubnets = async (serverId: number): Promise<TSubnet[]> => {

@@ -10,6 +10,9 @@
 	import { invalidate } from '$app/navigation';
 	import { ModalDialog } from '../models/modal';
 	import EditServerForm from '../modals/proxy-form.svelte';
+	import NetworkIcon from './icons/network-icon.svelte';
+	import type { ProxyServerInterface } from '../models/proxy';
+	import DeviceIcon from './icons/device-icon.svelte';
 
 	export let server: any;
 	export let serverDropdownShow = false;
@@ -41,6 +44,16 @@
 		}
 
 		applyAction(result);
+	};
+
+	const getDevicesCount = (server: ProxyServerInterface) => {
+		let count = 0;
+		if ('subnets' in server && server.subnets) {
+			server.subnets.forEach((subnet: any) => {
+				count += subnet.devices.length;
+			});
+		}
+		return count;
 	};
 
 	const onClickOutsideEventHandler = (event: MouseEvent) => {
@@ -118,11 +131,10 @@
 		<h5 class=" w-full text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
 			{server.name}
 		</h5>
-		<div class="relative inline-block text-left" id="test">
+		<div class="relative inline-block text-left">
 			<div id="button">
 				<button
 					use:clickOutside={onClickOutsideEventHandler}
-					on:keyup={onKeyUpEventHandler}
 					on:click={onClickDropDownMenuEventHandler}
 					type="button"
 					class="inline-flex w-full justify-center rounded-md px-2 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-inset ring-gray-600 hover:ring-1"
@@ -185,7 +197,17 @@
 	</div>
 
 	<span class="block mb-2 text-xs text-white">{server.hostname}</span>
-	<p class="mb-3 font-normal text-gray-700 dark:text-gray-400">{server.description}</p>
+	<p class="flex items-center mb-3 font-normal text-gray-700 dark:text-gray-400">
+		{server.description}
+		<span class="pl-2 pr-1">
+			<NetworkIcon size="14" />
+		</span>
+		{server.subnets.length}
+		<span class="pl-2 pr-1">
+			<DeviceIcon size="15" />
+		</span>
+		{getDevicesCount(server)}
+	</p>
 
 	<div class="relative flex justify-between">
 		<a
