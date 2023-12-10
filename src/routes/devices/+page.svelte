@@ -1,14 +1,75 @@
 <script lang="ts">
 	import type { PageData } from './$types';
+	import SearchDevices from '../../templates/search.devices.svelte';
+	import { onMount } from 'svelte';
+	import type { IDevice } from '../../models/device';
 
 	export let data: PageData;
+	let searching: string = '';
+	let items: IDevice[] = [];
+
+	$: devices = data.devices;
+	$: devicesCount = data.devices.length;
+
+	const searchHandler = (event: CustomEvent<string>) => {
+		searching = event.detail;
+		// console.log(searching);
+		items = devices.filter((device) => {
+			return device.address.toLowerCase().includes(searching.toLowerCase());
+		});
+		devicesCount = items.length;
+
+	};
+
+	onMount(() => {
+		items = devices;
+	});
 
 </script>
 
-<div class="items-center max-w-screen-lg p-4 mx-auto">
-    <h1 class="text-3xl font-bold">Devices page</h1>
-    <h3 class="text-xl font-bold">This is a Devices page</h3>
-    {#if data.user}
-		<p>Welcome, {data.user?.username}</p>
-	{/if}
+<div class="items-center min-h-screen max-w-full mx-auto bg-gray-800 lg:p-20">
+	<div class="block max-w-screen-sm mx-auto p-2">
+		<h1 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+			Search for Subnet list
+		</h1>
+	</div>
+	<div class="block max-w-screen-sm mx-auto py-3 px-1">
+		<SearchDevices on:onSearch={searchHandler} {searching} />
+	</div>
+
+	<div class="max-w-screen-sm p-6 mx-auto bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-900 dark:border-gray-700">
+	{#if devicesCount > 0}
+		<ul>
+			{#each items as device, index}
+			<li
+			class:border-b={devicesCount - 1 > index}
+			class=" border-gray-600">
+				<dl class="max-w-md text-gray-900 dark:text-white">
+					<div class="flex flex-col py-3">
+						<dd class="text-lg font-semibold">
+							<a href={`/servers/${device.owner.serverId}/${device.subnetId}`}>
+								{#if device.description}
+									{device.description}
+								{:else}
+									N/A
+								{/if}
+							</a>
+						</dd>
+						<dt class="text-gray-500 md:text-md dark:text-gray-400">
+							<a href={`/servers/${device.owner.serverId}/${device.subnetId}`}>
+								{device.hostname}
+								<span class="text-sm">
+									({device.address})
+								</span>
+							</a>
+						</dt>
+					</div>
+				</dl>
+			</li>
+			{/each}
+		</ul>
+		{:else}
+			<div class="text-gray-900 dark:text-white">No result found</div>
+		{/if}
+	</div>
 </div>

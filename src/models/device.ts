@@ -1,4 +1,5 @@
 import { pingDevice } from '$lib/service/network.service';
+import type { iSubnet } from './subnet';
 // import { ProxyServer, type ProxyServerInterface } from "./proxy";
 // import { CSubnet, type iSubnet } from "./subnet";
 import type { TServer } from './types';
@@ -16,6 +17,11 @@ export interface iDevice {
 	// serverId: number;
 	status?: Promise<boolean> | boolean | null;
 	// subnet?: CSubnet
+}
+
+
+export interface IDevice extends iDevice {
+	owner: iSubnet;
 }
 
 export class CDevice implements iDevice {

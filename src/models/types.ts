@@ -1,3 +1,4 @@
+import type { iDevice } from "./device"
 import type { iSubnet } from "./subnet"
 
 export type TUser = {
@@ -26,7 +27,7 @@ export type TSubnet = {
     id?: number
     subnet: string
     description?: string | null
-    devices?: TDevice[]
+    devices?: iDevice[]
     serverId: number
 }
 
@@ -63,3 +64,5 @@ export type TButton = {
     class?: string
     handler: Promise<ModalFunction> | ModalFunction,
 }
+
+export type TInput = string | undefined;

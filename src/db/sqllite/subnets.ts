@@ -1,9 +1,13 @@
 import { db } from '$lib/db.server';
-import type { iSubnet } from '../../models/subnet';
+import type { iSubnet, iSubnetCreatePrototype } from '../../models/subnet';
 import type { TEditSubnet, TSubnet } from '../../models/types';
 
 
-export const createSubnet = async (subnet: iSubnet): Promise<TSubnet> => {
+export const getAllSubnets = async (): Promise<iSubnet[]> => {
+	return await db.subnet.findMany();
+};
+
+export const createSubnet = async (subnet: iSubnetCreatePrototype): Promise<iSubnet> => {
 	return await db.subnet.create({
 		data: subnet
 	});

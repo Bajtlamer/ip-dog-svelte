@@ -30,6 +30,15 @@ export class ScanResult implements IScanResult  {
     }
 }
 
+export interface iSubnetCreatePrototype {
+    id?: number;
+    subnet: string
+    description?: string | null;
+    serverId: number
+    status?: Promise<boolean> | boolean
+    server?: ProxyServerInterface | null
+}
+
 export interface iSubnet {
     id?: number;
     subnet: string
@@ -37,7 +46,7 @@ export interface iSubnet {
     serverId: number
     status?: Promise<boolean> | boolean
     server?: ProxyServerInterface | null
-    devices: iDevice[]
+    devices?: iDevice[]
 }
 
 export class CSubnet implements iSubnet {

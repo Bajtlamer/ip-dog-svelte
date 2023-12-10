@@ -29,7 +29,7 @@
 
 </script>
 
-<div class="items-center h-screen max-w-full p-2 mx-auto bg-gray-800 lg:p-20">
+<div class="items-center min-h-screen max-w-full p-2 mx-auto bg-gray-800 lg:p-20">
 	<div
 		class="max-w-screen-sm p-6 mx-auto bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-600 dark:border-gray-700"
 	>

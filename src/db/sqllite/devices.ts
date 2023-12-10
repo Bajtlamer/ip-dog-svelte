@@ -1,5 +1,14 @@
 import { db } from '$lib/db.server';
-import type { iDevice } from '../../models/device';
+import type { ISubnet, iDevice } from '../../models/device';
+
+export const getAllDevices = async (): Promise<ISubnet[]> => {
+	return await db.device.findMany({
+		include: {
+			owner: true
+		}
+
+	});
+};
 
 export const insertDevice = async (device: iDevice): Promise<iDevice> => {
 	return await db.device.create({

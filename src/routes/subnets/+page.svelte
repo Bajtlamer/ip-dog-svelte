@@ -1,8 +1,4 @@
 <script lang="ts">
-	import { Pulse } from 'svelte-loading-spinners';
-	import { enhance } from '$app/forms';
-	import type { SubmitFunction } from './$types';
-	import { getStatusIcon } from '$lib/functions';
 
 	const url = 'https://ipdog-api.smes24.com/api/v1/';
 
@@ -10,144 +6,32 @@
 
 	let loading = false;
 
-	let subnet: string = '';
-	let devices: string[] = [];
-	let count: number = 0;
-	let message: string | undefined = '';
-	let userToken: string = data.user.username;
+	$: subnets = data.subnets;
+	$: subnetsCount = data.subnets.length;
 
-	const pingDevice = async (userToken: string, deviceString?: string) => {
-		if (!deviceString) return null;
-
-        const split = /\s/g.test(deviceString);
-        let device = (split) ? deviceString.split(' ')[0] : deviceString;
-        console.log('IP:', device);
-        
-		const res = await fetch(url + 'ping/' + device, {
-			method: 'GET',
-			headers: {
-				'Content-Type': 'application/json',
-				Accept: 'application/json',
-				Authorization: userToken
-			}
-		});
-
-		if (res.ok === true) {
-			const status = await res.json();
-			return status.isAlive;
-		} else {
-			return null;
-		}
-	};
-
-	const submitScanForm: SubmitFunction = ({ formElement, formData, action, cancel, submitter }) => {
-		const req = Object.fromEntries(formData);
-
-		loading = true;
-		return async ({ result, update }) => {
-			console.log('e2e21',result.type)
-			if (result.type === 'success') {
-				console.log('->', subnet);
-				
-				const _data = result.data;
-
-				subnet = _data?.subnet;
-				devices = _data?.devices || [];
-				// devices.push('10.0.1.11');
-				// devices.push('172.16.24.224');
-				count = _data?.count || 0;
-				message = _data?.message;
-			}
-
-			loading = false;
-		};
-	};
 </script>
 
-<div class="items-center h-screen max-w-full p-2 mx-auto bg-gray-800 lg:p-20">
-	<div
-		class="max-w-screen-sm p-6 mx-auto bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-600 dark:border-gray-700"
-	>
+<div class="items-center min-h-screen max-w-full p-2 mx-auto bg-gray-800 lg:p-20">
+	<div class="block max-w-screen-sm mx-auto p-2">
 		<h1 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-			Search for subnet devices
+			Search for Subnet list
 		</h1>
+	</div>
+	<div class="max-w-screen-sm p-6 mx-auto bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-900 dark:border-gray-700">
+		<ul>
+			{#each subnets as subnet, index}
+			<li
+			class:border-b={subnetsCount - 1 > index}
+			class=" border-gray-600">
+				<dl class="max-w-md text-gray-900 dark:text-white">
+					<div class="flex flex-col py-3">
+						<dd class="text-lg font-semibold"><a href={`/servers/${subnet.serverId}`}>{subnet.description}</a></dd>
+						<dt class="text-gray-500 md:text-md dark:text-gray-400">{subnet.subnet}</dt>
+					</div>
+				</dl>
+			</li>
+			{/each}
+		</ul>
 
-		<form
-			action="?/subnets"
-			method="POST"
-			class="space-y-4 md:space-y-6"
-			use:enhance={submitScanForm}
-		>
-			<label
-				for="default-search"
-				class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label
-			>
-			<div class="relative">
-				<div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-					<svg
-						class="w-4 h-4 text-gray-500 dark:text-gray-400"
-						aria-hidden="true"
-						xmlns="http://www.w3.org/2000/svg"
-						fill="none"
-						viewBox="0 0 20 20"
-					>
-						<path
-							stroke="currentColor"
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="2"
-							d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
-						/>
-					</svg>
-				</div>
-				<input
-					type="text"
-					name="subnet"
-					id="subnet"
-					value={subnet}
-					class="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-					placeholder="Scan subnet..."
-				/>
-				<button
-					type="submit"
-					class="text-white absolute right-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-					>Scan</button
-				>
-			</div>
-		</form>
-
-		<p class="mb-3 font-normal text-gray-700 dark:text-gray-400">
-			Please enter a subnet you are serarching for. For example '10.0.1.0/24'
-		</p>
-
-		{#if loading}
-			<div class="flex items-center justify-center">
-				<Pulse size="40" color="lightgreen" unit="px" duration="1s" />
-			</div>
-		{:else}
-			{#if count}
-				<h2 class="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
-					Found {count} devices:
-				</h2>
-			{:else}
-				<p class="mb-2 text-lg font-semibold text-red-700 dark:text-red-700">
-					{message}
-				</p>
-			{/if}
-			<ul class="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">
-				{#each devices as device, index}
-					<li class="flex items-center">
-						{#await pingDevice(userToken, device)}
-                        <span class="pr-2">
-                            <Pulse size="19" color="lightgreen" unit="px" duration="1s" />
-                        </span>
-						{:then isAlive}
-                            <svelte:component this={getStatusIcon(isAlive)} />
-                        {/await}
-                            {device}
-					</li>
-				{/each}
-			</ul>
-		{/if}
 	</div>
 </div>

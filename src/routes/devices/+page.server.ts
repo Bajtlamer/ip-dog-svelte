@@ -1,11 +1,17 @@
-import { fail, type Actions } from "@sveltejs/kit";
+import { fail, type Actions, redirect } from "@sveltejs/kit";
 import type { PageServerLoad } from "../$types";
-import { deleteDevice, updateDevice } from "$db/sqllite/devices";
+import { deleteDevice, getAllDevices, updateDevice } from "$db/sqllite/devices";
 import { error } from "console";
+import type { IDevice } from "../../models/device";
 // import { getProxyServerById } from "$db/sqllite/proxy";
 
 export const load: PageServerLoad = async ({ locals }) => {
-    console.log('Server.svelte, devices...', locals)
+	if (!locals.user) {
+		throw redirect(302, '/');
+	}
+	const devices:IDevice[] = await getAllDevices();
+	return { devices };
+
 };
 
 export const actions: Actions = {
