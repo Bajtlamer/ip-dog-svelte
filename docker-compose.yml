@@ -4,7 +4,7 @@ services:
   ipdog_svelte:
     container_name: ipdog_svelte
     # The name of the image that will be created when building this container
-    image: ipdog_svelte_frontend
+    image: ipdog_svelte
     build:
       context: .
       dockerfile: Dockerfile
