@@ -4,7 +4,16 @@ import type { TEditSubnet, TSubnet } from '../../models/types';
 
 
 export const getAllSubnets = async (): Promise<iSubnet[]> => {
-	return await db.subnet.findMany();
+	return await db.subnet.findMany({
+		orderBy: [
+			{
+				id: 'asc'
+			}
+		],
+		include: {
+			devices: true
+		}
+	});
 };
 
 export const createSubnet = async (subnet: iSubnetCreatePrototype): Promise<iSubnet> => {

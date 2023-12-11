@@ -6,8 +6,18 @@ import type { TServer, TSubnet } from '../../models/types';
 export const getProxyServers = async (): Promise<TServer[]> => {
 	return await db.server.findMany(
 		{
+			orderBy: [
+				{
+					id: 'asc'
+				}
+			],
 			include: {
 				subnets: {
+					orderBy: [
+						{
+							id: 'desc'
+						}
+					],
 					include: {
 						devices: true
 					}
@@ -65,12 +75,22 @@ export const updateProyServer = async (id: number, proxy: TProxyServerCreateProt
 }
 
 export const findSubnetById = async (id: number): Promise<iSubnet | null> => {
-	return await db.subnet.findUnique({
+	const subnet = await db.subnet.findUnique({
 		where: {
 			id
 		},
 		include: {
-			devices: true
+			devices: true,
 		}
 	});
+
+	if (subnet && subnet.devices) {
+        subnet.devices.sort((a, b) => {
+            const lastPartA = parseInt(a.address.split('.').pop() || '', 10);
+            const lastPartB = parseInt(b.address.split('.').pop() || '', 10);
+            return lastPartA - lastPartB;
+        });
+    }
+
+    return subnet;
 };

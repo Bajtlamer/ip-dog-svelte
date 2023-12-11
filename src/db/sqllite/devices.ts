@@ -3,6 +3,11 @@ import type { ISubnet, iDevice } from '../../models/device';
 
 export const getAllDevices = async (): Promise<ISubnet[]> => {
 	return await db.device.findMany({
+		orderBy: [
+			{
+				description: 'asc'
+			}
+		],
 		include: {
 			owner: true
 		}

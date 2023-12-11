@@ -18,7 +18,8 @@ export const actions: Actions = {
 	edit: async ({ request }) => {
 		const data = await request.formData();
 		const address = data.get('address')?.toString();
-		const description = data.get('device-description')?.toString();
+		const hostname = data.get('hostname')?.toString() || '';
+		const description = data.get('device-description')?.toString() || '';
 		const subnetId = Number(data.get('subnetId'));
 		const id = Number(data.get('deviceId'));
 		// const serverId = Number(data.get('serverId'));
@@ -48,7 +49,7 @@ export const actions: Actions = {
 		// }
 
 		// const server = await getProxyServerById(serverId);
-        const _device = {address, description, id, subnetId}
+        const _device = {address, hostname, description, id, subnetId}
 
 		try {
 			if (address && description && id) {
