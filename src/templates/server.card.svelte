@@ -200,11 +200,11 @@
 	<p class="flex items-center mb-3 font-normal text-gray-700 dark:text-gray-400">
 		{server.description}
 		<span class="pl-2 pr-1">
-			<NetworkIcon size="14" />
+			<NetworkIcon size=14 />
 		</span>
 		{server.subnets.length}
 		<span class="pl-2 pr-1">
-			<DeviceIcon size="15" />
+			<DeviceIcon size=15 />
 		</span>
 		{getDevicesCount(server)}
 	</p>

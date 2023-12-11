@@ -1,11 +1,10 @@
 import { db } from '$lib/db.server'
-import { fail } from 'assert'
-import type { User, UserInterface } from '../../models/user'
+import type { UserInterface } from '../../models/user'
 
 
 
 export const addUser = async (user: UserInterface) => {
-  
+
   const found = await db.user.findUnique({
     where: {
       username: user.username
@@ -49,9 +48,9 @@ export const updateUser = async (user: UserInterface) => {
   return await db.user.update({
     where: {
       username: user.username,
-    }, 
+    },
       data: user
-    }    
+    }
   )
 }
 
@@ -59,8 +58,8 @@ export const updateUsersToken = async (user: UserInterface) => {
   return await db.user.update({
     where: {
       username: user.username,
-    }, 
+    },
       data: {token: user.token}
-    }    
+    }
   )
 }

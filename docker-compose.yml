@@ -30,5 +30,6 @@ services:
     volumes:
       - ./etc/certs:/etc/nginx/certs
       - ./etc/nginx/conf.d:/etc/nginx/conf.d
+      - ./prisma:/prisma
     depends_on:
       - ipdog_svelte

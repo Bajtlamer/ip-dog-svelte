@@ -7,13 +7,12 @@ import type { TServer } from '../../models/types';
 import { error } from 'console';
 
 export const load: PageServerLoad = async ({ locals, depends }: any) => {
-	depends('server:delete');
-
 	if (!locals?.user) {
 		throw redirect(302, '/');
 	}
-	const proxyServers = await getProxyServers();
+	depends('server:delete');
 
+	const proxyServers = await getProxyServers();
 	return { proxyServers };
 };
 

@@ -5,7 +5,6 @@ import type { iSubnet } from '../../../../models/subnet.js';
 import type { ProxyServerInterface } from '../../../../models/proxy.js';
 
 export const load: import('./$types.js').PageServerLoad = async ({ locals, depends, params }) => {
-    // console.log('LOAD:',locals.user)
 	if (!locals.user) {
 		throw redirect(302, '/login');
 	}
