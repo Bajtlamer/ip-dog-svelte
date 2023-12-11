@@ -30,8 +30,9 @@
 </script>
 
 <div class="items-center min-h-screen max-w-full p-2 mx-auto bg-gray-800 lg:p-20">
+	<!-- <h1 class="text-2xl font-bold text-white">DEVICES</h1> -->
 	<div
-		class="max-w-screen-sm p-6 mx-auto bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-600 dark:border-gray-700"
+		class="max-w-screen-sm p-2 md:p-4 lg:p-4 mx-auto bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-600 dark:border-gray-700"
 	>
 		<div class="flex items-center justify-between w-full">
 			<a
@@ -40,7 +41,7 @@
 			>
 				&larr; Back
 			</a>
-			<h1 class="text-2xl font-bold text-white">DEVICES</h1>
+			<!-- <h1 class="text-2xl font-bold text-white">DEVICES</h1> -->
 			<button
 				on:click={() => dialog.showModal()}
 				class="px-4 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-md hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 md:mr-0 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 md:block"
@@ -48,25 +49,27 @@
 				Add network
 			</button>
 		</div>
+		<div class="p-2">
 
-		<h1 class="pt-4 text-2xl font-bold text-white">{subnet.description}</h1>
-		<div class="flex text-white text-xs items-center">
-            <NetworkIcon size="14" />
-            <span class="pl-1">{subnet.subnet}</span>
-        </div>
-		<!-- <h4 class="text-white text-sm font-bold pt-4">Description:</h4>
-        <p class="font-normal text-gray-700 dark:text-gray-400">{Subnet?.description}</p> -->
-		<h2 class="pt-4 mb-2 text-lg font-semibold text-gray-900 dark:text-white">Devices list:</h2>
+			<h1 class="pt-4 text-2xl font-bold text-white">{subnet.description}</h1>
+			<div class="flex text-white text-xs items-center">
+				<NetworkIcon size="14" />
+				<span class="pl-1">{subnet.subnet}</span>
+			</div>
+			<!-- <h4 class="text-white text-sm font-bold pt-4">Description:</h4>
+				<p class="font-normal text-gray-700 dark:text-gray-400">{Subnet?.description}</p> -->
+				<h2 class="pt-4 mb-2 text-lg font-semibold text-gray-900 dark:text-white">Devices list:</h2>
+			</div>
 		<ul class="max-w-full divide-y divide-gray-200 dark:divide-gray-700">
 			<!-- {#if Subnet?.devices} -->
 			{#each subnet.devices as device, index}
 				<li
 					class:mb-1={devicesCount - 1 > index}
 					id={index.toString()}
-					class="py-3 px-3 sm:py-4 bg-slate-700 border-gray-600 rounded-md"
+					class="py-3 pl-3 md:px-3 bg-slate-700 border-gray-600 rounded-md"
 				>
 					<!-- {device.description} -->
-					<DeviceCard device={device} iServer={server} />
+					<DeviceCard {device} iServer={server} />
 				</li>
 			{/each}
 			<!-- {/if} -->

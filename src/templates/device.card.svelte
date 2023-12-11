@@ -25,6 +25,7 @@
 	let modal: ModalDialog = new ModalDialog();
 
 	$: server = new ProxyServer(iServer);
+	$: deviceUrl = 'http://' + device.address;
 
 	const onKeyUpEscape = (event: KeyboardEvent) => {
 		if (event.key === 'Escape') {
@@ -131,7 +132,9 @@
 			{device.description}
 		</p>
 		<p class="flex text-xs text-gray-500 truncate dark:text-gray-400">
-			{device.hostname} ({device.address})
+			<a target="_blank" href={deviceUrl}>
+				{device.hostname} ({device.address})
+			</a>
 		</p>
 	</div>
 
@@ -141,11 +144,11 @@
 				<div class="inline-flex items-center">
 					<!-- {#if isValidIpAddress(device.address)} -->
 						{#await device.status}
-							<span class="block pr-2">
+							<span class="block pr-0 md:pr-2">
 								<Pulse size="19" color="lightgreen" unit="px" duration="1s" />
 							</span>
 						{:then isAlive}
-							<span class="block pr-2">
+							<span class="block pr-0 md:pr-2">
 								<svelte:component this={getStatusIcon(isAlive)} />
 							</span>
 						{/await}

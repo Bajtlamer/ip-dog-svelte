@@ -125,7 +125,7 @@
 </script>
 
 <div
-	class="p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
+	class="pb-3 pl-3 pr-2 md:p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
 >
 	<div class="flex items-center justify-between" id="outside">
 		<h5 class=" w-full text-2xl font-bold tracking-tight text-gray-900 dark:text-white">

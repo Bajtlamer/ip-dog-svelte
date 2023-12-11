@@ -46,7 +46,7 @@ export interface iSubnet {
     serverId: number
     status?: Promise<boolean> | boolean
     server?: ProxyServerInterface | null
-    devices?: iDevice[]
+    devices: iDevice[]
 }
 
 export class CSubnet implements iSubnet {
