@@ -11,6 +11,7 @@
 	import { CDevice, type iDevice } from '../models/device';
 	import { CSubnet, type iSubnet } from '../models/subnet';
 	import { invalidate } from '$app/navigation';
+	import type { KeyboardEventHandler } from 'svelte/elements';
 
 	export let server: ProxyServerInterface;
 	// export let showSubnetModal: MouseEventHandler<HTMLButtonElement>;
@@ -46,20 +47,20 @@
 		return await response.json();
 	};
 
-	const saveDevicesToSubnet = (devices: string[], subnet: CSubnet) => {
-		// const serverId = server.id;
-		const subnetId = subnet.id;
+	// const saveDevicesToSubnet = (devices: string[], subnet: CSubnet) => {
+	// 	// const serverId = server.id;
+	// 	const subnetId = subnet.id;
 
-		if (subnet.isSubnet() && devices.length > 0) {
-			devices.forEach((address: string) => {
-				const dev = { address, subnetId };
-				const res = addDevice(new CDevice(dev));
-                console.log('add device response:', res);
-                invalidate('/servers/' + server.id);
-			});
-		}
-        return;
-	};
+	// 	if (subnet.isSubnet() && devices.length > 0) {
+	// 		devices.forEach((address: string) => {
+	// 			const dev = { address, subnetId };
+	// 			const res = addDevice(new CDevice(dev));
+    //             console.log('add device response:', res);
+    //             invalidate('/servers/' + server.id);
+	// 		});
+	// 	}
+    //     return;
+	// };
 
 	const submitScanResultForm: SubmitFunction = async ({formData, cancel }) => {
 		const serverId = server.id?.toString();
@@ -90,7 +91,7 @@
 
                     const subnet:CSubnet = new CSubnet(response.subnet)
 
-                    
+
                     // const subnetId:number = subnet.id;
 
                     if (subnet.isSubnet() && devices.length > 0) {
@@ -146,6 +147,25 @@
 		saveDropdownShow = !saveDropdownShow;
 	};
 
+	const subnetFormatHandler = (event: KeyboardEvent) => {
+		const target = event.target as HTMLInputElement;
+		const value = target.value;
+		const pattern = new RegExp(
+			'^((([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|' +
+				'25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|' +
+				'2[0-4][0-9]|25[0-5]))\\/([0-9]|[1-2][0-9]|3[0-2])$'
+		);
+
+		if (pattern.test(value)) {
+			subnet = value;
+			disabled = false;
+			console.log('subnet:', disabled);
+		} else {
+			disabled = true;
+			console.log('subnet:', disabled);
+		}
+	};
+
 	// const submitSubnetWithDevices: SubmitFunction = ({formElement, formData, action, cancel, submitter}) => {
 
 	// };
@@ -184,9 +204,9 @@
 	};
 </script>
 
-<div class="items-center max-w-full mx-auto bg-gray-800 p-2 rounded-lg">
+<div class="items-center mx-auto bg-gray-800 p-0 md:p-2 rounded-lg">
 	<div
-		class="max-w-screen-sm p-6 mx-auto bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-600 dark:border-gray-700"
+		class="p-4 mx-auto bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-600 dark:border-gray-700"
 	>
 		<h1 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
 			Subnet scan <span class="text-sm font-normal">({server.name})</span>
@@ -221,14 +241,17 @@
 					</svg>
 				</div>
 				<input
+					on:keyup={subnetFormatHandler}
+					class:dark:border-red-500={disabled}
 					bind:value={subnet}
 					type="text"
 					name="subnet"
 					id="subnet"
-					class="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+					class="focus:outline-none block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white "
 					placeholder="Scan subnet..."
 				/>
 				<button
+					disabled={disabled}
 					type="submit"
 					class="text-white absolute right-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
 					>Scan
@@ -237,7 +260,7 @@
 		</form>
 
 		<p class="pt-2 mb-3 font-normal text-gray-700 dark:text-gray-400">
-			Please enter a subnet you are searching for. For example '10.11.11.0/24'
+			Please enter a subnet, for example '10.11.11.0/24'
 		</p>
 
 		{#if loading}
