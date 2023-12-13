@@ -1,14 +1,14 @@
 <script lang="ts">
     import { enhance } from '$app/forms';
- 
+
     export let dialog: HTMLDialogElement;
     export let submitNewServer: any;
     export let message: string | undefined | unknown = '';
-    
+
 </script>
-    
+
 <!-- <div class="relative w-96 lg:w-96 max-w-3xl max-h-full"> -->
-    <div class="relative w-96 items-center mx-auto bg-gray-800 lg:p-4">
+    <div class="relative w-96 items-center mx-auto bg-gray-800 p-2 rounded-lg">
     <!-- Modal content -->
     <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
         <!-- Modal header -->
@@ -46,16 +46,16 @@
                     <textarea name="description" id="description" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Write server description here..."></textarea>
                 </div>
                 <div class="block text-right">
-                    <button 
-                        data-modal-hide="default-modal" 
-                        type="submit" 
+                    <button
+                        data-modal-hide="default-modal"
+                        type="submit"
                         class="w-20 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                         >Add
                     </button>
-                    <button 
-                        on:click|preventDefault={()=>dialog.close()} 
-                        data-modal-hide="default-modal" 
-                        type="button" 
+                    <button
+                        on:click|preventDefault={()=>dialog.close()}
+                        data-modal-hide="default-modal"
+                        type="button"
                         class="ml-2 w-20 text-white bg-gray-400 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:hover:bg-gray-500 dark:focus:ring-blue-800"
                         >Cancel
                     </button>

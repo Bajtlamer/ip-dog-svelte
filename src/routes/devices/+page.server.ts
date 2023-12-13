@@ -1,6 +1,6 @@
 import { fail, type Actions, redirect } from "@sveltejs/kit";
 import type { PageServerLoad } from "../$types";
-import { deleteDevice, getAllDevices, updateDevice } from "$db/sqllite/devices";
+import { deleteDevice, getAllDevices, insertDevice, updateDevice } from "$db/sqllite/devices";
 import { error } from "console";
 import type { IDevice } from "../../models/device";
 // import { getProxyServerById } from "$db/sqllite/proxy";
@@ -65,7 +65,7 @@ export const actions: Actions = {
 				if (device) {
                 	return { device }
 				} else {
-					fail(400, {message: 'Update device failed'});
+					fail(400, { message: 'Update device failed' } );
 				}
 			}
 		} catch (error: any) {
@@ -90,6 +90,51 @@ export const actions: Actions = {
 		// console.log("🚀 ~ file: +page.server.ts:64 ~ delete_server: ~ proxyServers:", proxyServers)
 
 		return { device: device };
+	},
+
+	new: async ({ request }) => {
+		const data = await request.formData();
+		const address = data.get('address')?.toString();
+		const hostname = data.get('hostname')?.toString() || '';
+		const description = data.get('device-description')?.toString() || '';
+		const subnetId = Number(data.get('subnetId'));
+		// const id = Number(data.get('deviceId'));
+		// const serverId = Number(data.get('serverId'));
+
+		if (typeof address !== 'string' || !address) {
+            return fail(400, { message: 'Invalid IP address' });
+		}
+
+		if (typeof subnetId !== 'number' || !subnetId) {
+			return fail(400, { message: "Subnet ID can't be empty" });
+		}
+
+
+        console.log(data)
+
+		try {
+			if (address && subnetId) {
+
+				const _device = {address, hostname, description, subnetId}
+                console.log(_device);
+
+				// if(!server) {
+				// 	fail(400, {message: 'Create instance of ProxyServer failed'});
+				// }
+
+				// const server = new ProxyServer(_server);
+				const device = await insertDevice(_device);
+
+				if (device) {
+                	return { device }
+				} else {
+					fail(400, { message: 'Create device failed' } );
+				}
+			}
+		} catch (error: any) {
+			// console.log(error);
+			return fail(400, { message: error.message });
+		}
 	}
 
 }

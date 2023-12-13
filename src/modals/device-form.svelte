@@ -1,9 +1,11 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { FORM_MODE_EDIT } from '../constants';
+	import { onMount } from 'svelte';
+	import { FORM_MODE_EDIT, FORM_MODE_NEW } from '../constants';
 	import type { iDevice } from '../models/device';
 	import type { SubmitFunction } from '@sveltejs/kit';
-	import { invalidate, invalidateAll } from '$app/navigation';
+	import Modal from './modal.svelte';
+	import { isValidIpAddress } from '$lib/functions';
 
 	// export let submitDeviceForm: any;
 	export let dialog: HTMLDialogElement;
@@ -13,8 +15,31 @@
 	export let submitDeviceForm: SubmitFunction;
 	export let serverId: number | null;
 
+	let disabled: boolean = false;
+
 	const isEditMode = (): boolean => mode === FORM_MODE_EDIT;
 
+	onMount(() => {
+		if (mode !== FORM_MODE_EDIT && mode !== FORM_MODE_NEW) {
+			console.log(
+				'Device edit form ERROR, invalid action mode. Has expected edit or new, but got ' + mode
+			);
+		}
+	});
+
+	const deviceIpAddressHandler = (event: KeyboardEvent) => {
+		const target = event.target as HTMLInputElement;
+		const value = target.value;
+		message = '';
+		const isValidAddress = isValidIpAddress(value);
+
+		if (isValidAddress) {
+			device.address = value;
+			disabled = false;
+		} else {
+			disabled = true;
+		}
+	};
 </script>
 
 <div class="relative w-96 items-center mx-auto bg-gray-800 p-2 rounded-lg">
@@ -24,9 +49,9 @@
 		<div class="flex items-center justify-between p-5 border-b rounded-t dark:border-gray-600">
 			<h3 class="text-xl font-semibold text-gray-900 dark:text-white">
 				{#if isEditMode()}
-					Edit Devce form
+					Edit device
 				{:else}
-					New Device form
+					Create new device
 				{/if}
 			</h3>
 			<button
@@ -55,22 +80,25 @@
 		<!-- Modal body -->
 		<div class="p-5 space-y-4">
 			<form
-				action="/devices?/edit"
+				action="/devices?/{mode}"
 				method="POST"
 				class="space-y-4 md:space-y-6"
 				use:enhance={submitDeviceForm}
 			>
 				<div class="relative z-0 w-full mb-6 group">
 					<input
+						on:keyup={deviceIpAddressHandler}
 						disabled={isEditMode()}
 						bind:value={device.address}
 						type="text"
 						name="address"
 						id="address"
-						class="{isEditMode()
+						class="
+							{isEditMode()
 							? 'dark:text-gray-400'
-							: 'dark:text-white'} block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-						placeholder={isEditMode() ? device.address : 'Enter an IP address'}
+							: 'dark:text-white'}
+							{disabled?'dark:border-red-500 dark:focus:border-red-500':'dark:border-gray-300 dark:focus:border-blue-500'} block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+						placeholder=" "
 					/>
 					<label
 						for="address"
@@ -87,17 +115,20 @@
 						class="{isEditMode()
 							? 'dark:text-gray-400'
 							: 'dark:text-white'} block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-						placeholder={isEditMode() ? device.hostname : 'Enter an hostname'}
+						placeholder=" "
 					/>
 					<label
 						for="address"
 						class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-						>Device's hostname
+						>Device hostname
 					</label>
 				</div>
 				{#if isEditMode()}
 					<input type="hidden" bind:value={device.address} name="address" />
 					<input type="hidden" bind:value={device.id} name="deviceId" />
+					<input type="hidden" bind:value={device.subnetId} name="subnetId" />
+					<input type="hidden" bind:value={serverId} name="serverId" />
+				{:else}
 					<input type="hidden" bind:value={device.subnetId} name="subnetId" />
 					<input type="hidden" bind:value={serverId} name="serverId" />
 				{/if}
@@ -117,9 +148,10 @@
 				</div>
 				<div class="block text-right">
 					<button
+						disabled={disabled}
 						data-modal-hide="default-modal"
 						type="submit"
-						class="w-24 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+						class="{disabled?'dark:bg-gray-600 dark:hover:bg-gray-600':'dark:bg-blue-600 dark:hover:bg-blue-700'} w-24 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2 text-center dark:focus:ring-blue-800"
 						>Save
 					</button>
 					<!-- <button

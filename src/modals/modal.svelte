@@ -3,7 +3,7 @@
 </script>
 
 <dialog class="min-w-full md:min-w-fit p-0 px-2 md:mx-auto mt-2 md:mt-64 transition bg-transparent shadow-2xl trounded-lg backdrop:bg-neutral-900 backdrop:opacity-70 backdrop:transition"
-	bind:this={dialog} on:close>
+	bind:this={dialog}>
 	<div>
 		<slot />
 	</div>
