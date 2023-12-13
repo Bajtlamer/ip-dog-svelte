@@ -6,6 +6,7 @@
 
 	export let data;
 	let open = false;
+	let profileOpen = false;
 </script>
 
 <nav class="bg-white border-gray-200 dark:bg-gray-900">
@@ -24,16 +25,47 @@
 					>Login
 				</a>
 			{:else}
-				<span class="self-center pr-4 text-sm font-semibold whitespace-nowrap dark:text-white">
-					{#if data.user?.fullname} {data.user?.fullname} {:else} {data.user?.username} {/if}
-				</span>
-			
-				<form action="/logout" method="POST">
+				<div class="self-center pr-4 text-sm font-semibold whitespace-nowrap dark:text-white">
+					<div class="hidden md:block">
+						<button
+							on:click={()=>profileOpen = !profileOpen}
+							class="block dark:hover:bg-gray-700 p-2 rounded-md"
+						>
+							{#if data.user?.fullname} {data.user?.fullname} {:else} {data.user?.username} {/if}
+						</button>
+					</div>
+					<div class="block md:hidden overflow-hidden rounded-full">
+						<button
+							on:click={()=>profileOpen = !profileOpen}
+							class="justify-center items-center select-none w-8 h-8 border border-1 overflow-hidden rounded-full focus:outline-none dark:hover:bg-gray-700"
+						>
+							<svg class="object-cover" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24">
+								<path fill="currentColor" d="M12 4a4 4 0 0 1 4 4a4 4 0 0 1-4 4a4 4 0 0 1-4-4a4 4 0 0 1 4-4m0 10c4.42 0 8 1.79 8 4v2H4v-2c0-2.21 3.58-4 8-4"/>
+							</svg>
+							<!-- {#if data.user?.fullname} {data.user?.fullname} {:else} {data.user?.username} {/if} -->
+						</button>
+					</div>
+
+					<div
+						class:hidden={!profileOpen}
+						class="-translate-x-11 md:-translate-x-2 bg-gray-800 mt-3 rounded-md absolute origin-top-right divide-y block w-36 shadow-lg border dark:border-gray-700">
+						<ul class="p-0">
+							<li class="">
+								<a class="block text-white px-3 py-2 dark:hover:bg-gray-700" href="#">User profile</a>
+								<!-- <a class="block text-white px-3 py-2 dark:hover:bg-gray-500" href="#">Logout</a> -->
+								<form action="/logout" method="POST">
+									<button type="submit" class="border-t-2 border-t-gray-800 block w-full text-left text-white px-3 py-2 dark:hover:bg-gray-600">Logout</button>
+								</form>
+							</li>
+						</ul>
+					</div>
+				</div>
+				<!-- <form action="/logout" method="POST">
 					<button
-						class="hidden px-4 py-2 mr-3 text-sm font-medium text-center text-white bg-blue-700 rounded-md hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 md:mr-0 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 md:block"
-						>Logout</button
+					class="hidden px-4 py-2 mr-3 text-sm font-medium text-center text-white bg-blue-700 rounded-md hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 md:mr-0 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 md:block"
+					>Logout</button
 					>
-				</form>
+				</form> -->
 			{/if}
 			<button
 				on:click={() => {
