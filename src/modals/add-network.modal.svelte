@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Pulse } from 'svelte-loading-spinners';
 	import { enhance } from '$app/forms';
-	import { getStatusIcon } from '$lib/functions';
+	import { getStatusIcon, isValidIpAddress, isValidNetworkSubnet } from '$lib/functions';
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import type { ProxyServerInterface } from '../models/proxy';
 	import { pingDevice } from '$lib/service/network.service';
@@ -26,7 +26,7 @@
 	let count: number = 0;
 	let message: string | undefined = '';
 	let saveDropdownShow: boolean = false;
-	let disabled = true;
+	let disabled = false;
 
 	let form: Record<string, any> | undefined = {};
 
@@ -150,19 +150,15 @@
 	const subnetFormatHandler = (event: KeyboardEvent) => {
 		const target = event.target as HTMLInputElement;
 		const value = target.value;
-		const pattern = new RegExp(
-			'^((([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|' +
-				'25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|' +
-				'2[0-4][0-9]|25[0-5]))\\/([0-9]|[1-2][0-9]|3[0-2])$'
-		);
 
-		if (pattern.test(value)) {
+		const isSubnet = isValidNetworkSubnet(value);
+		const isValidAddress = isValidIpAddress(value);
+
+		if (isSubnet || isValidAddress || value === '') {
 			subnet = value;
 			disabled = false;
-			console.log('subnet:', disabled);
 		} else {
 			disabled = true;
-			console.log('subnet:', disabled);
 		}
 	};
 
@@ -208,7 +204,7 @@
 	<div
 		class="p-4 mx-auto bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-600 dark:border-gray-700"
 	>
-		<h1 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+		<h1 class="sm:text-lg md:text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
 			Subnet scan <span class="text-sm font-normal">({server.name})</span>
 		</h1>
 
@@ -247,20 +243,20 @@
 					type="text"
 					name="subnet"
 					id="subnet"
-					class="focus:outline-none block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white "
+					class="{disabled?'dark:border-red-500':'dark:border-gray-300'} focus:outline-none block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white "
 					placeholder="Scan subnet..."
 				/>
 				<button
 					disabled={disabled}
 					type="submit"
-					class="text-white absolute right-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+					class="text-white absolute right-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-md text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
 					>Scan
 				</button>
 			</div>
 		</form>
 
-		<p class="pt-2 mb-3 font-normal text-gray-700 dark:text-gray-400">
-			Please enter a subnet, for example '10.11.11.0/24'
+		<p class="pt-2 mb-3 font-normal text-sm md:w-96 text-gray-700 dark:text-gray-400">
+			Please enter a subnet, or IP e.g. '10.11.11.0/24'
 		</p>
 
 		{#if loading}

@@ -8,15 +8,24 @@ import DeviceIcon from '../templates/icons/device-icon.svelte';
 import { fail } from '@sveltejs/kit';
 import PcIcon from '../templates/icons/pc-icon.svelte';
 
-export const isValidIpAddress = (ipaddress: string) => {
-	if (
-		/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(
-			ipaddress
-		)
-	) {
-		return true;
-	}
-	return false;
+export const isValidIpAddress = (ip: string) => {
+	const pattern = new RegExp(
+		'^((([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|' +
+			'25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|' +
+			'2[0-4][0-9]|25[0-5]))$'
+	);
+
+	return pattern.test(ip);
+};
+
+export const isValidNetworkSubnet = (subnet: string) => {
+	const pattern = new RegExp(
+		'^((([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|' +
+			'25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|' +
+			'2[0-4][0-9]|25[0-5]))\\/([0-9]|[1-2][0-9]|3[0-2])$'
+	);
+
+	return pattern.test(subnet);
 };
 
 export const getStatusIcon = (status?: boolean | null) => {
