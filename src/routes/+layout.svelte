@@ -3,10 +3,16 @@
 	import { menuitems } from './pages.json';
 	import '../app.css';
 	import { version } from '$app/environment';
+	import { clickOutside } from '$lib/event';
 
 	export let data;
 	let open = false;
 	let profileOpen = false;
+
+	const onClickOutsideEventHandler = (event: MouseEvent) => {
+		profileOpen = false;
+	};
+
 </script>
 
 <nav class="bg-white border-gray-200 dark:bg-gray-900">
@@ -68,6 +74,7 @@
 				</form> -->
 			{/if}
 			<button
+				use:clickOutside={onClickOutsideEventHandler}
 				on:click={() => {
 					open = !open;
 				}}
