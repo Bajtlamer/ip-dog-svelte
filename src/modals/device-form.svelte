@@ -28,6 +28,8 @@
 	});
 
 	const deviceIpAddressHandler = (event: KeyboardEvent) => {
+		if(isEditMode()) return;
+
 		const target = event.target as HTMLInputElement;
 		const value = target.value;
 		message = '';
@@ -97,7 +99,7 @@
 							{isEditMode()
 							? 'dark:text-gray-400'
 							: 'dark:text-white'}
-							{disabled?'dark:border-red-500 dark:focus:border-red-500':'dark:border-gray-300 dark:focus:border-blue-500'} block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+							{disabled?'dark:border-red-500 dark:focus:border-red-500':'dark:border-gray-600 dark:focus:border-blue-500'} block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
 						placeholder=" "
 					/>
 					<label

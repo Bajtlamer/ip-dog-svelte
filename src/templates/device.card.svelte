@@ -1,21 +1,20 @@
 <script lang="ts">
 	import { clickOutside } from '$lib/event';
-	import { getDeviceTypeIcon, getStatusIcon, isValidIpAddress } from '$lib/functions';
+	import { getDeviceTypeIcon, getStatusIcon } from '$lib/functions';
 	import { Pulse } from 'svelte-loading-spinners';
 	import { onMount } from 'svelte';
 	import { ProxyServer, type ProxyServerInterface } from '../models/proxy';
 	import Modal from '../modals/modal.svelte';
-    import DeviceForm from './../modals/device-form.svelte';
+	import DeviceForm from './../modals/device-form.svelte';
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import type { iDevice } from '../models/device';
 	import ConfirmationDialog from '../modals/confirmation-dialog.svelte';
 	import { ModalDialog } from '../models/modal';
-	import { invalidate } from '$app/navigation';
-	import { deserialize } from '$app/forms';
+	import { invalidate, invalidateAll } from '$app/navigation';
+	import { applyAction, deserialize } from '$app/forms';
 
 	export let device: iDevice;
 	export let iServer: ProxyServerInterface | null;
-
 
 	let deleteDeviceDialog: HTMLDialogElement;
 	let deviceFormDialog: HTMLDialogElement;
@@ -26,6 +25,7 @@
 
 	$: server = new ProxyServer(iServer);
 	$: deviceUrl = 'http://' + device.address;
+	$: device.status = server.isDeviceOnline(device);
 
 	const onKeyUpEscape = (event: KeyboardEvent) => {
 		if (event.key === 'Escape') {
@@ -33,22 +33,21 @@
 		}
 	};
 
-
 	onMount(async () => {
 		device.status = server.isDeviceOnline(device);
 		serverId = server.id;
 	});
 
 	const showDeviceEditForm = (event: Event) => {
-        deviceFormDialog.showModal();
-    };
+		deviceFormDialog.showModal();
+	};
 
 	/** ! Need to solve the issue with the deviceFormDialog **/
 
-    const submitDeviceForm: SubmitFunction = async ({ formData, cancel }) => {
-        console.log('submitting device form...');
+	const submitDeviceForm: SubmitFunction = async ({ formData, cancel }) => {
+		console.log('submitting device form...');
 
-        return async ({ result, update }) => {
+		return async ({ result, update }) => {
 			if (result.type === 'success') {
 				const data = result.data;
 				if (data) {
@@ -67,26 +66,26 @@
 				}
 			} else if (result.type === 'failure') {
 				message = result.data?.message;
-				// console.log(message)
-				update();
+				console.log(message)
+				// update();
 			}
 
 			// loader = false;
 		};
-
-    };
-
+	};
 
 	const deleteDevice = async () => {
-		console.log('deleting device:', device.description, device.id)
 		const data = new FormData();
 
-		if(device.id) {
+		if (device.id) {
 			data.set('deviceId', device.id.toString());
-		}else{
+		} else {
 			modal = modal.createModalWarningDialog(
 				'Delete Device',
-				'Device deletion failed. Device ID is missing.');
+				'Device deletion failed. Device ID is missing.'
+			);
+
+			deleteDeviceDialog.showModal();
 		}
 
 		const response = await fetch('/devices?/delete', {
@@ -95,31 +94,42 @@
 		});
 
 		const result: import('@sveltejs/kit').ActionResult = deserialize(await response.text());
-
+		// console.log('response:', result)
 		if (result.type === 'success') {
-			console.log('success', result.data)
+			// console.log('success', result.data);
 			await invalidate('subnet:devices');
-			// deleteDeviceDialog.close();
+
+			deleteDeviceDialog.close();
+			// applyAction(result);
+			// await invalidateAll();
 		} else if (result.type === 'failure') {
 			message = result.data?.message;
 			// dialog.close();
 		}
-	}
+	};
 
-	modal = modal.createModalConfirmationDialog(
-		'Delete device',
-		`Are you sure you want to delete device '${device.description}'?`,
-		[
-			{ text: 'Cancel', class: 'cancel', handler: () => deleteDeviceDialog.close() },
-			{
-				text: 'Delete',
-				class: 'bg-red-700 dark:bg-red-700 dark:hover:bg-red-600 dark:focus:ring-red-600',
-				handler: () => deleteDevice()
-			}
-		]
-	);
+	const openDialog = () => {
+		// console.log('opening dialog...', device)
+		let deviceDescription = device.description;
 
+		if(deviceDescription === null || deviceDescription === undefined || deviceDescription === '') {
+			deviceDescription = 'with IP ' + device.address;
+		}
 
+		modal = modal.createModalConfirmationDialog(
+			'Delete device',
+			`Are you sure you want to delete device ${deviceDescription}?`,
+			[
+				{ text: 'Cancel', class: 'cancel', handler: () => deleteDeviceDialog.close() },
+				{
+					text: 'Delete',
+					class: 'bg-red-700 dark:bg-red-700 dark:hover:bg-red-600 dark:focus:ring-red-600',
+					handler: () => deleteDevice()
+				}
+			]
+		);
+		deleteDeviceDialog.showModal();
+	};
 </script>
 
 <div class="flex items-center space-x-4 rtl:space-x-reverse bg-gray-700">
@@ -143,15 +153,15 @@
 			<div id="button" class="rounded-lg hover:bg-gray-700 hover:border-gray-500">
 				<div class="inline-flex items-center">
 					<!-- {#if isValidIpAddress(device.address)} -->
-						{#await device.status}
-							<span class="block pr-0 md:pr-2">
-								<Pulse size="19" color="lightgreen" unit="px" duration="1s" />
-							</span>
-						{:then isAlive}
-							<span class="block pr-0 md:pr-2">
-								<svelte:component this={getStatusIcon(isAlive)} />
-							</span>
-						{/await}
+					{#await device.status}
+						<span class="block pr-0 md:pr-2">
+							<Pulse size="19" color="lightgreen" unit="px" duration="1s" />
+						</span>
+					{:then isAlive}
+						<span class="block pr-0 md:pr-2">
+							<svelte:component this={getStatusIcon(isAlive)} />
+						</span>
+					{/await}
 					<!-- {:else}
 						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
 							><path
@@ -209,7 +219,7 @@
 						>Probe device
 					</button>
 					<button
-						on:click={() => deleteDeviceDialog.showModal()}
+						on:click={openDialog}
 						type="submit"
 						class="block w-full px-4 py-2 text-left hover:bg-gray-700"
 						role="menuitem"
@@ -224,7 +234,7 @@
 </div>
 
 <!-- SUBNET EDIT DIALOG -->
-<Modal bind:dialog={deviceFormDialog} >
+<Modal bind:dialog={deviceFormDialog}>
 	<DeviceForm
 		mode="edit"
 		dialog={deviceFormDialog}
@@ -237,5 +247,5 @@
 
 <!-- CONFIRM DEVICE DELETE DIALOG -->
 <Modal bind:dialog={deleteDeviceDialog} on:close>
-	<ConfirmationDialog on:close={()=>deleteDeviceDialog.close()} {modal} />
+	<ConfirmationDialog on:close={() => deleteDeviceDialog.close()} {modal} />
 </Modal>

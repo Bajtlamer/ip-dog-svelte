@@ -77,7 +77,7 @@ export const actions: Actions = {
 		const data = await request.formData();
 		const deviceId = Number(data.get('deviceId'));
 
-		console.log("edit server data:", data)
+		// console.log("Devices data:", data)
 
 		if(isNaN(deviceId)) {
 			throw error(400, 'Update server failed, invalid deviceId.');
@@ -85,7 +85,7 @@ export const actions: Actions = {
 
 		const device = await deleteDevice(deviceId);
 
-		console.log('Device with ID:' + deviceId + ' has deleted');
+		// console.log('Device with ID:' + deviceId + ' has deleted');
 		// const proxyServers = await getProxyServers();
 		// console.log("🚀 ~ file: +page.server.ts:64 ~ delete_server: ~ proxyServers:", proxyServers)
 
@@ -110,7 +110,7 @@ export const actions: Actions = {
 		}
 
 
-        console.log(data)
+        // console.log(data)
 
 		try {
 			if (address && subnetId) {

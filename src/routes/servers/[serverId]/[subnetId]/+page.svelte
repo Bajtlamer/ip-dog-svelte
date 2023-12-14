@@ -7,6 +7,7 @@
 	import { FORM_MODE_NEW } from '../../../../constants';
 	import { CDevice, type iDevice } from '../../../../models/device';
 	import type { SubmitFunction } from '@sveltejs/kit';
+	import { invalidate } from '$app/navigation';
 
 	export let data: PageData;
 
@@ -50,8 +51,9 @@
 					// device.address = "172.16.24.20"
 					// device.status = server.isDeviceOnline(device);
 					// console.log(data);
+					await invalidate('subnet:devices');
 					deviceDialog.close();
-					update();
+					// update();
 					// applyAction(result);
 					// await invalidateAll();
 				}
