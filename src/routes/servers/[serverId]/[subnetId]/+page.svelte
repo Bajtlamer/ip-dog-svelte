@@ -43,27 +43,14 @@
 			if (result.type === 'success') {
 				const data = result.data;
 				if (data) {
-					// await invalidate('subnet:devices');
-					// server = new ProxyServer(data.server)
-					// device = new CDevice(data.device);
-					// device = data.device;
-					// device.description = "Blabol"
-					// device.address = "172.16.24.20"
-					// device.status = server.isDeviceOnline(device);
-					// console.log(data);
 					await invalidate('subnet:devices');
 					deviceDialog.close();
-					// update();
-					// applyAction(result);
-					// await invalidateAll();
 				}
 			} else if (result.type === 'failure') {
 				message = result.data?.message;
-				// console.log(message)
 				update();
 			}
 
-			// loader = false;
 		};
 	};
 </script>

@@ -20,8 +20,8 @@ export interface ProxyServerInterface {
     password: string
     description?: string | null
     token?: string | null
-    status: boolean
-    subnets?: iSubnet[]
+    status: Promise<boolean> | boolean
+    subnets: iSubnet[]
 }
 
 export interface SecureProxyServer {
@@ -48,6 +48,7 @@ export class ProxyServer implements ProxyServerInterface {
     public description = ''
     public token = ''
     public status = false
+    public subnets = []
 
     constructor(proxy?: ProxyServerInterface | null) {
         if (proxy) Object.assign(this, proxy);
@@ -70,6 +71,7 @@ export class ProxyServer implements ProxyServerInterface {
             password: this.password,
             description: this.description,
             status: this.status,
+            subnets: this.subnets,
         }
     }
 

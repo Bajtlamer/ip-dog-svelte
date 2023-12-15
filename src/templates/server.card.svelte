@@ -13,8 +13,9 @@
 	import NetworkIcon from './icons/network-icon.svelte';
 	import type { ProxyServerInterface } from '../models/proxy';
 	import DeviceIcon from './icons/device-icon.svelte';
+	import { onMount } from 'svelte';
 
-	export let server: any;
+	export let server: ProxyServerInterface;
 	export let serverDropdownShow = false;
 	// export let id: number;
 
@@ -22,10 +23,16 @@
 	let deleting: boolean = false;
 	let confirmationDialog: HTMLDialogElement;
 	let ProxyFormDialog: HTMLDialogElement;
+	let serverId: number | null | undefined;
 
 	// const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 	const close = () => confirmationDialog.close();
+
+	onMount(async () => {
+		server.status = validateServer(server);
+		serverId = server.id;
+	});
 
 	const submitForm = async (event: HTMLFormElement) => {
 		const data = new FormData(event.currentTarget);
@@ -100,10 +107,13 @@
 
 	const deleteServer = async () => {
 		deleting = true;
-		// await sleep(5000);
-		// console.log('success');
+
 		const data = new FormData();
-		data.set('serverId', server.id);
+		// let serverId = server.id;
+
+		if (serverId) {
+			data.set('serverId', serverId.toString());
+		}
 
 		const response = await fetch('?/delete_server', {
 			method: 'POST',
@@ -114,10 +124,8 @@
 
 		if (result.type === 'success') {
 			await invalidate('server:delete');
-			// confirmationDialog.close();
 		} else if (result.type === 'failure') {
 			modal = modal.createModalWarningDialog('Delete Server', 'Server deletion failed.');
-			// dialog.close();
 		}
 
 		deleting = false;
@@ -200,11 +208,11 @@
 	<p class="flex items-center mb-3 font-normal text-gray-700 dark:text-gray-400">
 		{server.description}
 		<span class="pl-2 pr-1">
-			<NetworkIcon size=14 />
+			<NetworkIcon size="14" />
 		</span>
 		{server.subnets.length}
 		<span class="pl-2 pr-1">
-			<DeviceIcon size=15 />
+			<DeviceIcon size="15" />
 		</span>
 		{getDevicesCount(server)}
 	</p>
@@ -233,7 +241,8 @@
 		</a>
 		<span class="pr-2">
 			{#if browser}
-				{#await validateServer(server)}
+				<!-- {#await validateServer(server)} -->
+				{#await server.status}
 					<span>
 						<Pulse size="20" color="lightgreen" unit="px" duration="1s" />
 					</span>

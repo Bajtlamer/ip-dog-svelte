@@ -40,7 +40,7 @@ const submitNewServer: SubmitFunction= ({ formData, cancel, submitter }) => {
 };
 </script>
 
-<div class="items-center min-h-screen max-w-full p-2 mx-auto dark:bg-gray-800 lg:p-20">
+<div class="items-center min-h-screen max-w-full p-2 mx-auto dark:bg-gray-800 lg:p-5">
     <div class="max-w-screen-sm p-2 md:p-4 mx-auto bg-white border border-gray-200 rounded-lg shadow-lg dark:bg-gray-600 dark:border-gray-700">
 		<div class="flex items-center justify-between w-full">
 
