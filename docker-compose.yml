@@ -7,7 +7,7 @@ services:
     image: ipdog_svelte
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: ./Dockerfile
     user: "node"
     environment:
       # Internal server error messages will not send stacktrace to the browser in production
