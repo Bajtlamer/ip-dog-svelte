@@ -129,8 +129,12 @@
 			{device.description}
 		</p>
 		<p class="flex text-xs text-gray-500 truncate dark:text-gray-400">
-			<a target="_blank" href={deviceUrl}>
-				{device.hostname} ({device.address})
+			<a target="_blank" href={'https://' + device.hostname}>
+				{device.hostname}
+			</a>
+			&nbsp;
+			<a target="_blank" href={'http://' + device.address}>
+				({device.address})
 			</a>
 		</p>
 	</div>
